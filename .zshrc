@@ -32,10 +32,10 @@ function dots-stop-capture () {
     eval "function $(functions -- -dots-original-antigen-load | sed 's/-dots-original//')"
 }
 
-if [ -f ~/.cache/zdotcache ] ; then
-    source ~/.cache/zdotcache
+if [ -f "$XDG_CACHE_HOME/zdotcache" ] ; then
+    source "$XDG_CACHE_HOME/zdotcache"
 else
-    dots-start-capture ~/.cache/zdotcache
+    dots-start-capture "$XDG_CACHE_HOME/zdotcache"
 
     # antigen
     # plugins
