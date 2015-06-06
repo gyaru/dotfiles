@@ -41,10 +41,10 @@ else
     # plugins
 	antigen bundle zsh-users/zsh-syntax-highlighting
     # oh-my-zsh plugins
-	antigen bundle plugins/systemd
-	antigen bundle plugins/git
-	antigen bundle plugins/cp
-	antigen bundle plugins/rsync
+	antigen bundle robbyrussell/oh-my-zsh plugins/systemd
+	antigen bundle robbyrussell/oh-my-zsh plugins/git
+	antigen bundle robbyrussell/oh-my-zsh plugins/cp
+	antigen bundle robbyrussell/oh-my-zsh plugins/rsync
 
 	# personal stuff
 	# theme
