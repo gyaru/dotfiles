@@ -1,0 +1,57 @@
+! xft
+Xft.autohint:		0
+Xft.lcdfilter:		lcddefault
+Xft.hintstyle:  	hintfull
+Xft.hinting:		1
+Xft.antialias:		1
+Xft.rgba:		rgb
+Xft.DPI:		96
+
+! urxvt
+urxvt*font:		xft:M+ 2m regular:size=9,xft:FontAwesome:size=9
+urxvt*boldFont:		xft:M+ 2m regular:size=9,xft:FontAwesome:size=9
+urxvt*italicFont:	xft:M+ 2m regular:size=9,xft:FontAwesome:size=9
+urxvt*bolditalicFont:	xft:M+ 2m regular:size=9,xft:FontAwesome:size=9
+urxvt.depth:		24
+urxvt*internalBorder:	5
+urxvt.scrollBar:	false
+urxvt*cursorUnderline:	1
+urxvt*cursorBlink:	true
+urxvt.urgentOnBell:	true
+urxvt*letterSpace:	-1
+urxvt.matcher.button:	1s
+urxvt.perl-ext-common:	default,matcher,selection-to-clipboard
+urxvt.url-launcher:	/usr/bin/firefox
+urxvt.internalBorder: 	6
+
+! colours
+*.foreground:		#2b303b
+*.background:		#eff1f5
+*.cursorColor:		#4f5b66
+! black
+*.color0:		#2b303b
+*.color8:		#65737e
+! red
+*.color1:		#bf616a
+*.color9:		#bf616a
+! green
+*.color2:		#a3be8c
+*.color10:		#a3be8c
+! yellow
+*.color3:		#ebcb8b
+*.color11:		#ebcb8b
+! blue
+*.color4:		#96b5b4
+*.color12:		#96b5b4
+! magenta
+*.color5:		#b48ead
+*.color13:		#b48ead
+! cyan
+*.color6:		#96b5b4
+*.color14:		#96b5b4
+! white
+*.color7:		#c0c5ce
+*.color15:		#eff1f5
+
+! cursor
+Xcursor.size:		14
