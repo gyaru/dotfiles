@@ -81,16 +81,16 @@ XF86AudioRaiseVolume
 XF86AudioLowerVolume
 	/home/eryla/scripts/kikoeru -d 5
 
-#XF86AudioMute
+#XF86AudioMute not working yet
 #	/home/eryla/scripts/kikoeru !
 
-#XF86AudioPlay
+#XF86AudioPlay not working yet
 #	/home/eryla/scripts/kikoeru
 
-#XF86AudioNext
+#XF86AudioNext not working yet
 #	/home/eryla/scripts/kikoeru
 	
-#XF86AudioPrev
+#XF86AudioPrev not working yet
 #	/home/eryla/scripts/kikoeru
 
 # printscreen script
@@ -106,6 +106,7 @@ super + space
 	/home/eryla/scripts/dmenyuu_bin
 
 # sxhkd reload
+# TODO: add bspwm reload
 super + Escape
 	pkill -USR1 -x sxhkd
 
