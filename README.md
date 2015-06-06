@@ -18,5 +18,3 @@ personal dotfiles.
 
 ## ncmpcpp
 ![columns](https://eru.me/i/Zlu.png)
-
-![classic](https://eru.me/i/weU.png)
