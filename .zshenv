@@ -9,8 +9,10 @@ export XDG_CACHE_HOME=$HOME/.cache
 export PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/vendor_perl:/usr/bin/core_perl:$HOME/.gem/ruby/2.2.0/bin"
 
 # wine
-export WINEPREFIX=/mnt/amatsukaze/wine/.wine
+export WINEDIR=/mnt/amatsukaze/wine
+export WINEPREFIX=$WINEDIR/.wine
 export WINEARCH=win32
+export WINEDLLOVERRIDES='winemenubuilder.exe=d' # prevents wine from populating with menu entries/desktop links
 
 # gtk - disable atk-bridge
 export NO_AT_BRIDGE=1

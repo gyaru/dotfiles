@@ -52,6 +52,7 @@ bspc monitor HDMI-0 -d tv
 bspc rule -a "Kodi"		 		desktop=6 fullscreen=on
 bspc rule -a "Deluge" 				desktop=4
 bspc rule -a "Wine" 				desktop=5
+bspc rule -a "explorer.exe"			desktop=5	# force wine shit 
 bspc rule -a "mpv" 				floating=on
 
 # firefox specific rules
