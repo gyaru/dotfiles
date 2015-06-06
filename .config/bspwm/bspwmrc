@@ -49,16 +49,16 @@ bspc monitor DVI-I-1 -d 1 2 3 4 5
 bspc monitor HDMI-0 -d tv
 
 # rules
-bspc rule -a "Kodi" 		desktop=6 fullscreen=on
-bspc rule -a "Deluge" 		desktop=4
-bspc rule -a "Wine" 		desktop=5
-bspc rule -a "mpv" 		floating=on
+bspc rule -a "Kodi"		 		desktop=6 fullscreen=on
+bspc rule -a "Deluge" 				desktop=4
+bspc rule -a "Wine" 				desktop=5
+bspc rule -a "mpv" 				floating=on
 
 # firefox specific rules
-bspc rule -a "Navigator"	floating=off	# Main Browser
-bspc rule -a "Places"		floating=on	# History
-bspc rule -a "Toplevel"		floating=on	# Settings for other shit
-bspc rule -a "Browser"		floating=on	# Settings
+bspc rule -a "Navigator"			floating=off	# Main Browser
+bspc rule -a "Places"				floating=on	# History
+bspc rule -a "Toplevel"				floating=on	# Settings for other shit
+bspc rule -a "Browser"				floating=on	# Settings
 
 # launching panel
 $XDG_CONFIG_HOME/urayamashi/panel &

@@ -1,40 +1,39 @@
 [options]
-font=			M+ 2m regular 9
-allow_bold=		false
-audible_bell=		false
-browser=		firefox
-clickable_url=		true
-scrollback_lines=	10000
-search_wrap=		true
-cursor_blink=		system
-cursor_shape=		ibeam
+font =			M+ 2m regular 9
+allow_bold =		false
+audible_bell =		false
+browser =		firefox
+clickable_url =		true
+scrollback_lines =	10000
+search_wrap =		true
+cursor_blink =		system
+cursor_shape =		ibeam
 
 [colors]
-foreground=		#2b303b
-foreground_bold=	#2b303b
-cursor=			#2b303b
-background=		#eff1f5
+foreground =		#2b303b
+cursor =		#2b303b
+background =		#eff1f5
 # black
-color0=			#2b303b
-color8=			#65737e
+color0 =		#2b303b
+color8 =		#65737e
 # red
-color1=			#bf616a
-color9=			#bf616a
+color1 =		#bf616a
+color9 =		#bf616a
 # green
-color2=			#a3be8c
-color10=		#a3be8c
+color2 =		#a3be8c
+color10 =		#a3be8c
 # yellow
-color3=			#ebcb8b
-color11=		#ebcb8b
+color3 =		#ebcb8b
+color11 =		#ebcb8b
 # blue
-color4=			#96b5b4
-color12=		#96b5b4
+color4 =		#96b5b4
+color12 =		#96b5b4
 # magenta
-color5=			#b48ead
-color13=		#b48ead
+color5 =		#b48ead
+color13 =		#b48ead
 # cyan
-color6=			#96b5b4
-color14=		#96b5b4
+color6 =		#96b5b4
+color14 =		#96b5b4
 # white
-color7=			#c0c5ce
-color15=		#eff1f5
+color7 =		#c0c5ce
+color15 =		#eff1f5
