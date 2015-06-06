@@ -61,4 +61,4 @@ bspc rule -a "Toplevel"		floating=on	# Settings for other shit
 bspc rule -a "Browser"		floating=on	# Settings
 
 # launching panel
-/home/eryla/.config/urayamashi/panel &
+$XDG_CONFIG_HOME/urayamashi/panel &
