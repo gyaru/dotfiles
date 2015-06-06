@@ -1,0 +1,114 @@
+# bspwm
+
+# close focused window
+super + w
+	bspc window -c
+
+# set focused window state
+# s > floating 		"Is above any tiled window and can be moved/resized freely."
+# f > fullscreen	"Fills its monitor rectangle, is above all the other windows and has no borders."
+# e > sticky		"Stays in the focused desktop of its monitor."
+# r > locked		"Ignores the close message."
+# p > private		"Tries to keep the same tiling position/size."
+super + {s,f,e,r,p}
+	bspc window -t {floating,fullscreen,sticky,locked,private}
+
+# replace the focused window to the previously focused one
+super + apostrophe
+	bspc window -s last
+
+# move window, vi style
+super + {_,shift + }{h,j,k,l}
+	bspc window -{f,s} {left,down,up,right}
+
+
+# resize window, vi style
+super + alt + {h,j,k,l}
+	bspc window -e {left -10,down +10,up -10,right +10}
+super + alt + shift + {h,j,k,l}
+	bspc window -e {right -10,up +10,down -10,left +10}
+
+# move window to the biggest place in the desktop
+super + m
+	bspc window -s biggest
+
+# switch desktop to the last used
+super + Tab
+	bspc desktop -f last
+
+# toggle desktop layout (monocle/tiled)
+super + t
+	bspc desktop -l next
+
+# adjust the split ratios of the tree of the selected desktop so that all windows occupy the same area.
+super + b
+	bspc desktop -B
+
+# move the leaves of the tree of the selected desktop.
+super + {comma,period}
+	bspc desktop -C {backward,forward}
+
+# move window to desktop
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,window -d} ^{1-9,10}
+
+# pointer - focus windows automatically
+~button1
+	bspc pointer -g focus
+
+# pointer - moving, resizing. 
+super + button{1-3}
+	bspc pointer -g {move,resize_side,resize_corner}
+super + !button{1-3}
+	bspc pointer -t %i %i
+super + @button{1-3}
+	bspc pointer -u
+
+# simple presel bindings for noobs that can't handle hjkl
+super + Up
+	bspc window --presel up
+super + Left
+	bspc window --presel left
+super + Right
+	bspc window --presel right
+super + Down
+	bspc window --presel down
+
+# media
+XF86AudioRaiseVolume
+	/home/eryla/scripts/kikoeru -i 5
+
+XF86AudioLowerVolume
+	/home/eryla/scripts/kikoeru -d 5
+
+#XF86AudioMute
+#	/home/eryla/scripts/kikoeru !
+
+#XF86AudioPlay
+#	/home/eryla/scripts/kikoeru
+
+#XF86AudioNext
+#	/home/eryla/scripts/kikoeru
+	
+#XF86AudioPrev
+#	/home/eryla/scripts/kikoeru
+
+# printscreen script
+Print
+	/home/eryla/scripts/chaika
+
+# terminal
+super + Return
+	termite
+
+# dmenyuu
+super + space
+	/home/eryla/scripts/dmenyuu_bin
+
+# sxhkd reload
+super + Escape
+	pkill -USR1 -x sxhkd
+
+# logout
+super + alt + Escape
+		pkill -x panel; bspc quit
