@@ -3,32 +3,32 @@
 #  envs/exports
 source $HOME/.zshenv
 
-# load antigen
-source $XDG_DATA_HOME/antigen/antigen.zsh
-antigen use oh-my-zsh
-antigen apply
+# load zgen
+source $XDG_DATA_HOME/zgen/zgen.zsh
 
-# antigen plugins
-antigen-plugins () {
-	antigen bundle zsh-users/zsh-syntax-highlighting
+# load plugins
 
-	# oh-my-zsh plugins
-	antigen bundle robbyrussell/oh-my-zsh plugins/systemd
-	antigen bundle robbyrussell/oh-my-zsh plugins/git
-	antigen bundle robbyrussell/oh-my-zsh plugins/cp
-	antigen bundle robbyrussell/oh-my-zsh plugins/rsync
+if ! zgen saved; then
+	echo "generating a new zgen save"
 
-	# personal stuff
-	# theme
-	antigen theme Eryla/zshstuff themes/myucel
+	# oh-my-zsh base
+	zgen oh-my-zsh
 	# plugins
-	antigen bundle Eryla/zshstuff plugins/completion-waiting-dots
-}
+	zgen oh-my-zsh plugins/systemd
+	zgen oh-my-zsh plugins/git
+	zgen oh-my-zsh plugins/cp
+	zgen oh-my-zsh plugins/rsync
+	zgen load zsh-users/zsh-syntax-highlighting
+	zgen load Eryla/zshstuff plugins/completion-waiting-dots
+	# theme
+	zgen load Eryla/zshstuff themes/myucel
+	# lets roll
+	zgen save
+fi
 
 # script functions
 source $SCRIPTS/update-git		# lazy dotfiles updates
 source $SCRIPTS/ssh-aliases		# ssh aliases/functions
-source $SCRIPTS/antigen-cache	# antigen caching
 
 # dircolors
 eval `dircolors ~/.dircolors`
