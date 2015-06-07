@@ -21,7 +21,6 @@ super + apostrophe
 super + {_,shift + }{h,j,k,l}
 	bspc window -{f,s} {left,down,up,right}
 
-
 # resize window, vi style
 super + alt + {h,j,k,l}
 	bspc window -e {left -10,down +10,up -10,right +10}
@@ -76,34 +75,38 @@ super + Down
 
 # media
 XF86AudioRaiseVolume
-	/home/eryla/scripts/kikoeru -i 5
+	$SCRIPTS/kikoeru -i 5
 
 XF86AudioLowerVolume
-	/home/eryla/scripts/kikoeru -d 5
+	$SCRIPTS/kikoeru -d 5
 
 #XF86AudioMute not working yet
-#	/home/eryla/scripts/kikoeru !
+#	$SCRIPTS/kikoeru !
 
 #XF86AudioPlay not working yet
-#	/home/eryla/scripts/kikoeru
+#	$SCRIPTS/kikoeru
 
 #XF86AudioNext not working yet
-#	/home/eryla/scripts/kikoeru
+#	$SCRIPTS/kikoeru
 	
 #XF86AudioPrev not working yet
-#	/home/eryla/scripts/kikoeru
+#	$SCRIPTS/kikoeru
 
 # printscreen script
 Print
-	/home/eryla/scripts/chaika
+	$SCRIPTS/chaika
 
 # terminal
 super + Return
 	termite
 
-# dmenyuu
+# dmenyuu - $PATH
 super + space
-	/home/eryla/scripts/dmenyuu_bin
+	$SCRIPTS/dmenyuu_bin
+
+# dmenyuu - menu
+super + g
+	$SCRIPTS/dmenyuu_menu
 
 # sxhkd reload
 # TODO: add bspwm reload

@@ -10,6 +10,7 @@ shadow-opacity =			1;
 shadow-ignore-shaped =			false;
 shadow-exclude=[
 	"class_i * =	 		'slop'",
+	"name * =	 		'bar'",
 	"class_i * =	 		'dmenu'"
 ];
 
