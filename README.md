@@ -11,7 +11,7 @@ personal dotfiles.
 - [ncmpcpp](http://unkart.ovh.org/ncmpcpp/)
 - [ranger](https://savannah.nongnu.org/projects/ranger)
 - [zsh](http://www.zsh.org/)
-- [antigen](https://github.com/zsh-users/antigen)
+- [zgen](https://github.com/tarjoilija/zgen)
 
 ## termite
 ![termite](https://eru.me/i/1Qg.png)
