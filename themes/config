@@ -1,0 +1,22 @@
+#!/bin/bash
+# themes
+
+# set overall theme
+source $XDG_CONFIG_HOME/themes/base16-ocean
+
+# set font
+FONT_1="M+ 2m regular:size=9"
+FONT_2="FontAwesome:size=12"
+
+# geometry
+PANEL_GEOMETRY="1896x21+12+12"
+PANEL_BG_GEOMETRY="1900x25+10+10"
+NOTIFY_GEOMETRY="x21+12+12"
+
+# panel icons
+PANEL_BSPWM_ICON_F_O_D=""		# focused occupied desktop
+PANEL_BSPWM_ICON_F_F_D=""		# focused free desktop
+PANEL_BSPWM_ICON_F_U_D=""		# focused urgent desktop
+PANEL_BSPWM_ICON_O_D=""		# occupied desktop
+PANEL_BSPWM_ICON_F_D=""		# free desktop
+PANEL_BSPWM_ICON_U_D=""		# urgent desktop
