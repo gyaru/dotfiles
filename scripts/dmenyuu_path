@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 IFS=:
 if stest -dqr -n "$XDG_CACHE_HOME/dmenyuu_run" $PATH; then
 	stest -flx $PATH | sort -u | tee "$XDG_CACHE_HOME/dmenyuu_run"

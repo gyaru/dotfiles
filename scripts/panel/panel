@@ -17,14 +17,13 @@ bspc control --subscribe > "$PANEL_FIFO" &
 conky -c panel_conky > "$PANEL_FIFO" &
 
 cat "$PANEL_FIFO" \
-	| ./panel_bar \
+	| $SCRIPTS/panel/panel_bar \
 	| lemonbar \
 		-f "$FONT_1" \
 		-f "$FONT_2" \
 		-F "$COLOR_0E_aa" \
 		-B "$COLOR_07_aa" \
-		-g "$PANEL_GEOMETRY" \
-		-u "$PANEL_LINEHEIGHT" | \
+		-g "$PANEL_GEOMETRY" | \
 		while read line; do
    			panel_execute $line
 		done &

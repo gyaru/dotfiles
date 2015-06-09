@@ -12,6 +12,7 @@ personal dotfiles.
 - [ranger](https://savannah.nongnu.org/projects/ranger)
 - [zsh](http://www.zsh.org/)
 - [zgen](https://github.com/tarjoilija/zgen)
+- [dmenu2](https://bitbucket.org/melek/dmenu2)
 
 ## termite
 ![termite](https://eru.me/i/1Qg.png)
