@@ -1,0 +1,10 @@
+short_units yes
+use_spacer none
+background no
+out_to_console yes
+out_to_x no
+
+update_interval 25
+
+TEXT
+S${execi 25 ./panel_volume} ${exec ./panel_dividerhack} ${execi 900 ./panel_date} ${exec ./panel_dividerhack} ${execi 10 ./panel_clock} 

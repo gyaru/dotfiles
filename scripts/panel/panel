@@ -1,0 +1,31 @@
+#!/bin/bash
+cd $(dirname $0)
+source $XDG_CONFIG_HOME/themes/config
+
+if [ $(pgrep -cx panel) -gt 1 ] ; then
+	printf "%s\n" "The panel is already running." >&2
+	exit 1
+fi
+
+trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
+
+[ -e "$PANEL_FIFO" ] && rm "$PANEL_FIFO"
+mkfifo "$PANEL_FIFO"
+
+bspc control --subscribe > "$PANEL_FIFO" &
+#xtitle -t 50 -sf 'T%s' > "$PANEL_FIFO" &
+conky -c panel_conky > "$PANEL_FIFO" &
+
+cat "$PANEL_FIFO" \
+	| ./panel_bar \
+	| lemonbar \
+		-f "$FONT_1" \
+		-f "$FONT_2" \
+		-F "$COLOR_0E_aa" \
+		-B "$COLOR_07_aa" \
+		-g "$PANEL_GEOMETRY" \
+		-u "$PANEL_LINEHEIGHT" | \
+		while read line; do
+   			panel_execute $line
+		done &
+wait

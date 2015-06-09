@@ -1,0 +1,7 @@
+#!/bin/bash
+source $XDG_CONFIG_HOME/themes/config
+
+date=$(date +'%F')
+
+output="%{F$COLOR_0E_aa}%{B$COLOR_07_aa}$date%{B-}%{F-}"
+echo $output;

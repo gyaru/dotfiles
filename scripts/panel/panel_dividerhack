@@ -1,0 +1,4 @@
+#!/bin/bash
+source $XDG_CONFIG_HOME/themes/config
+icon="|"
+echo "$icon";
