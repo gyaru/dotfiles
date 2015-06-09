@@ -110,7 +110,9 @@ super + g
 
 # sxhkd/bspwm/panel reload
 super + Escape
-	pkill -USR1 -x sxhkd; pkill -x panel; $XDG_CONFIG_HOME/bspwm/bspwmrc
+	pkill -USR1 -x sxhkd; pkill -x panel; \
+	$XDG_CONFIG_HOME/bspwm/bspwmrc; \
+	pkill -USR1 -x compton;
 
 # logout
 super + alt + Escape
