@@ -1,17 +1,11 @@
 #!/bin/sh
 # bspwmrc
 
-# loop
-if [ -e "$BSPWM_TREE" ] ; then
-	bspc restore -T "$BSPWM_TREE" -H "$BSPWM_HISTORY" -S "$BSPWM_STACK"
-	rm "$BSPWM_TREE" "$BSPWM_HISTORY" "$BSPWM_STACK"
-fi
-
 # specific monitor settings
 bspc config -m DVI-I-1 top_padding		35
 
 # general
-bspc config border_width			2
+bspc config border_width			3
 bspc config window_gap				10
 bspc config split_ratio				1
 bspc config borderless_monocle			false

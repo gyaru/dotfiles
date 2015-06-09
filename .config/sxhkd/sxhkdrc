@@ -108,11 +108,10 @@ super + space
 super + g
 	$SCRIPTS/dmenyuu_menu
 
-# sxhkd reload
-# TODO: add bspwm reload
+# sxhkd/bspwm/panel reload
 super + Escape
-	pkill -USR1 -x sxhkd
+	pkill -USR1 -x sxhkd; pkill -x panel; $XDG_CONFIG_HOME/bspwm/bspwmrc
 
 # logout
 super + alt + Escape
-		pkill -x panel; bspc quit
+	pkill -x panel; bspc quit
