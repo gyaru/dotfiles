@@ -63,5 +63,5 @@ bspc rule -a "Browser"				floating=on		# settings
 bspc rule -a "plugin-container"			floating=on 		# usually flash
 
 # launching panel
-$XDG_CONFIG_HOME/urayamashi/panel_bg & # awful hack, will fix some day.
-$XDG_CONFIG_HOME/urayamashi/panel &
+$SCRIPTS/panel/panel_bg & # awful hack, will fix some day.
+$SCRIPTS/panel/panel &

@@ -8,7 +8,6 @@ export XDG_LIB_HOME=$HOME/.local/lib
 export XDG_CACHE_HOME=$HOME/.cache
 
 # standard path
-#export PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/vendor_perl:/usr/bin/core_perl:$HOME/.gem/ruby/2.2.0/bin"
 export PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/bin"
 
 # perl
