@@ -8,10 +8,8 @@ source $XDG_CONFIG_HOME/themes/base16-ocean
 FONT_1="M+ 2m regular:size=9"
 FONT_2="FontAwesome:size=12"
 
-# geometry
-PANEL_GEOMETRY="1896x21+12+12"
-PANEL_BG_GEOMETRY="1900x25+10+10"
-NOTIFY_GEOMETRY="x21+12+12"
+# panel geometry, notify/dmenu inherits the geometry from this
+PANEL_GEOMETRY="1904x25+8+9"
 
 # panel icons
 PANEL_BSPWM_ICON_F_O_D=""		# focused occupied desktop

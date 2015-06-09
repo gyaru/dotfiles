@@ -26,4 +26,4 @@ sxhkd &
 nitrogen --restore &
 
 # window manager
-exec wm-loop
+exec bspwm
