@@ -12,5 +12,5 @@ panel_bg_x=$((panel_x - 3))
 panel_bg_y=$((panel_y - 3))
 
 cat "/dev/null" \
-	| bar -p -g "${panel_bg_width}""x""${panel_bg_height}"+"${panel_bg_x}"+"${panel_bg_y}" -B "$COLOR_0E_aa"
+	| bar -p -g "${panel_bg_width}""x""${panel_bg_height}"+"${panel_bg_x}"+"${panel_bg_y}" -B "$COLOR_AA0E"
 wait

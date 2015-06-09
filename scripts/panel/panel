@@ -21,8 +21,8 @@ cat "$PANEL_FIFO" \
 	| lemonbar \
 		-f "$FONT_1" \
 		-f "$FONT_2" \
-		-F "$COLOR_0E_aa" \
-		-B "$COLOR_07_aa" \
+		-F "$COLOR_AA0E" \
+		-B "$COLOR_AA07" \
 		-g "$PANEL_GEOMETRY" | \
 		while read line; do
    			panel_execute $line

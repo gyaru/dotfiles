@@ -2,7 +2,7 @@
 source $XDG_CONFIG_HOME/themes/config
 
 system_volume=$((`pacmd list-sinks | grep -A6 "name: <alsa_output.pci-0000_00_1b.0.analog-stereo>" | grep "volume: " | cut -d'/' -f2 | head -c4`))
-output="%{F$COLOR_0E_aa}%{B$COLOR_07_aa}$system_volume%%{B-}%{F-}"
+output="%{F$COLOR_AA0E}%{B$COLOR_AA07}$system_volume%%{B-}%{F-}"
 echo $output;
 
 
