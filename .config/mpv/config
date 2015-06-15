@@ -1,5 +1,4 @@
 # video output
-vo = 			opengl-hq:swapinterval=1:scale=ewa_lanczos:cscale=ewa_lanczos:dither-depth=8:temporal-dither:scaler-resizes-only:fbo-format=rgba16:sigmoid-upscaling:sigmoid-slope=6.5:sigmoid-center=0.75:interpolation:tscale-param1=0.5
 framedrop =		vo
 hwdec =			vda
 
@@ -27,6 +26,9 @@ slang =			en,eng,English
 # loop webms
 [extension.webm]
 loop-file =		inf
+
+[extension.mkv]
+vo = 			opengl-hq:swapinterval=1:scale=ewa_lanczos:cscale=ewa_lanczos:dither-depth=8:temporal-dither:scaler-resizes-only:fbo-format=rgba16:sigmoid-upscaling:sigmoid-slope=6.5:sigmoid-center=0.75:interpolation:tscale-param1=0.5
 
 # screenshots
 screenshot-template =	"/home/eryla/pictures/mpv/%f<%P>"
