@@ -35,8 +35,8 @@ export WINEDLLOVERRIDES='winemenubuilder.exe=d' # prevents wine from populating 
 export NO_AT_BRIDGE=1
 
 # go
-#export GOPATH="$HOME/gocode"
-#export PATH="$PATH:$GOPATH/bin"
+export GOPATH="$HOME/gocode"
+export PATH="$PATH:$GOPATH/bin"
 
 # aliases
 alias mkdir='mkdir -pv'
