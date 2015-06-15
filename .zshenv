@@ -7,6 +7,9 @@ export XDG_BIN_HOME=$HOME/.local/bin
 export XDG_LIB_HOME=$HOME/.local/lib
 export XDG_CACHE_HOME=$HOME/.cache
 
+# zgen
+export ZGEN_DIR=$XDG_DATA_HOME/zgen
+
 # standard path
 export PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/bin"
 
