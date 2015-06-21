@@ -23,7 +23,7 @@ export PATH="$PATH:$HOME/.gem/ruby/2.2.0/bin"
 export SCRIPTS=$HOME/scripts
 
 # force off main thread compositing for firefox 
-export MOZ_USE_OMTC=1
+# export MOZ_USE_OMTC=1 # still pretty buggy
 
 # wine
 export WINEDIR=/mnt/amatsukaze/wine
