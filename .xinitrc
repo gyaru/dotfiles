@@ -7,7 +7,7 @@ compton --config $XDG_CONFIG_HOME/compton/config -b
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
 
 # keyboard - layout
-setxkbmap -v se & 
+setxkbmap se & 
 
 # keyboard - typematic delay (200ms) and rate (30Hz)
 xset r rate 160 20

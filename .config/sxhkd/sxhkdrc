@@ -94,7 +94,7 @@ XF86AudioLowerVolume
 
 # printscreen script
 Print
-	xdotool click 1
+	maim -i $(xdotool getactivewindow)
 
 # terminal
 super + Return

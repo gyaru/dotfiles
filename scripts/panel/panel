@@ -13,7 +13,6 @@ trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
 mkfifo "$PANEL_FIFO"
 
 bspc control --subscribe > "$PANEL_FIFO" &
-#xtitle -t 50 -sf 'T%s' > "$PANEL_FIFO" &
 conky -c panel_conky > "$PANEL_FIFO" &
 
 cat "$PANEL_FIFO" \

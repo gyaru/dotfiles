@@ -12,11 +12,11 @@ fvec = core.mv.Analyse(sup, blksize=16, isb=False, chroma=True, search=3, search
 # DO
 clip = core.mv.BlockFPS(clip, sup, bvec, fvec, num=144, den=1, mode=3, thscd2=12, blend=True)
 # NOT
-clip = core.mv.BlockFPS(clip, sup, bvec, fvec, num=144, den=1, mode=3, thscd2=12, blend=True)
+# clip = core.mv.BlockFPS(clip, sup, bvec, fvec, num=144, den=1, mode=3, thscd2=12, blend=True)
 # USE
-clip = core.mv.BlockFPS(clip, sup, bvec, fvec, num=144, den=1, mode=3, thscd2=12, blend=True)
+# clip = core.mv.BlockFPS(clip, sup, bvec, fvec, num=144, den=1, mode=3, thscd2=12, blend=True)
 # THIS
-clip = core.mv.BlockFPS(clip, sup, bvec, fvec, num=144, den=1, mode=3, blend=True)
+# clip = core.mv.BlockFPS(clip, sup, bvec, fvec, num=144, den=1, mode=3, blend=True)
 # ROFL
 clip = core.mv.FlowFPS(clip, sup, bvec, fvec, num=144, den=1, blend=True)
 clip.set_output()
