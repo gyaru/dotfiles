@@ -1,5 +1,3 @@
-XTerm*utf8: 1
-
 ! xft
 Xft.autohint:		0
 Xft.lcdfilter:		lcddefault

@@ -92,6 +92,7 @@ XF86AudioLowerVolume
 #XF86AudioPrev not working yet
 #	$SCRIPTS/kikoeru
 
+# change keyboard layout fn + y
 XF86Calculator
 	$SCRIPTS/gengo
 
