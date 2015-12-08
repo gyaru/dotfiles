@@ -10,8 +10,9 @@ super + w
 # e > sticky		"Stays in the focused desktop of its monitor."
 # r > locked		"Ignores the close message."
 # p > private		"Tries to keep the same tiling position/size."
-super + {s,f,e,r,p}
-	bspc window -t {floating,fullscreen,sticky,locked,private}
+# t > pseudo_tiled	"Has an unrestricted size while being centered in its tiling space."
+super + {s,f,e,r,p,t}
+	bspc window -t {floating,fullscreen,sticky,locked,private,pseudo_tiled}
 
 # replace the focused window to the previously focused one
 super + apostrophe
