@@ -1,9 +1,9 @@
 # video output
 framedrop =		vo
-hwdec =			vda
+hwdec =			vaapi
 
 # default subtitles
-sub-text-font =		'Nimbus Sans L:style=Medium'
+sub-text-font =		'M+ 2m regular'
 sub-text-font-size =	48
 sub-text-margin-y =	42
 sub-text-color =	'#ececea'
@@ -12,7 +12,7 @@ sub-text-border-color =	'#29292b'
 
 # osd
 no-osd-bar
-osd-font =		'Nimbus Sans L:style=Medium'
+osd-font =		'M+ 2m regular'
 osd-font-size =		18
 osd-scale-by-window =	no
 osd-color =		'#ffffff'

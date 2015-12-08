@@ -11,7 +11,7 @@ top_padding=$(($padding_height + $padding_y))
 
 # general
 bspc config border_width			3
-bspc config window_gap				10
+bspc config window_gap				11
 bspc config split_ratio				1
 bspc config borderless_monocle			false
 bspc config gapless_monocle			false
@@ -53,6 +53,7 @@ bspc monitor HDMI-0 -d tv
 # rules
 bspc rule -a "Kodi"		 		desktop=6 fullscreen=on
 bspc rule -a "Deluge" 				desktop=4
+bspc rule -a "Steam"				desktop=4
 bspc rule -a "Wine" 				desktop=5
 bspc rule -a "explorer.exe"			desktop=5		# force wine shit 
 bspc rule -a "mpv" 				floating=on

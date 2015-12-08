@@ -23,7 +23,7 @@ export PATH="$PATH:$HOME/.gem/ruby/2.2.0/bin"
 export SCRIPTS=$HOME/scripts
 
 # force off main thread compositing for firefox 
-# export MOZ_USE_OMTC=1 # still pretty buggy
+#export MOZ_USE_OMTC=0 # still pretty buggy
 
 # wine
 export WINEDIR=/mnt/amatsukaze/wine
@@ -44,4 +44,4 @@ alias ls='ls --color=auto -hF --group-directories-first'
 alias ping='ping -c 5'
 alias du='du -h'
 alias df='df -h'
-alias pacaur='pacaur --domain aur4.archlinux.org'
+alias nw='/home/eryla//nw.js/nwjs-v0.13.0-alpha2-linux-x64/nw'

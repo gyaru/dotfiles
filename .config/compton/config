@@ -34,32 +34,32 @@ no-fading-openclose =			false;
 fade-exclude = [
 ];
 
-# backend
-backend =				"xr-glx-hybrid"
+# backend xr_glx_hybrid
+backend =				"glx"
 
 
-mark-wmwin-focused =			true;
-mark-ovredir-focused =			true;
-use-ewmh-active-win =			true;
+#mark-wmwin-focused =			true;
+#mark-ovredir-focused =			true;
+#use-ewmh-active-win =			true;
 
 
-detect-rounded-corners =		true;
-detect-client-opacity =			true;
-refresh-rate =				0;
-vsync =					"none";
-dbe =					false;	# doesn't work on glx
-paint-on-overlay =			true;
-sw-opti =				false;
+#detect-rounded-corners =		true;
+#detect-client-opacity =			true;
+#refresh-rate =				0;
+#vsync =					"none";
+#dbe =					false;	# doesn't work on glx
+#paint-on-overlay =			true;
+#sw-opti =				false;
 unredir-if-possible =			true;
-focus-exclude =				[ ];
-detect-transient =			true;
-detect-client-leader =			true;
-invert-color-include =			[ ];
-glx-no-stencil =			true;
-glx-copy-from-front =			true;
-glx-use-copysubbuffermesa =		false; 
-glx-no-rebind-pixmap =			true;
-glx-swap-method =			"undefined";
+#focus-exclude =				[ ];
+#detect-transient =			true;
+#detect-client-leader =			true;
+#invert-color-include =			[ ];
+#glx-no-stencil =			true;
+#glx-copy-from-front =			true;
+#glx-use-copysubbuffermesa =		false; 
+#glx-no-rebind-pixmap =			true;
+#glx-swap-method =			"undefined";
 
 # window specific settings
 wintypes:

@@ -1,16 +1,19 @@
 # .xinitrc
 
 # compositor
-compton --config $XDG_CONFIG_HOME/compton/config -b
+# compton --config $XDG_CONFIG_HOME/compton/config -b
 
 # .Xresources
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
 
 # keyboard - layout
-setxkbmap se & 
+setxkbmap us & 
 
 # keyboard - typematic delay (200ms) and rate (30Hz)
 xset r rate 160 20
+
+# enable numlock
+xdotool key Num_Lock
 
 # mouse - steelseries rival
 rivalctl --cpi1 400 &

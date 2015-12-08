@@ -92,6 +92,9 @@ XF86AudioLowerVolume
 #XF86AudioPrev not working yet
 #	$SCRIPTS/kikoeru
 
+XF86Calculator
+	$SCRIPTS/gengo
+
 # printscreen script
 Print
 	maim -i $(xdotool getactivewindow)
@@ -100,9 +103,16 @@ Print
 super + Return
 	termite
 
+# terminal
+Menu + Alt_L
+
+Menu + Super_L
+
+
 # dmenyuu - $PATH
 super + space
 	$SCRIPTS/dmenyuu_bin
+
 
 # dmenyuu - menu
 super + g
