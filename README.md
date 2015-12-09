@@ -19,4 +19,4 @@ personal dotfiles.
 ![termite](https://eru.me/i/1Qg.png)
 
 ## ncmpcpp
-![columns](https://eru.me/i/Zlu.png)
+![columns](https://i.imgur.com/unCT7va.png)
