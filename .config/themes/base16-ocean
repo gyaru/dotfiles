@@ -1,6 +1,6 @@
 #!/bin/bash
 # themes
-# base16 ocean light
+# base16 ocean dark
 COLOR_00='#2b303b'
 COLOR_01='#bf616a'
 COLOR_02='#a3be8c'
