@@ -1,7 +1,7 @@
 #!/bin/sh
 # bspwmrc
 
-# load theming
+# load theme
 source $XDG_CONFIG_HOME/themes/config
 
 # calculating padding based on theme config
@@ -11,7 +11,7 @@ top_padding=$(($padding_height + $padding_y))
 
 # general
 bspc config border_width			3
-bspc config window_gap				11
+bspc config window_gap				10
 bspc config split_ratio				1
 bspc config borderless_monocle			false
 bspc config gapless_monocle			false
@@ -23,7 +23,7 @@ bspc config focused_frame_opacity 		1
 
 # border colours
 bspc config focused_border_color		$COLOR_0E
-bspc config active_border_color			$COLOR_04
+bspc config active_border_color			$COLOR_0E
 bspc config normal_border_color			$COLOR_04
 bspc config urgent_border_color			$COLOR_08
 bspc config presel_border_color			$COLOR_0A
@@ -66,5 +66,4 @@ bspc rule -a "Browser"				floating=on		# settings
 bspc rule -a "plugin-container"			floating=on 		# usually flash
 
 # launching panel
-$SCRIPTS/panel/panel_bg & # awful hack, will fix some day.
 $SCRIPTS/panel/panel &

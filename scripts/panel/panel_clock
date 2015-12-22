@@ -1,5 +1,5 @@
 #!/bin/bash
 source $XDG_CONFIG_HOME/themes/config
 time=$(date +'%R')
-output="%{F$COLOR_AA0E}%{B$COLOR_AA07}$time%{B-}%{F-}"
+output="%{F$COLOR_AA04}%{B$COLOR_AA00}$time%{B-}%{F-}"
 echo $output;

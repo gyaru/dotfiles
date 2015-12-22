@@ -23,7 +23,7 @@ while read -r line ; do
 					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
-						bspwm="${bspwm}%{F$COLOR_AA0E}%{B$COLOR_AA07} $PANEL_BSPWM_ICON_F_O_D %{B-}%{F-}"
+						bspwm="${bspwm}%{F$COLOR_AA04}%{B$COLOR_AA00} $PANEL_BSPWM_ICON_F_O_D %{B-}%{F-}"
 					fi
 					;;
 
@@ -31,7 +31,7 @@ while read -r line ; do
 					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
-						bspwm="${bspwm}%{F$COLOR_AA0E}%{B$COLOR_AA07} $PANEL_BSPWM_ICON_F_F_D %{B-}%{F-}"
+						bspwm="${bspwm}%{F$COLOR_AA04}%{B$COLOR_AA00} $PANEL_BSPWM_ICON_F_F_D %{B-}%{F-}"
 					fi
 					;;
 
@@ -39,7 +39,7 @@ while read -r line ; do
 					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
-						bspwm="${bspwm}%{F$COLOR_AA0E}%{B$COLOR_AA07} $PANEL_BSPWM_ICON_F_U_D {B-}%{F-}"
+						bspwm="${bspwm}%{F$COLOR_AA04}%{B$COLOR_AA00} $PANEL_BSPWM_ICON_F_U_D {B-}%{F-}"
 					fi
 					;;
 
@@ -47,7 +47,7 @@ while read -r line ; do
 					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
-						bspwm="${bspwm}%{F$COLOR_AA0E}%{B$COLOR_AA07} $PANEL_BSPWM_ICON_O_D %{B-}%{F-}"
+						bspwm="${bspwm}%{F$COLOR_AA04}%{B$COLOR_AA00} $PANEL_BSPWM_ICON_O_D %{B-}%{F-}"
 					fi
 					;;
 
@@ -55,7 +55,7 @@ while read -r line ; do
 					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
-						bspwm="${bspwm}%{F$COLOR_AA0E}%{B$COLOR_AA07} $PANEL_BSPWM_ICON_F_D %{B-}%{F-}"
+						bspwm="${bspwm}%{F$COLOR_AA04}%{B$COLOR_AA00} $PANEL_BSPWM_ICON_F_D %{B-}%{F-}"
 					fi
 					;;
 
@@ -63,7 +63,7 @@ while read -r line ; do
 					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
-						bspwm="${bspwm}%{F$COLOR_AA0E}%{B$COLOR_AA07} $PANEL_BSPWM_ICON_U_D %{B-}%{F-}"
+						bspwm="${bspwm}%{F$COLOR_AA04}%{B$COLOR_AA00} $PANEL_BSPWM_ICON_U_D %{B-}%{F-}"
 					fi
 					;;
 				esac
@@ -71,5 +71,5 @@ while read -r line ; do
 			done
 			;;
 	esac
-	printf "%s\n" "%{l}${title}%{c}${bspwm}%{r}${conky}"
+	printf "%s\n" "%{l}%{c}${bspwm}%{r}${conky}"
 done

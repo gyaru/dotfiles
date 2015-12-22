@@ -1,5 +1,5 @@
 [options]
-font =			M+ 2m regular 10
+font =			M+ 2m regular 11
 allow_bold =		false
 audible_bell =		false
 browser =		firefox
@@ -10,9 +10,9 @@ cursor_blink =		system
 cursor_shape =		ibeam
 
 [colors]
-foreground =		#2b303b
-cursor =		#2b303b
-background =		#eff1f5
+foreground =		#c0c5ce
+cursor =		#c0c5ce
+background =		#2b303b
 # black
 color0 =		#2b303b
 color8 =		#65737e
@@ -26,8 +26,8 @@ color10 =		#a3be8c
 color3 =		#ebcb8b
 color11 =		#ebcb8b
 # blue
-color4 =		#96b5b4
-color12 =		#96b5b4
+color4 =		#8fa1b3
+color12 =		#8fa1b3
 # magenta
 color5 =		#b48ead
 color13 =		#b48ead

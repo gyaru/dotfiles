@@ -10,7 +10,7 @@ super + w
 # e > sticky		"Stays in the focused desktop of its monitor."
 # r > locked		"Ignores the close message."
 # p > private		"Tries to keep the same tiling position/size."
-# y > pseudo_tiled	"Has an unrestricted size while being centered in its tiling space."
+# y > pseudo_tiled "Has an unrestricted size while being centered in its tiling space."
 super + {s,f,e,r,p,y}
 	bspc window -t {floating,fullscreen,sticky,locked,private,pseudo_tiled}
 
@@ -93,13 +93,12 @@ XF86AudioLowerVolume
 #XF86AudioPrev not working yet
 #	$SCRIPTS/kikoeru
 
-# change keyboard layout fn + y
 XF86Calculator
 	$SCRIPTS/gengo
 
 # printscreen script
 Print
-	maim -i $(xdotool getactivewindow)
+	maim
 
 # terminal
 super + Return
@@ -109,7 +108,7 @@ super + Return
 Menu + Alt_L
 
 Menu + Super_L
-
+121
 
 # dmenyuu - $PATH
 super + space
@@ -125,7 +124,7 @@ super + Escape
 	pkill -USR1 -x sxhkd; \
 	pkill -x panel; \
 	$XDG_CONFIG_HOME/bspwm/bspwmrc; \
-	pkill -USR1 -x compton;
+	pkill -USR1 -x compton
 
 # logout
 super + alt + Escape
