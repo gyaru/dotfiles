@@ -55,3 +55,9 @@ urxvt.internalBorder: 	6
 
 ! cursor
 Xcursor.size:		14
+
+rofi.color-enabled: true
+rofi.color-window: #2b303b, argb:0c0c5ce, argb:0c0c5ce
+rofi.color-normal: argb:a52b303b, #c0c5ce, argb:a82b303b, argb:ac586e75, #c0c5ce
+rofi.color-active: argb:8c2b303b, #8fa1b3, argb:a02b303b, #2b303b, #c0c5ce
+rofi.color-urgent: argb:80bf616a, #c0c5ce, argb:722b303b, argb:b0bf616a, #c0c5ce

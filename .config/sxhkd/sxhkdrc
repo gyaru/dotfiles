@@ -110,9 +110,9 @@ Menu + Alt_L
 Menu + Super_L
 121
 
-# dmenyuu - $PATH
+# rofi - run
 super + space
-	$SCRIPTS/dmenyuu_bin
+	rofi -show run -lines 3 -eh 2 -width 100 -padding 420 -opacity "90" -bw 0  -font "M+ 2m regular 18"
 
 
 # dmenyuu - menu

@@ -3,5 +3,5 @@ source $XDG_CONFIG_HOME/themes/config
 
 date=$(date +'%F')
 
-output="%{F$COLOR_AA04}%{B$COLOR_AA00}$date%{B-}%{F-}"
+output="%{F$COLOR_AA04}$date%{F-}"
 echo $output;

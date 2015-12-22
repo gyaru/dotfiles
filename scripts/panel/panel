@@ -21,7 +21,7 @@ cat "$PANEL_FIFO" \
 		-f "$FONT_1" \
 		-f "$FONT_2" \
 		-F "$COLOR_AA04" \
-		-B "$COLOR_AA00" \
+		-B "#00" \
 		-g "$PANEL_GEOMETRY" | \
 		while read line; do
    			panel_execute $line

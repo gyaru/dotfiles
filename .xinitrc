@@ -1,7 +1,7 @@
 # .xinitrc
 
 # compositor
-# compton --config $XDG_CONFIG_HOME/compton/config -b
+compton -b
 
 # .Xresources
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources

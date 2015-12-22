@@ -10,8 +10,8 @@ padding_y="$(echo "$PANEL_GEOMETRY" |  grep -Eo '[0-9]{1,4}' | head -n4 | tail -
 top_padding=$(($padding_height + $padding_y))
 
 # general
-bspc config border_width			3
-bspc config window_gap				10
+bspc config border_width			2
+bspc config window_gap				11
 bspc config split_ratio				1
 bspc config borderless_monocle			false
 bspc config gapless_monocle			false
