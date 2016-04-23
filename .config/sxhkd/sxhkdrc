@@ -14,9 +14,8 @@ super + {s,f,y}
 # set focused node flags
 # e > sticky		"Stays in the focused desktop of its monitor."
 # r > locked		"Ignores the close message."
-# p > private		"Tries to keep the same tiling position/size."
 super + {e,r,p}
-	bspc node -g {~sticky,~locked,~private}
+	bspc node -g {sticky,locked}
 
 # move window to the biggest place in the desktop
 super + m
@@ -56,26 +55,14 @@ super + Right
 super + Down
 	bspc node --presel-dir ~south
 
-# media
+# media TODO: XF86AudioMute XF86AudioPlay XF86AudioNext XF86AudioPrev
 XF86AudioRaiseVolume
 	$SCRIPTS/kikoeru -i 5
 
 XF86AudioLowerVolume
 	$SCRIPTS/kikoeru -d 5
 
-XF86AudioMute not working yet
-	$SCRIPTS/kikoeru !
-
-XF86AudioPlay not working yet
-	$SCRIPTS/kikoeru
-
-XF86AudioNext not working yet
-	$SCRIPTS/kikoeru
-	
-XF86AudioPrev not working yet
-	$SCRIPTS/kikoeru
-
-# toggle keyboard layout
+# toggle keyboard layout (fn + y)
 XF86Calculator
 	$SCRIPTS/gengo
 
@@ -87,21 +74,22 @@ Print
 super + Return
 	termite
 
+# firefox
+super + o
+	firefox
+
 # rofi - run
 super + space
 	rofi -show run -lines 3 -eh 2 -width 100 -padding 420 -opacity "90" -bw 0  -font "M+ 1m 18"
 
-
-# dmenyuu - menu
-super + g
-	$SCRIPTS/dmenyuu_menu
-
-# sxhkd/bspwm/panel reload
+# sxhkd/bspwm/panel/termite reload
 super + Escape
+	$SCRIPTS/regen-theme; \
 	pkill -USR1 -x sxhkd; \
 	pkill -x panel; \
 	$XDG_CONFIG_HOME/bspwm/bspwmrc; \
-	pkill -USR1 -x compton
+	pkill -USR1 -x compton; \
+	pkill -USR1 -x termite
 
 # logout
 super + alt + Escape

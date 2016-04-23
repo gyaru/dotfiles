@@ -24,7 +24,7 @@ blur-background =			false;
 blur-background-fixed =			false;
 opacity-exclude=[
 ];
-opacity-rule = [ "40:class_g = 'Bspwm' && class_i = 'presel_feedback'" ];
+opacity-rule = [ "30:class_g = 'Bspwm' && class_i = 'presel_feedback'" ];
 
 fading =				false;
 backend =				"xrender";
