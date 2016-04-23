@@ -1,7 +1,7 @@
 mpd_host =				"/home/eryla/.config/mpd/socket"
 mpd_music_dir =				"/mnt/kanna/music/"
 ncmpcpp_directory =			"/home/eryla/.config/ncmpcpp"
-mouse_support =				"no"
+mouse_support =				"yes"
 header_text_scrolling =			"yes"
 visualizer_look =			"▪▪"
 visualizer_type =			"wave"

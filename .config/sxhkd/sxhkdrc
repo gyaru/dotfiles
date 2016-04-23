@@ -1,36 +1,26 @@
 # bspwm
 
-# close focused window
-super + w
-	bspc window -c
+# close/kill focused window
+super + {_,shift + }w
+	bspc node -{c,k}
 
 # set focused window state
 # s > floating 		"Is above any tiled window and can be moved/resized freely."
 # f > fullscreen	"Fills its monitor rectangle, is above all the other windows and has no borders."
+# y > pseudo_tiled "Has an unrestricted size while being centered in its tiling space."
+super + {s,f,y}
+	bspc node -t {~floating,~fullscreen,~pseudo_tiled}
+
+# set focused node flags
 # e > sticky		"Stays in the focused desktop of its monitor."
 # r > locked		"Ignores the close message."
 # p > private		"Tries to keep the same tiling position/size."
-# y > pseudo_tiled "Has an unrestricted size while being centered in its tiling space."
-super + {s,f,e,r,p,y}
-	bspc window -t {floating,fullscreen,sticky,locked,private,pseudo_tiled}
-
-# replace the focused window to the previously focused one
-super + apostrophe
-	bspc window -s last
-
-# move window, vi style
-super + {_,shift + }{h,j,k,l}
-	bspc window -{f,s} {left,down,up,right}
-
-# resize window, vi style
-super + alt + {h,j,k,l}
-	bspc window -e {left -10,down +10,up -10,right +10}
-super + alt + shift + {h,j,k,l}
-	bspc window -e {right -10,up +10,down -10,left +10}
+super + {e,r,p}
+	bspc node -g {~sticky,~locked,~private}
 
 # move window to the biggest place in the desktop
 super + m
-	bspc window -s biggest
+	bspc node -s biggest
 
 # switch desktop to the last used
 super + Tab
@@ -40,17 +30,9 @@ super + Tab
 super + t
 	bspc desktop -l next
 
-# adjust the split ratios of the tree of the selected desktop so that all windows occupy the same area.
-super + b
-	bspc desktop -B
-
-# move the leaves of the tree of the selected desktop.
-super + {comma,period}
-	bspc desktop -C {backward,forward}
-
 # move window to desktop
 super + {_,shift + }{1-9,0}
-	bspc {desktop -f,window -d} ^{1-9,10}
+	bspc {desktop -f,node -d} '^{1-9,10}'
 
 # pointer - focus windows automatically
 ~button1
@@ -66,13 +48,13 @@ super + @button{1-3}
 
 # simple presel bindings for noobs that can't handle hjkl
 super + Up
-	bspc window --presel up
+	bspc node --presel-dir ~north
 super + Left
-	bspc window --presel left
+	bspc node --presel-dir ~west
 super + Right
-	bspc window --presel right
+	bspc node --presel-dir ~east
 super + Down
-	bspc window --presel down
+	bspc node --presel-dir ~south
 
 # media
 XF86AudioRaiseVolume
@@ -81,18 +63,19 @@ XF86AudioRaiseVolume
 XF86AudioLowerVolume
 	$SCRIPTS/kikoeru -d 5
 
-#XF86AudioMute not working yet
-#	$SCRIPTS/kikoeru !
+XF86AudioMute not working yet
+	$SCRIPTS/kikoeru !
 
-#XF86AudioPlay not working yet
-#	$SCRIPTS/kikoeru
+XF86AudioPlay not working yet
+	$SCRIPTS/kikoeru
 
-#XF86AudioNext not working yet
-#	$SCRIPTS/kikoeru
+XF86AudioNext not working yet
+	$SCRIPTS/kikoeru
 	
-#XF86AudioPrev not working yet
-#	$SCRIPTS/kikoeru
+XF86AudioPrev not working yet
+	$SCRIPTS/kikoeru
 
+# toggle keyboard layout
 XF86Calculator
 	$SCRIPTS/gengo
 
@@ -104,15 +87,9 @@ Print
 super + Return
 	termite
 
-# terminal
-Menu + Alt_L
-
-Menu + Super_L
-121
-
 # rofi - run
 super + space
-	rofi -show run -lines 3 -eh 2 -width 100 -padding 420 -opacity "90" -bw 0  -font "M+ 2m regular 18"
+	rofi -show run -lines 3 -eh 2 -width 100 -padding 420 -opacity "90" -bw 0  -font "M+ 1m 18"
 
 
 # dmenyuu - menu

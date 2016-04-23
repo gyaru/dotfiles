@@ -17,13 +17,14 @@ xdotool key Num_Lock
 
 # mouse - steelseries rival
 rivalctl --cpi1 400 &
+xset m 0 0 & # no acc
 xsetroot -cursor_name left_ptr &
 
 # hide cursor on inactivity
 unclutter -noevents -idle 2 -jitter 1 -root >/dev/null 2>&1 &
 
 # X hotkey demon
-sxhkd &
+# sxhkd &
 
 # wallpaper
 nitrogen --restore &

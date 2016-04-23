@@ -1,5 +1,5 @@
 [options]
-font =			M+ 2m regular 11
+font =			M+ 1m 13
 allow_bold =		false
 audible_bell =		false
 browser =		firefox
