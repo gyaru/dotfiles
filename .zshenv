@@ -1,3 +1,4 @@
+#!/bin/zsh
 # .zshenv
  
 # XDG defaults
@@ -6,9 +7,6 @@ export XDG_DATA_HOME=$HOME/.local/share
 export XDG_BIN_HOME=$HOME/.local/bin
 export XDG_LIB_HOME=$HOME/.local/lib
 export XDG_CACHE_HOME=$HOME/.cache
-
-# zgen
-export ZGEN_DIR=$XDG_DATA_HOME/zgen
 
 # standard path
 export PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/bin"
@@ -21,9 +19,6 @@ export PATH="$PATH:$HOME/.gem/ruby/2.2.0/bin"
 
 # scripts
 export SCRIPTS=$HOME/scripts
-
-# force off main thread compositing for firefox 
-#export MOZ_USE_OMTC=0 # still pretty buggy
 
 # wine
 export WINEDIR=/mnt/amatsukaze/wine
