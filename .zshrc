@@ -1,34 +1,22 @@
+#!/bin/zsh
 # .zshrc
 
 #  envs/exports
 source $HOME/.zshenv
 
-# load zgen
-source $XDG_DATA_HOME/zgen/zgen.zsh
+# load danua
+source $XDG_DATA_HOME/danua/init.zsh
 
-# load plugins
+# prompt
+source $SCRIPTS/prompt.zsh
 
-if ! zgen saved; then
-	echo "generating a new zgen save"
-
-	# oh-my-zsh base
-	zgen oh-my-zsh
-	# plugins
-	zgen oh-my-zsh plugins/systemd
-	zgen oh-my-zsh plugins/git
-	zgen oh-my-zsh plugins/cp
-	zgen oh-my-zsh plugins/rsync
-	zgen load zsh-users/zsh-syntax-highlighting
-	zgen load Eryla/zshstuff plugins/completion-waiting-dots
-	# theme
-	zgen load Eryla/zshstuff themes/myucel
-	# lets roll
-	zgen save
-fi
+# load syntax highlighting plugin
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # script functions
 source $SCRIPTS/update-git		# lazy dotfiles updates
 source $SCRIPTS/ssh-aliases		# ssh aliases/functions
+source $SCRIPTS/randomfunctions # lazy functions
 
 # dircolors
 eval `dircolors ~/.dircolors`

@@ -1,7 +1,10 @@
 # .xinitrc
 
+#  envs/exports
+source $HOME/.zshenv
+
 # compositor
-compton -b
+compton --config ~/.config/compton/config -b &
 
 # .Xresources
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources

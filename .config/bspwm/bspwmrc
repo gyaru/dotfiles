@@ -13,45 +13,41 @@ padding_y="$(echo "$PANEL_GEOMETRY" |  grep -Eo '[0-9]{1,4}' | head -n4 | tail -
 top_padding=$(($padding_height + $padding_y))
 
 # general
-bspc config border_width			2
-bspc config window_gap				11
-bspc config split_ratio				1
-bspc config borderless_monocle			false
-bspc config gapless_monocle			false
-bspc config focus_follows_pointer		true
-bspc config auto_alternate			true
-bspc config auto_cancel				true
-bspc config normal_frame_opacity 		1
-bspc config focused_frame_opacity 		1
+bspc config border_width			2 &
+bspc config window_gap				11 &
+bspc config split_ratio				1 &
+bspc config borderless_monocle			true &
+bspc config gapless_monocle			true &
+bspc config focus_follows_pointer		true &
+bspc config auto_alternate			true &
+bspc config auto_cancel				true &
+bspc config normal_frame_opacity 		1 &
+bspc config focused_frame_opacity 		1 &
 
 # border colours
-bspc config focused_border_color		$COLOR_0E
-bspc config active_border_color			$COLOR_0E
-bspc config normal_border_color			$COLOR_04
-bspc config presel_feedback_color		$COLOR_04
+bspc config focused_border_color		$COLOR_0E &
+bspc config active_border_color			$COLOR_0E &
+bspc config normal_border_color			$COLOR_04 &
+bspc config presel_feedback_color		$COLOR_04 &
 
 # specific monitor settings
-bspc config -m DVI-I-1 top_padding		$top_padding
+bspc config -m DVI-I-1 top_padding $top_padding &
 
 # monitors / desktops
-bspc monitor DVI-I-1 -d 1 2 3 4 5
-bspc monitor HDMI-0 -d tv
+bspc monitor DVI-I-1 -d 1 2 3 4 5 &
+bspc monitor HDMI-0 -d tv &
 
 # rules
-bspc rule -a "Kodi"		 		desktop=6 fullscreen=on
-bspc rule -a "Deluge" 				desktop=4
-bspc rule -a "Steam"				desktop=4
-#bspc rule -a "Wine" 				desktop=5
-bspc rule -a "explorer.exe"			desktop=5		# force wine shit 
-bspc rule -a "FL.exe"				desktop=5 floating=off
-bspc rule -a "mpv" 				floating=on
+bspc rule -a "Kodi" desktop=^6 -t locked=on &
+bspc rule -a "Deluge" 				desktop=^4 &
+bspc rule -a "Steam"				desktop=^4 &
 
 # firefox specific rules
-bspc rule -a "Navigator"			floating=off		# firefox itself
-bspc rule -a "Places"				floating=on		# history
-bspc rule -a "Toplevel"				floating=on		# settings for other shit
-bspc rule -a "Browser"				floating=on		# settings
-bspc rule -a "plugin-container"			floating=on 		# usually flash
+bspc rule -a "Navigator"					&		# firefox itself
+bspc rule -a "Places"				state=floating  &		# history
+bspc rule -a "Toplevel"				state=floating  &		# settings for other shit
+bspc rule -a "Browser"				state=floating  &		# settings
+bspc rule -a "plugin-container"			state=floating  & 		# usually flash
 
 # launching panel
 $SCRIPTS/panel/panel &

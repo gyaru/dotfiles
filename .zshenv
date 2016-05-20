@@ -34,6 +34,9 @@ export WINEDLLOVERRIDES='winemenubuilder.exe=d' # prevents wine from populating 
 # gtk - disable atk-bridge
 export NO_AT_BRIDGE=1
 
+# qt
+export QT_STYLE_OVERRIDE=GTK+
+
 # go
 export GOPATH="$HOME/gocode"
 export PATH="$PATH:$GOPATH/bin"
@@ -45,3 +48,4 @@ alias ping='ping -c 5'
 alias du='du -h'
 alias df='df -h'
 alias pdflatex='pdflatex -synctex=1 -interaction=nonstopmode'
+alias neofetch='neofetch --line_wrap off --ascii --shell_version on --cpu_shorthand tiny --block_width 3 --disk_display info --memory_display info --ascii_logo_size small'

@@ -27,8 +27,7 @@ FONT_1="M+ 1m:size=13"
 FONT_2="FontAwesome:size=14"
 
 # panel geometry, notify/dmenu inherits the geometry from this
-PANEL_GEOMETRY="1920x18+0+9"  # 1920x1080
-#PANEL_GEOMETRY="1264x25+8+9" # 1280x1024
+PANEL_GEOMETRY="1920x18+0+9" # 1920x1080
 
 # panel icons
 PANEL_BSPWM_ICON_F_O_D=""		# focused occupied desktop
