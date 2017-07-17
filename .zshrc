@@ -4,6 +4,10 @@
 # keybindings
 source $XDG_CONFIG_HOME/zsh/key-bindings.zsh
 
+# disable C-s C-q
+stty start undef
+stty stop undef
+
 # colours
 autoload -Uz colors && colors
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
@@ -50,7 +54,26 @@ autoload compinit && compinit			# load and start
 # load syntax highlighting plugin
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# functions for daily use
-source $SCRIPTS/ssh-aliases		# ssh aliases/functions
-source $SCRIPTS/randomfunctions		# lazy functions
-source $SCRIPTS/update-git		# lazy dotfiles updates
+# load tty colour scheme
+if [ "$TERM" = "linux" ]; then
+  /bin/echo -e "
+  \e]P02b303b
+  \e]P1bf616a
+  \e]P2a3be8c
+  \e]P3ebcb8b
+  \e]P48fa1b3
+  \e]P5b48ead
+  \e]P696b5b4
+  \e]P7c0c5ce
+  \e]P865737e
+  \e]P9bf616a
+  \e]PAa3be8c
+  \e]PBebcb8b
+  \e]PC8fa1b3
+  \e]PDb48ead
+  \e]PE96b5b4
+  \e]PFeff1f5
+  "
+  # get rid of artifacts
+  clear
+fi

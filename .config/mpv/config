@@ -14,7 +14,7 @@ sub-text-border-color =	'#29292b'
 no-osd-bar
 osd-font =		'M+ 1m'
 osd-font-size =		18
-osd-scale-by-window =	no
+osd-scale-by-window =	yes
 osd-color =		'#ffffff'
 osd-border-size =	1
 osd-border-color =	'#6b6b70'
@@ -26,12 +26,13 @@ slang =			en,eng,English
 # loop webms
 [extension.webm]
 loop-file =		inf
-
+[extension.mp4]
+loop-file = inf
+[extension.gif]
+loop-file = inf
 # rice mkv
 [extension.mkv]
-vo = 			opengl-hq:scale=ewa_lanczossharp:cscale=ewa_lanczossharp:tscale=lanczos:dither-depth=8:temporal-dither:scaler-resizes-only:fbo-format=rgba16:sigmoid-upscaling:sigmoid-slope=6.5:sigmoid-center=0.75:interpolation:tscale-param1=0.5:prescale=nnedi3:nnedi3-neurons=16:nnedi3-upload=shader:prescale-downscaling-threshold=1.5:scale-antiring=1:deband:blend-subtitles=yes
-video-sync = display-resample
 
 
 # screenshots
-screenshot-template =	"/home/eryla/pictures/mpv/%f<%P>"
+screenshot-template =	"/home/gyaru/pictures/mpv/%f<%P>"

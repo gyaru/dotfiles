@@ -1,36 +1,28 @@
 # .xinitrc
 
-#  envs/exports
-source $HOME/.zshenv
-
 # compositor
 compton --config ~/.config/compton/config -b &
 
-# .Xresources
-[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
-
-# keyboard - layout
-setxkbmap us & 
-
-# keyboard - typematic delay (200ms) and rate (30Hz)
-xset r rate 160 20
-
-# enable numlock
-xdotool key Num_Lock
-
-# mouse - steelseries rival
-rivalctl --cpi1 400 &
-xset m 0 0 & # no acc
+# cursor
 xsetroot -cursor_name left_ptr &
-
-# hide cursor on inactivity
-unclutter -noevents -idle 2 -jitter 1 -root >/dev/null 2>&1 &
-
-# X hotkey demon
-# sxhkd &
 
 # wallpaper
 nitrogen --restore &
+
+# nvidia regression metamodes bug
+nvidia-settings --assign CurrentMetaMode="DFP-4: 3440x1440_60 +0+0 {  ForceCompositionPipeline = On }" &
+
+# icc profile
+xcalib -d :0 ~/.local/share/dell_u3415w.icc &
+
+# crossfeed b2b
+pacmd load-module module-ladspa-sink sink_name=bs2b master=alsa_output.pci-0000_00_1b.0.analog-stereo plugin=bs2b label=bs2b control=700,6.0 &
+
+# start sxhkd with bash as shell
+SXHKD_SHELL=/bin/bash sxhkd -r /tmp/sxhkd.log &
+
+# clipboard manager
+autocutsel -selection PRIMARY -fork &
 
 # window manager
 exec bspwm

@@ -1,0 +1,78 @@
+#!/bin/bash
+# lemonbar panel
+
+cd "${0%/*}"
+
+# config
+. config
+
+# traps
+trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
+
+# let's make other scripts be aware of our pid
+echo $$ > /tmp/panel-pid
+
+# fifo
+[ -e "$PANEL_FIFO" ] && rm "$PANEL_FIFO"
+mkfifo "$PANEL_FIFO"
+
+# bspwm to panel
+bspc subscribe report > "$PANEL_FIFO" &
+
+# clock to panel
+while true;
+	do
+		echo 'C'$(date +"%Y-%m-%d %H:%M") $(TZ='Asia/Tokyo' date +"%H:%M");
+	sleep 5;
+done > "$PANEL_FIFO" &
+
+# mpd to panel
+while true;
+	do
+		./plugins/mpd
+	sleep 1;
+done > "$PANEL_FIFO" &
+
+# volume
+while true;
+	do
+		./plugins/volume
+	sleep 1;
+done > "$PANEL_FIFO" &
+
+
+# bluetooth to panel
+while true;
+	do
+		./plugins/bluetooth
+	sleep 5;
+done > "$PANEL_FIFO" &
+
+# toggle mpd output and connect bt speaker if needed
+. plugins/toggle_output
+
+# functions for clickables
+function panel_execute {
+	case $1 in
+		mpd_output_toggle*)
+			mpd_output_toggle
+		;;
+	esac
+}
+
+# launch the panel
+cat "$PANEL_FIFO" \
+	| ./panel_bar \
+	| lemonbar \
+		-f "$FONT_1" \
+		-f "$FONT_2" \
+		-f "$FONT_3" \
+		-o "-1" \
+		-u "1" \
+		-F "$COLOR_AA07" \
+		-B "#302b303b" \
+		-g "$PANEL_GEOMETRY" | \
+		while read line; do
+   			panel_execute $line
+		done &
+wait

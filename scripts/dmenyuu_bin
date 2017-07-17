@@ -1,9 +1,0 @@
-#!/bin/bash
-source $XDG_CONFIG_HOME/themes/config
-
-dmenyuu_font="$(echo $FONT_1 | sed 's/:size=/-/g')"
-dmenyuu_width="$(echo "$PANEL_GEOMETRY" | grep -Eo '[0-9]{1,4}' | head -n1)"
-dmenyuu_height="$(echo "$PANEL_GEOMETRY" |  grep -Eo '[0-9]{1,4}' | head -n2 | tail -1)"
-dmenyuu_x="$(echo "$PANEL_GEOMETRY" |  grep -Eo '[0-9]{1,4}' | head -n3 | tail -1)"
-dmenyuu_y="$(echo "$PANEL_GEOMETRY" |  grep -Eo '[0-9]{1,4}' | head -n4 | tail -1)"
-$SCRIPTS/dmenyuu_path | dmenu "$@" -i -p "/bin/" -fn "$dmenyuu_font" -l "0" -nb "$COLOR_07" -nf "$COLOR_0E" -w "$dmenyuu_width" -x "$dmenyuu_x" -y "$dmenyuu_y" -h "$dmenyuu_height" -sb "$COLOR_0E" -sf "$COLOR_07" | ${SHELL:-"/bin/bash"} &

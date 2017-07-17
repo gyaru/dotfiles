@@ -1,96 +1,102 @@
-# bspwm
+#!/bin/bash
+# bspwm hotkeys
 
-# close/kill focused window
-super + {_,shift + }w
+# presel the direction
+super + shift + {Up,Left,Right,Down}
+	bspc node -p {~north,~west,~east,~south}
+
+# presel the ratio
+super + ctrl + {1-9}
+	bspc node -o 0.{1-9}
+
+# quit bspwm normally
+super + alt + Escape
+	bspc quit
+
+# close and kill
+super + {_,shift + } w
 	bspc node -{c,k}
 
-# set focused window state
-# s > floating 		"Is above any tiled window and can be moved/resized freely."
-# f > fullscreen	"Fills its monitor rectangle, is above all the other windows and has no borders."
-# y > pseudo_tiled "Has an unrestricted size while being centered in its tiling space."
-super + {s,f,y}
-	bspc node -t {~floating,~fullscreen,~pseudo_tiled}
-
-# set focused node flags
-# e > sticky		"Stays in the focused desktop of its monitor."
-# r > locked		"Ignores the close message."
-super + {e,r,p}
-	bspc node -g {sticky,locked}
-
-# move window to the biggest place in the desktop
+# alternate between the tiled and monocle layout
 super + m
-	bspc node -s biggest
-
-# switch desktop to the last used
-super + Tab
-	bspc desktop -f last
-
-# toggle desktop layout (monocle/tiled)
-super + t
 	bspc desktop -l next
 
-# move window to desktop
+# if the current node is automatic, send it to the last manual, otherwise pull the last leaf
+super + y
+	bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
+
+# swap the current node and the biggest node
+super + g
+	bspc node -s biggest
+
+# state/flags
+
+# set the window state
+super + {t,shift + t,s,f}
+	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+# set the node flags
+super + ctrl + {x,y,z}
+	bspc node -g {locked,sticky,private}
+
+# focus/swap
+
+# focus the node in the given direction
+super + {Up,Left,Right,Down}
+	bspc node -f {north,west,east,south}
+
+# focus the last node/desktop
+super + {grave,Tab}
+	bspc {node,desktop} -f last
+
+# focus or send to the given desktop
 super + {_,shift + }{1-9,0}
 	bspc {desktop -f,node -d} '^{1-9,10}'
 
-# pointer - focus windows automatically
-~button1
-	bspc pointer -g focus
+# move/resize
 
-# pointer - moving, resizing. 
-super + button{1-3}
-	bspc pointer -g {move,resize_side,resize_corner}
-super + !button{1-3}
-	bspc pointer -t %i %i
-super + @button{1-3}
-	bspc pointer -u
+# expand a window by moving one of its side outward
+#super + ctrl + {h,j,k,l}
+#	bspc node -z {top -20 0,left 0 20,right 0 -20,bottom 20 0}
 
-# simple presel bindings for noobs that can't handle hjkl
-super + Up
-	bspc node --presel-dir ~north
-super + Left
-	bspc node --presel-dir ~west
-super + Right
-	bspc node --presel-dir ~east
-super + Down
-	bspc node --presel-dir ~south
+# contract a window by moving one of its side inward
+#super + ctrl + shift + {h,j,k,l}
+#	bspc node -z {top -20 0,left 0 20,right 0 -20,bottom 20 0}
 
-# media TODO: XF86AudioMute XF86AudioPlay XF86AudioNext XF86AudioPrev
-XF86AudioRaiseVolume
-	$SCRIPTS/kikoeru -i 5
+# browser
+super + o
+	firefox-beta &
 
-XF86AudioLowerVolume
-	$SCRIPTS/kikoeru -d 5
+# terminal emulator
+super + Return
+	termite &
+
+# program launcher
+super + space
+	rofi -show run &
+
+# printscreen
+Print
+	~/bin/charlotta &
+
+# reload all our configuration files
+super + Escape
+	pkill -USR1 -x sxhkd
+
+# log out from user session
+super + ctrl + Escape
+	zenity --question --text 'Are you sure you want to log-out?' && bspc quit && kill -s TERM $(cat /tmp/panel-pid) 
+
+# screensaver
+super + l
+	~/bin/lockscreen
+
+# media
+XF86Audio{Raise,Lower}Volume
+	amixer set Master -i 5%{+,-} &
+XF86Audio{Prev,Next,Play}
+	mpc -q {prev,next,toggle} &
 
 # toggle keyboard layout (fn + y)
 XF86Calculator
-	$SCRIPTS/gengo
-
-# printscreen script
-Print
-	maim
-
-# terminal
-super + Return
-	termite
-
-# firefox
-super + o
-	firefox
-
-# rofi - run
-super + space
-	rofi -show run -lines 3 -eh 2 -width 100 -padding 420 -opacity "90" -bw 0  -font "M+ 1m 18"
-
-# sxhkd/bspwm/panel/termite reload
-super + Escape
-	$SCRIPTS/regen-theme; \
-	pkill -USR1 -x sxhkd; \
-	pkill -x panel; \
-	$XDG_CONFIG_HOME/bspwm/bspwmrc; \
-	pkill -USR1 -x compton; \
-	pkill -USR1 -x termite
-
-# logout
-super + alt + Escape
-	pkill -x panel; bspc quit
+	(setxkbmap -query | grep -q "layout:\s\+us") && setxkbmap se && xset r rate 160 20 || setxkbmap us && xset r rate 160 20

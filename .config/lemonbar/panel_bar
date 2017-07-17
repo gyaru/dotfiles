@@ -1,15 +1,30 @@
 #!/bin/bash
-source $XDG_CONFIG_HOME/themes/config
+# lemonbar panel bar
+
+cd "${0%/*}"
+
+# config
+. config
+
+# bar
 while read -r line ; do
 	case $line in
-		S*)
-			# conky
-			conky="${line#?} "
-			;;
-		T*)
-			# xtitle
-			#title="%{F$COLOR_AA0E}%{B$COLOR_AA07} ${line#?} %{B-}%{F-}"
-			;;
+		V*)
+			# clock output
+			volume="${line#?}"
+		;;
+		C*)
+			# clock output
+			clock="${line#?}"
+		;;
+		U*)
+			# bluetooth output
+			bluetooth="${line#?}"
+		;;
+		M*)
+			# mpd output
+			mpd="${line#?}"
+		;;
 		W*)
 			# bspwm
 			bspwm=""
@@ -20,23 +35,23 @@ while read -r line ; do
 				name=${item#?}
 				case $item in
 					O*)	# focused occupied desktop
-					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
+					if [[ $name == "tv" ]]; then # ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
-						bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_F_O_D %{F-}"
+						bspwm="${bspwm}%{F$COLOR_AA05} $PANEL_BSPWM_ICON_F_O_D %{F-}"
 					fi
 					;;
 
 					F*)	# focused free desktop
-					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
+					if [[ $name == "tv" ]]; then # ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
-						bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_F_F_D %{F-}"
+						bspwm="${bspwm}%{F$COLOR_AA05} $PANEL_BSPWM_ICON_F_F_D %{F-}"
 					fi
 					;;
 
 					U*)	# focused urgent desktop
-					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
+					if [[ $name == "tv" ]]; then # ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
 						bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_F_U_D %{F-}"
@@ -44,7 +59,7 @@ while read -r line ; do
 					;;
 
 					o*)	# occupied desktop
-					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
+					if [[ $name == "tv" ]]; then # ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
 						bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_O_D %{F-}"
@@ -52,7 +67,7 @@ while read -r line ; do
 					;;
 
 					f*)	# free desktop
-					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
+					if [[ $name == "tv" ]]; then # ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
 						bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_F_D %{F-}"
@@ -60,7 +75,7 @@ while read -r line ; do
 					;;
 
 					u*) # urgent desktop
-					if [[ $name == "tv" ]]; then #ignoring if the desktop is called tv
+					if [[ $name == "tv" ]]; then # ignoring if the desktop is called tv
 						bspwm="${bspwm}"
 					else
 						bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_U_D %{F-}"
@@ -71,5 +86,5 @@ while read -r line ; do
 			done
 			;;
 	esac
-	printf "%s\n" "%{l}%{c}${bspwm}%{r}${conky}"
+	printf "%s\n" "%{l} ${volume} ${mpd} %{c}${bspwm} %{r}${bluetooth} ${clock} "
 done

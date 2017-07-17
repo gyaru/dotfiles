@@ -1,5 +1,0 @@
-#!/bin/bash
-source $XDG_CONFIG_HOME/themes/config
-time=$(date +'%R')
-output="%{F$COLOR_AA04}$time%{F-}"
-echo $output;
