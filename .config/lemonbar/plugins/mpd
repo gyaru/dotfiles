@@ -2,29 +2,29 @@
 # lemonbar mpd
 
 # config
-. $XDG_CONFIG_HOME/lemonbar/config
+. "$XDG_CONFIG_HOME/lemonbar/config"
 
 mpd_np=""
 mpd_icon=""
 mpd=$(mpc status)
 mpd_alive=$(echo "$mpd" | grep "volume" | cut -d':' -f2 | head -c4)
-if [ $mpd_alive = "n/a" ]; then
+if [ "$mpd_alive" = "n/a" ]; then
 	mpd_np=""
 	mpd_icon=""
 else
 	mpd_output=$(pacmd list-sink-inputs | grep "Music Player Daemon" -B 15 -A 11 | grep "sink: "| cut -d'<' -f2 | cut -d'>' -f1)
 	mpd_status=$(echo "$mpd" | tail -n+2 | head -n1 | cut -d'[' -f2 | cut -d']' -f1)
-	if [ $mpd_output = "bluez_sink.00_9E_C8_62_69_0B.a2dp_sink" ]; then
+	if [ "$mpd_output" = "bluez_sink.00_9E_C8_62_69_0B.a2dp_sink" ]; then
 	   mpd_icon="%{A:mpd_output_toggle:}%{F$COLOR_AA05}%{F-}%{A}"
 	fi
-	if [ $mpd_output = "alsa_output.pci-0000_00_1b.0.analog-stereo" ]; then
+	if [ "$mpd_output" = "alsa_output.pci-0000_00_1b.0.analog-stereo" ]; then
 	   mpd_icon="%{A:mpd_output_toggle:}%{F$COLOR_AA05}%{F-}%{A}"
 	fi
-	if [ $mpd_status = "playing" ]; then
+	if [ "$mpd_status" = "playing" ]; then
 	   mpd_np=$(echo "%{F$COLOR_AA05}%{F-}$mpd" | head -n1)
 	fi
-	if [ $mpd_status = "paused" ]; then
+	if [ "$mpd_status" = "paused" ]; then
 	   mpd_np="%{F$COLOR_AA04}%{F-}"
 	fi
 fi
-echo 'M'$mpd_icon$mpd_np
+echo 'M'"$mpd_icon""$mpd_np"

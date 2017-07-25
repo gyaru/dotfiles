@@ -1,4 +1,6 @@
 #!/bin/bash
+# sxhkdrc
+
 # bspwm hotkeys
 
 # presel the direction
@@ -85,7 +87,7 @@ super + Escape
 
 # log out from user session
 super + ctrl + Escape
-	zenity --question --text 'Are you sure you want to log-out?' && bspc quit && kill -s TERM $(cat /tmp/panel-pid) 
+	zenity --question --text 'Are you sure you want to log-out?' && bspc quit && kill -s TERM "$(cat /tmp/panel-pid)"
 
 # screensaver
 super + l

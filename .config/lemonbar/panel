@@ -1,7 +1,7 @@
 #!/bin/bash
 # lemonbar panel
 
-cd "${0%/*}"
+cd "${0%/*}" || exit
 
 # config
 . config
@@ -22,7 +22,7 @@ bspc subscribe report > "$PANEL_FIFO" &
 # clock to panel
 while true;
 	do
-		echo 'C'$(date +"%Y-%m-%d %H:%M") $(TZ='Asia/Tokyo' date +"%H:%M");
+		echo 'C'"$(date +"%Y-%m-%d %H:%M")" "$(TZ='Asia/Tokyo' date +"%H:%M")"
 	sleep 5;
 done > "$PANEL_FIFO" &
 
@@ -72,7 +72,7 @@ cat "$PANEL_FIFO" \
 		-F "$COLOR_AA07" \
 		-B "#302b303b" \
 		-g "$PANEL_GEOMETRY" | \
-		while read line; do
-   			panel_execute $line
+		while read -r line; do
+   			panel_execute "$line"
 		done &
 wait

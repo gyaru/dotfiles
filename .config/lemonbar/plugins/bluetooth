@@ -2,19 +2,19 @@
 # lemonbar bluetooth
 
 # config
-. $XDG_CONFIG_HOME/lemonbar/config
+. "$XDG_CONFIG_HOME/lemonbar/config"
 
 bt_icon=""
 bt_status=$(echo -e 'show 00:10:60:D0:89:3B' | bluetoothctl 2> /dev/null | grep "Powered" | cut -d':' -f2 | head -c4)
-if [ $bt_status = "no" ]; then
+if [ "$bt_status" = " no" ]; then
 	bt_icon=""
 fi
-if [ $bt_status = "yes" ]; then
+if [ "$bt_status" = " yes" ]; then
    bt_speaker=$(echo -e 'info 00:9E:C8:62:69:0B' | bluetoothctl 2> /dev/null | grep "Connected" | cut -d':' -f2 | head -c4)
-	if [ $bt_speaker = "yes" ]; then
+	if [ "$bt_speaker" = " yes" ]; then
 		bt_icon="%{F$COLOR_AA05}%{F-}"
 	else
 		bt_icon=""
 	fi
 fi
-echo 'U'$bt_icon;
+echo 'U'"$bt_icon";

@@ -23,7 +23,6 @@ export GOPATH="$HOME/gocode"
 export PATH="$PATH:$GOPATH/bin"
 
 # ruby
-export PATH="$PATH:$HOME/.gem/ruby/2.2.0/bin"
 export PATH="$PATH:$HOME/.gem/ruby/2.4.0/bin"
 
 # no wineshit
@@ -48,8 +47,12 @@ alias df='df -h'
 alias pdflatex='pdflatex -synctex=1 -interaction=nonstopmode'
 alias neofetch='neofetch --line_wrap off --ascii --shell_version on --cpu_shorthand tiny --block_width 3 --disk_display info --memory_display info --ascii_logo_size small'
 alias irc='mosh atago-eru.me --server="LANG=en_US.UTF-8 mosh-server" -- bin/irc'
+alias lsblk='lsblk --output NAME,SIZE,RO,TYPE,MOUNTPOINT,UUID'
+alias shellcheck='shellcheck -x'
 
 # functions
+
+# create QR from content
 qrcode() {
     echo $@ | curl -F-=\<- qrenco.de
 }

@@ -2,15 +2,15 @@
 # lemonbar volume
 
 # config
-. $XDG_CONFIG_HOME/lemonbar/config
+. "$XDG_CONFIG_HOME/lemonbar/config"
 
 volume_bar_size="10"
 str='─'
 volume_on='%{F'$COLOR_AA05'}'$str'%{F-}'
 volume_off='%{F'$COLOR_AA08'}'$str'%{F-}'
 volume_bar=''
-vol_hp=$((`pacmd list-sinks | grep -A6 "name: <alsa_output.pci-0000_00_1b.0.analog-stereo>" | grep "volume: " | cut -d'/' -f2 | head -c4`))
-vol_steps=$(($vol_hp/$volume_bar_size))
+vol_hp=$(pacmd list-sinks | grep -A6 "name: <alsa_output.pci-0000_00_1b.0.analog-stereo>" | grep "volume: " | cut -d'/' -f2 | head -c4)
+vol_steps=$((vol_hp/volume_bar_size))
 vol_left=$((volume_bar_size-vol_steps)) 
 for i in $(seq 1 $vol_steps); do
 	volume_bar+=$volume_on
@@ -20,11 +20,11 @@ for i in $(seq 1 $vol_left); do
 done
 sink_bt=$(pactl list sinks | grep "bluez_sink.00_9E_C8_62_69_0B.a2dp_sink" -B 3 | grep "Sink" | cut -d'#' -f2)
 if [ ! -z "$sink_bt" ]; then
- 	vol_bt=$((`pacmd list-sinks | grep -A6 "name: <bluez_sink.00_9E_C8_62_69_0B.a2dp_sink>" | grep "volume: " | cut -d'/' -f2 | head -c4`))
-	vol_steps=$(($vol_bt/$volume_bar_size))
+ 	vol_bt=$(pacmd list-sinks | grep -A6 "name: <bluez_sink.00_9E_C8_62_69_0B.a2dp_sink>" | grep "volume: " | cut -d'/' -f2 | head -c4)
+	vol_steps=$((vol_bt/volume_bar_size))
 	vol_left=$((volume_bar_size-vol_steps))
-	echo $vol_steps $vol_left
-	volume_bar=$(echo $volume_bar | sed 's/'$str'/%{+u}%{U'$COLOR_AA05'}'$str'%{-u}/g')
-	volume_bar=$(echo $volume_bar | sed 's/%{+u}%{U'$COLOR_AA05'}'$str'%{-u}/%{U'$COLOR_AA08'}%{+u}'$str'%{-u}/g'$vol_steps)
+	# is this possible to clean up?
+	volume_bar=$(echo "$volume_bar" | sed 's/'"$str"'/%{+u}%{U'"$COLOR_AA05"'}'"$str"'%{-u}/g')
+	volume_bar=$(echo "$volume_bar" | sed 's/%{+u}%{U'"$COLOR_AA05"'}'"$str"'%{-u}/%{U'"$COLOR_AA08"'}%{+u}'"$str"'%{-u}/g'"$vol_steps")
 fi
-echo 'V'$volume_bar
+echo 'V'"$volume_bar"

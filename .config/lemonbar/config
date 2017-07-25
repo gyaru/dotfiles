@@ -18,25 +18,25 @@ COLOR_0C='#8fa1b3'
 COLOR_0D='#b48ead'
 COLOR_0E='#96b5b4'
 COLOR_0F='#eff1f5'
+COLOR_TRANS="#00000000"
 
 # add extra for alpha
-COLOR_TRANS="#00000000"
-COLOR_AA00="$(echo $COLOR_00 | sed 's/#/#FF/g')"
-COLOR_AA01="$(echo $COLOR_01 | sed 's/#/#FF/g')"
-COLOR_AA02="$(echo $COLOR_02 | sed 's/#/#FF/g')"
-COLOR_AA03="$(echo $COLOR_03 | sed 's/#/#FF/g')"
-COLOR_AA04="$(echo $COLOR_04 | sed 's/#/#FF/g')"
-COLOR_AA05="$(echo $COLOR_05 | sed 's/#/#FF/g')"
-COLOR_AA06="$(echo $COLOR_06 | sed 's/#/#FF/g')"
-COLOR_AA07="$(echo $COLOR_07 | sed 's/#/#FF/g')"
-COLOR_AA08="$(echo $COLOR_08 | sed 's/#/#FF/g')"
-COLOR_AA09="$(echo $COLOR_09 | sed 's/#/#FF/g')"
-COLOR_AA0A="$(echo $COLOR_0A | sed 's/#/#FF/g')"
-COLOR_AA0B="$(echo $COLOR_0B | sed 's/#/#FF/g')"
-COLOR_AA0C="$(echo $COLOR_0C | sed 's/#/#FF/g')"
-COLOR_AA0D="$(echo $COLOR_0D | sed 's/#/#FF/g')"
-COLOR_AA0E="$(echo $COLOR_0E | sed 's/#/#FF/g')"
-COLOR_AA0F="$(echo $COLOR_0F | sed 's/#/#FF/g')"
+COLOR_AA00="${COLOR_00//#/#FF}"
+COLOR_AA01="${COLOR_01//#/#FF}"
+COLOR_AA02="${COLOR_02//#/#FF}"
+COLOR_AA03="${COLOR_03//#/#FF}"
+COLOR_AA04="${COLOR_04//#/#FF}"
+COLOR_AA05="${COLOR_05//#/#FF}"
+COLOR_AA06="${COLOR_06//#/#FF}"
+COLOR_AA07="${COLOR_07//#/#FF}"
+COLOR_AA08="${COLOR_08//#/#FF}"
+COLOR_AA09="${COLOR_09//#/#FF}"
+COLOR_AA0A="${COLOR_0A//#/#FF}"
+COLOR_AA0B="${COLOR_0B//#/#FF}"
+COLOR_AA0C="${COLOR_0C//#/#FF}"
+COLOR_AA0D="${COLOR_0D//#/#FF}"
+COLOR_AA0E="${COLOR_0E//#/#FF}"
+COLOR_AA0F="${COLOR_0F//#/#FF}"
 
 # set font
 FONT_1="M+ 1m:size=13"
