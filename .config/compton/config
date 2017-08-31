@@ -21,6 +21,7 @@ shadow-opacity =		    	0.3;
 shadow-ignore-shaped =			false;
 shadow-exclude=[
 	"class_i *  =   	 		'slop'",
+	"class_g *	=				'Firefox' && argb",
 	"class_i *	=				'Photoshop.exe'",
 	"class_i    =               'presel_feedback'"
 ];

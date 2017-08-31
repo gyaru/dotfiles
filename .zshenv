@@ -10,7 +10,7 @@ export XDG_CACHE_HOME=$HOME/.cache
 export XDG_DOWNLOAD_DIR=/mnt/iowa/downloads
 
 # defaults
-export BROWSER=firefox-beta
+export BROWSER=firefox-nightly
 
 # standard path
 export PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/bin"

@@ -28,7 +28,6 @@ cp -v "$HOME"/.config/compton/config								.config/compton/config
 cp -v "$HOME"/.config/fontconfig/conf.d/20-dpi.conf					.config/fontconfig/conf.d/20-dpi.conf
 cp -v "$HOME"/.config/fontconfig/conf.d/51-noto-color-emoji.conf	.config/fontconfig/conf.d/51-noto-color-emoji.conf
 cp -v "$HOME"/.config/fontconfig/conf.d/68-color-emoji.conf			.config/fontconfig/conf.d/68-color-emoji.conf
-cp -v "$HOME"/.config/fontconfig/conf.d/69-aliasing.conf			.config/fontconfig/conf.d/69-aliasing.conf
 
 # gtk 2
 cp -v "$HOME"/.gtkrc-2.0										.gtkrc-2.0
@@ -59,6 +58,7 @@ cp -v "$HOME"/.config/ncmpcpp/config								.config/ncmpcpp/config
 # nvim
 cp -v "$HOME"/.config/nvim/init.vim									.config/nvim/init.vim
 cp -v "$HOME"/.config/nvim/keybindings.vim							.config/nvim/keybindings.vim
+cp -v "$HOME"/.config/nvim/plugins.vim								.config/nvim/plugins.vim
 
 # pacaur
 cp -v "$HOME"/.config/pacaur/config									.config/pacaur/config

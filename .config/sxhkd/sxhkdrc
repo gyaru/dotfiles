@@ -67,7 +67,7 @@ super + {_,shift + }{1-9,0}
 
 # browser
 super + o
-	firefox-beta &
+	$BROWSER &
 
 # terminal emulator
 super + Return
@@ -101,4 +101,4 @@ XF86Audio{Prev,Next,Play}
 
 # toggle keyboard layout (fn + y)
 XF86Calculator
-	(setxkbmap -query | grep -q "layout:\s\+us") && setxkbmap se && xset r rate 160 20 || setxkbmap us && xset r rate 160 20
+	(setxkbmap -query | grep -q "layout:\s\+us") && setxkbmap se || setxkbmap us

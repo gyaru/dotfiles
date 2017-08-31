@@ -2,20 +2,20 @@
 
 call plug#begin('~/.local/share/nvim/plugged')
 
-	Plug 'scrooloose/nerdtree'                  " a nice filesystem explorer
+    Plug 'scrooloose/nerdtree'                  " a nice filesystem explorer
 
-	Plug 'Xuyuanp/nerdtree-git-plugin'          " plugin for NERDTree showing git status.
+    Plug 'Xuyuanp/nerdtree-git-plugin'          " plugin for NERDTree showing git status.
 
     Plug 'gyaru/ctrlp.vim'                      " fuzzy finder
 
     Plug 'chriskempson/base16-vim'              " base16 colour schemes.
 
-	Plug 'sheerun/vim-polyglot'                 " syntax and shit for various languages.
+    Plug 'sheerun/vim-polyglot'                 " syntax and shit for various languages.
 
-	Plug 'vim-airline/vim-airline'              " a statusline/tabline plugin.
-	Plug 'vim-airline/vim-airline-themes'
+    Plug 'vim-airline/vim-airline'              " a statusline/tabline plugin.
+    Plug 'vim-airline/vim-airline-themes'
 
-	Plug 'Shougo/deoplete.nvim',{ 'do': ':UpdateRemotePlugins' } " deoplete, an asynchronous keyword completion system.
+    Plug 'Shougo/deoplete.nvim',{ 'do': ':UpdateRemotePlugins' } " deoplete, an asynchronous keyword completion system.
 
 call plug#end()
 

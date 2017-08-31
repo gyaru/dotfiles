@@ -3,6 +3,7 @@
 
 # config
 . "$XDG_CONFIG_HOME/lemonbar/config"
+IFS="$(printf '\n\t')"
 
 function connect_bt_speaker {
 	echo -e 'power on\nconnect 00:9E:C8:62:69:0B \nquit' | bluetoothctl
@@ -22,10 +23,10 @@ function mpd_output_toggle {
 	if [ -z "$sink_bt" ]; then
 		connect_bt_speaker && mpd_output_toggle
 	else
-		if [ "$sink_mpd" = "$sink_bt" ]; then
+		if [ "$sink_mpd" = " $sink_bt" ]; then
 			pactl move-sink-input "$get_mpd_id" "$sink_pc"
 		fi
-		if [ "$sink_mpd" = "$sink_pc" ]; then
+		if [ "$sink_mpd" = " $sink_pc" ]; then
 			pactl move-sink-input "$get_mpd_id" "$sink_bt"
 		fi
 	fi
