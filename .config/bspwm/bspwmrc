@@ -49,5 +49,5 @@ bspc rule -a '*:Kodi' desktop=tv state=fullscreen &
 kill -s TERM $(cat /tmp/panel-pid) 2>/dev/null & ~/.config/lemonbar/panel &
 
 # weird workaround, hidpi gtk bullshit? need to investigate why spawning lxappearance for a sec fixes it
-bspc rule -a  '*:lxappearance' desktop=5 &
-lxappearance & sleep 1 && pkill lxappearance
+#bspc rule -a  '*:lxappearance' desktop=5 &
+#lxappearance & sleep 1 && pkill lxappearance
