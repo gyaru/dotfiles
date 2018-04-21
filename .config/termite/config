@@ -1,8 +1,8 @@
 [options]
 font =			M+ 1m 16
-allow_bold =		false
+allow_bold =		true
 audible_bell =		false
-browser =		firefox
+browser =		firefox-beta
 clickable_url =		true
 scrollback_lines =	10000
 search_wrap =		true
@@ -11,6 +11,7 @@ cursor_shape =		ibeam
 
 [colors]
 foreground =		#c0c5ce
+foreground_bold = #dfe1e8
 cursor =		#c0c5ce
 background =		#2b303b
 # black

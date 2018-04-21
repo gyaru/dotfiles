@@ -1,0 +1,57 @@
+{
+    // window
+    "window.zoomLevel": 0,
+    "window.menuBarVisibility": "toggle",
+    // editor
+    "editor.fontSize": 16,
+    "editor.fontFamily": "'Fira Code', 'Noto Serif CJK KR', 'Material Icons'",
+    "editor.fontLigatures": true,
+    "editor.letterSpacing": 0,
+    "editor.lineHeight": 24,
+    "editor.mouseWheelZoom": true,
+    "editor.renderWhitespace": "all",
+    "editor.cursorStyle": "line-thin",
+    "editor.wordWrap": "off",
+    "editor.tabSize": 4,
+    "editor.multiCursorModifier": "alt",
+    "editor.insertSpaces": true,
+    "explorer.confirmDelete": false,
+    // telemetry
+    "telemetry.enableTelemetry": false,
+    "telemetry.enableCrashReporter": false,
+    // workbench
+    "workbench.colorTheme": "Material Theme",
+    "workbench.startupEditor": "none",
+    "workbench.iconTheme": "material-icon-theme",
+    // terminal
+    "terminal.integrated.cursorStyle": "line",
+    "terminal.integrated.fontSize": 17,
+    // files
+    "files.associations": {
+        "*.vim": "shellscript"
+    },
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay" : 1000,
+    // bye
+    "update.channel": "none",
+    // vscode-icons
+    "vsicons.dontShowNewVersionMessage": true,
+    "vsicons.presets.jsonOfficial": true,
+    // shellcheck
+    "shellcheck.enable": true,
+    "shellcheck.run": "onType",
+    "shellcheck.executablePath": "shellcheck",
+    // gitlens
+    "gitlens.advanced.messages": {
+        "suppressShowKeyBindingsNotice": true
+    },
+    "gitlens.gitExplorer.enabled": false,
+    // tslint
+    "tslint.autoFixOnSave": true,
+    "tslint.alwaysShowStatus": true,
+    "tslint.packageManager": "yarn",
+    // python
+    "python.formatting.provider": "autopep8",
+    // docker
+    "docker.showExplorer": false,
+}

@@ -1,38 +1,39 @@
 # video output
-framedrop =		vo
-hwdec =			dxva2-copy
+framedrop =                 vo
+vo =                        opengl
+profile =                   opengl-hq
+video-sync =                display-resample
+blend-subtitles =           yes
+interpolation =             yes
+tscale =                    oversample
 
 # default subtitles
-sub-text-font =		'M+ 1m'
-sub-text-font-size =	48
-sub-text-margin-y =	42
-sub-text-color =	'#ececea'
-sub-text-border-size =	1.5
-sub-text-border-color =	'#29292b'
+sub-font =                  'M+ 1m'
+sub-font-size =             48
+sub-color =                 '#ececea'
+sub-border-size =           1.5
+sub-border-color =          '#29292b'
 
 # osd
 no-osd-bar
-osd-font =		'M+ 1m'
-osd-font-size =		18
-osd-scale-by-window =	yes
-osd-color =		'#ffffff'
-osd-border-size =	1
-osd-border-color =	'#6b6b70'
+osd-font =                  'M+ 1m'
+osd-font-size =             18
+osd-scale-by-window =       yes
+osd-color =                 '#ffffff'
+osd-border-size =           1
+osd-border-color =          '#6b6b70'
 
 # prefered languages
-alang =			ja,jpn,Japanese,en,eng,English
-slang =			en,eng,English
+alang =                     ja,jpn,Japanese,en,eng,English
+slang =                     en,eng,English,ja,jpn,Japanese
 
 # loop webms
 [extension.webm]
-loop-file =		inf
+loop-file =                 inf
 [extension.mp4]
-loop-file = inf
+loop-file =                 inf
 [extension.gif]
-loop-file = inf
-# rice mkv
-[extension.mkv]
-
+loop-file =                 inf
 
 # screenshots
-screenshot-template =	"/home/gyaru/pictures/mpv/%f<%P>"
+screenshot-template =      "/home/gyaru/pictures/mpv/%f<%P>"

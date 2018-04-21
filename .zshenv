@@ -7,13 +7,16 @@ export XDG_DATA_HOME=$HOME/.local/share
 export XDG_BIN_HOME=$HOME/.local/bin
 export XDG_LIB_HOME=$HOME/.local/lib
 export XDG_CACHE_HOME=$HOME/.cache
-export XDG_DOWNLOAD_DIR=/mnt/iowa/downloads
+export XDG_DOWNLOAD_DIR=$HOME/downloads
 
 # defaults
-export BROWSER=firefox-nightly
+export BROWSER=firefox-beta
 
 # standard path
 export PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/bin"
+
+# ccache
+export PATH="/usr/lib/ccache/bin/:$PATH"
 
 # perl
 export PATH="$PATH:/usr/bin/vendor_perl:/usr/bin/core_perl"
@@ -34,6 +37,9 @@ export NO_AT_BRIDGE=1
 # steam "if using a distribution that doesn't have proper compatible tray support"
 export STEAM_FRAME_FORCE_CLOSE=0
 
+# make java play nice with bspwm
+export _JAVA_AWT_WM_NONREPARENTING=1
+
 # qt
 export QT_STYLE_OVERRIDE=GTK+
 
@@ -49,6 +55,10 @@ alias neofetch='neofetch --line_wrap off --ascii --shell_version on --cpu_shorth
 alias irc='mosh atago-eru.me --server="LANG=en_US.UTF-8 mosh-server" -- bin/irc'
 alias lsblk='lsblk --output NAME,SIZE,RO,TYPE,MOUNTPOINT,UUID'
 alias shellcheck='shellcheck -x'
+
+docker-shell() {
+    docker exec -i -t "$1" /bin/bash
+}
 
 # functions
 

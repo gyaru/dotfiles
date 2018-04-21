@@ -1,0 +1,12 @@
+Xcursor.size: 32
+Xft.dpi: 96
+rofi.lines: 5
+rofi.eh: 1
+rofi.padding: 200
+rofi.fullscreen: true
+rofi.bw: 0
+rofi.separator-style: none
+rofi.hide-scrollbar: true
+rofi.color-window: argb:E62b303b, #b48ead, #b48ead
+rofi.color-normal: argb:00000000, #c0c5ce, argb:00000000, argb:00000000, #b48ead 
+rofi.font: M+ 1m 16

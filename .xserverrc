@@ -2,4 +2,4 @@
 # .xserverrc
 
 # keyboard - typematic delay (200ms) and rate (30Hz)
-exec /usr/bin/Xorg -ardelay 200 -arinterval 20 -nolisten tcp "$@" vt$XDG_VTNR
+exec /usr/bin/Xorg -ardelay 200 -arinterval 20 -nolisten tcp "$@" vt"$XDG_VTNR"

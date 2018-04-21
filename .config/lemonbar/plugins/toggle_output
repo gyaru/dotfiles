@@ -6,28 +6,28 @@
 IFS="$(printf '\n\t')"
 
 function connect_bt_speaker {
-	echo -e 'power on\nconnect 00:9E:C8:62:69:0B \nquit' | bluetoothctl
-	sleep 2
+    echo -e 'power on\nconnect 00:9E:C8:62:69:0B \nquit' | bluetoothctl
+    sleep 2
 }
 
 # mpd output function toggle
 function mpd_output_toggle {
-	get_mpd_id=""
-	sink_mpd=""
-	sink_bt=""
-	sink_pc=""
-	get_mpd_id=$(pactl list sink-inputs | grep "mpd" -B 21 | grep "Sink Input" | cut -d'#' -f2)
-	sink_mpd=$(pactl list sink-inputs | grep "mpd" -B 21 | grep "Sink:" | cut -d':' -f2)
-	sink_bt=$(pactl list sinks | grep "bluez_sink.00_9E_C8_62_69_0B.a2dp_sink" -B 3 | grep "Sink" | cut -d'#' -f2)
-	sink_pc=$(pactl list sinks | grep "Built-in Audio Analog Stereo" -B 3 | grep "Sink" | cut -d'#' -f2)
-	if [ -z "$sink_bt" ]; then
-		connect_bt_speaker && mpd_output_toggle
-	else
-		if [ "$sink_mpd" = " $sink_bt" ]; then
-			pactl move-sink-input "$get_mpd_id" "$sink_pc"
-		fi
-		if [ "$sink_mpd" = " $sink_pc" ]; then
-			pactl move-sink-input "$get_mpd_id" "$sink_bt"
-		fi
-	fi
+    get_mpd_id=""
+    sink_mpd=""
+    sink_bt=""
+    sink_pc=""
+    get_mpd_id=$(pactl list sink-inputs | grep "mpd" -B 21 | grep "Sink Input" | cut -d'#' -f2)
+    sink_mpd=$(pactl list sink-inputs | grep "mpd" -B 21 | grep "Sink:" | cut -d':' -f2)
+    sink_bt=$(pactl list sinks | grep "bluez_sink.00_9E_C8_62_69_0B.a2dp_sink" -B 3 | grep "Sink" | cut -d'#' -f2)
+    sink_pc=$(pactl list sinks | grep "Built-in Audio Analog Stereo" -B 3 | grep "Sink" | cut -d'#' -f2)
+    if [ -z "$sink_bt" ]; then
+        connect_bt_speaker && mpd_output_toggle
+    else
+        if [ "$sink_mpd" = " $sink_bt" ]; then
+            pactl move-sink-input "$get_mpd_id" "$sink_pc"
+        fi
+        if [ "$sink_mpd" = " $sink_pc" ]; then
+            pactl move-sink-input "$get_mpd_id" "$sink_bt"
+        fi
+    fi
 }

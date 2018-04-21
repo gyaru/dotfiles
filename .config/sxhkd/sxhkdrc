@@ -5,100 +5,79 @@
 
 # presel the direction
 super + shift + {Up,Left,Right,Down}
-	bspc node -p {~north,~west,~east,~south}
+    bspc node -p {~north,~west,~east,~south}
 
 # presel the ratio
 super + ctrl + {1-9}
-	bspc node -o 0.{1-9}
+    bspc node -o 0.{1-9}
 
 # quit bspwm normally
 super + alt + Escape
-	bspc quit
+    bspc quit
 
 # close and kill
 super + {_,shift + } w
-	bspc node -{c,k}
-
-# alternate between the tiled and monocle layout
-super + m
-	bspc desktop -l next
-
-# if the current node is automatic, send it to the last manual, otherwise pull the last leaf
-super + y
-	bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
-
-# swap the current node and the biggest node
-super + g
-	bspc node -s biggest
+    bspc node -{c,k}
 
 # state/flags
 
 # set the window state
 super + {t,shift + t,s,f}
-	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+    bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
 
 # set the node flags
 super + ctrl + {x,y,z}
-	bspc node -g {locked,sticky,private}
+    bspc node -g {locked,sticky,private}
 
 # focus/swap
 
 # focus the node in the given direction
 super + {Up,Left,Right,Down}
-	bspc node -f {north,west,east,south}
+    bspc node -f {north,west,east,south}
 
 # focus the last node/desktop
 super + {grave,Tab}
-	bspc {node,desktop} -f last
+    bspc {node,desktop} -f last
 
 # focus or send to the given desktop
 super + {_,shift + }{1-9,0}
-	bspc {desktop -f,node -d} '^{1-9,10}'
-
-# move/resize
-
-# expand a window by moving one of its side outward
-#super + ctrl + {h,j,k,l}
-#	bspc node -z {top -20 0,left 0 20,right 0 -20,bottom 20 0}
-
-# contract a window by moving one of its side inward
-#super + ctrl + shift + {h,j,k,l}
-#	bspc node -z {top -20 0,left 0 20,right 0 -20,bottom 20 0}
+    bspc {desktop -f,node -d} '^{1-9,10}'
 
 # browser
 super + o
-	$BROWSER &
+    $BROWSER &
 
 # terminal emulator
 super + Return
-	termite &
+    termite &
 
 # program launcher
 super + space
-	rofi -show run &
+    source "$HOME"/.zshenv && rofi -show run &
 
 # printscreen
 Print
-	~/bin/charlotta &
+    ~/bin/charlotta &
 
 # reload all our configuration files
 super + Escape
-	pkill -USR1 -x sxhkd
+    pkill -USR1 -x sxhkd
 
 # log out from user session
 super + ctrl + Escape
-	zenity --question --text 'Are you sure you want to log-out?' && bspc quit && kill -s TERM "$(cat /tmp/panel-pid)"
+    zenity --question --text 'Are you sure you want to log-out?' && bspc quit && kill -s TERM "$(cat /tmp/panel-pid)"
+    #rofi -show fb -modi fb:~/bin/power-management
 
 # screensaver
 super + l
-	~/bin/lockscreen
+    ~/bin/lockscreen
 
 # media
 XF86Audio{Raise,Lower}Volume
-	amixer set Master -i 5%{+,-} &
+    amixer set Master -i 5%{+,-} &
 XF86Audio{Prev,Next,Play}
-	mpc -q {prev,next,toggle} &
+    mpc -q {prev,next,toggle} &
 
 # toggle keyboard layout (fn + y)
 XF86Calculator
-	(setxkbmap -query | grep -q "layout:\s\+us") && setxkbmap se || setxkbmap us
+    (setxkbmap -query | grep -q "layout:\s\+us") && setxkbmap se || setxkbmap us

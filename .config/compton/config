@@ -1,40 +1,41 @@
-backend =			        	"xrender";
-mark-wmwin-focused =			true;
-use-ewmh-active-win =			true;
-detect-rounded-corners =		true;
-detect-client-opacity =			true;
-paint-on-overlay =			    true;
-unredir-if-possible =			true;
-glx-no-stencil =	    		true;
-glx-no-rebind-pixmap =			true;
-glx-swap-method =		    	"undefined";
+backend =                       "xrender";
+mark-wmwin-focused =            true;
+use-ewmh-active-win =           true;
+detect-rounded-corners =        true;
+detect-client-opacity =         true;
+paint-on-overlay =              true;
+unredir-if-possible =           true;
+glx-no-stencil =                true;
+glx-no-rebind-pixmap =          true;
+glx-swap-method =               "undefined";
 
 # shadow
-shadow =			        	true;
-no-dock-shadow =			    false;
-no-dnd-shadow =			    	true;
-clear-shadow =	    			true;
-shadow-radius =		    		6;
-shadow-offset-x =	    		-5;
-shadow-offset-y =		    	-5;
-shadow-opacity =		    	0.3;
-shadow-ignore-shaped =			false;
-shadow-exclude=[
-	"class_i *  =   	 		'slop'",
-	"class_g *	=				'Firefox' && argb",
-	"class_i *	=				'Photoshop.exe'",
-	"class_i    =               'presel_feedback'"
+shadow =                        true;
+no-dock-shadow =                false;
+no-dnd-shadow =                 true;
+clear-shadow =                  true;
+shadow-radius =                 6;
+shadow-offset-x =               -5;
+shadow-offset-y =               -5;
+shadow-opacity =                0.3;
+shadow-ignore-shaped =          false;
+shadow-exclude = [
+    "class_i    *=              'slop'",
+    "class_g    *=              'Firefox' && argb",
+    "class_i    *=              'Photoshop.exe'",
+    "class_i    =               'presel_feedback'"
 ];
 
 # opacity
-menu-opacity =				    1;
-inactive-opacity =		    	1;
-active-opacity =			    1;
-frame-opacity =				    1;
-alpha-step =				    0.06;
-opacity-rule =[
-                                "60:class_i *= 'presel_feedback'"
-    ];
-blur-background =			    false;
-blur-background-fixed =			false;
-fading =			        	false;
+menu-opacity =                  1;
+inactive-opacity =              1;
+active-opacity =                1;
+frame-opacity =                 1;
+alpha-step =                    0.06;
+opacity-rule = [
+    "60:class_i *=              'presel_feedback'",
+    "60:class_i *=              'slop'"
+];
+blur-background =               false;
+blur-background-fixed =         false;
+fading =                        false;

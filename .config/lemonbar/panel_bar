@@ -8,83 +8,83 @@ cd "${0%/*}" || exit
 
 # bar
 while read -r line ; do
-	case $line in
-		V*)
-			# clock output
-			volume="${line#?}"
-		;;
-		C*)
-			# clock output
-			clock="${line#?}"
-		;;
-		U*)
-			# bluetooth output
-			bluetooth="${line#?}"
-		;;
-		M*)
-			# mpd output
-			mpd="${line#?}"
-		;;
-		W*)
-			# bspwm
-			bspwm=""
-			IFS=':'
-			set -- ${line#?}
-			while [ $# -gt 0 ] ; do
-				item=$1
-				name=${item#?}
-				case $item in
-					O*)	# focused occupied desktop
-					if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
-						bspwm="${bspwm}"
-					else
-						bspwm="${bspwm}%{F$COLOR_AA05} $PANEL_BSPWM_ICON_F_O_D %{F-}"
-					fi
-					;;
+    case $line in
+        V*)
+            # clock output
+            volume="${line#?}"
+        ;;
+        C*)
+            # clock output
+            clock="${line#?}"
+        ;;
+        U*)
+            # bluetooth output
+            bluetooth="${line#?}"
+        ;;
+        M*)
+            # mpd output
+            mpd="${line#?}"
+        ;;
+        W*)
+            # bspwm
+            bspwm=""
+            IFS=':'
+            set -- ${line#?}
+            while [ $# -gt 0 ] ; do
+                item=$1
+                name=${item#?}
+                case $item in
+                    O*)	# focused occupied desktop
+                    if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
+                        bspwm="${bspwm}"
+                    else
+                        bspwm="${bspwm}%{F$COLOR_AA05} $PANEL_BSPWM_ICON_F_O_D %{F-}"
+                    fi
+                    ;;
 
-					F*)	# focused free desktop
-					if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
-						bspwm="${bspwm}"
-					else
-						bspwm="${bspwm}%{F$COLOR_AA05} $PANEL_BSPWM_ICON_F_F_D %{F-}"
-					fi
-					;;
+                    F*)	# focused free desktop
+                    if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
+                        bspwm="${bspwm}"
+                    else
+                        bspwm="${bspwm}%{F$COLOR_AA05} $PANEL_BSPWM_ICON_F_F_D %{F-}"
+                    fi
+                    ;;
 
-					U*)	# focused urgent desktop
-					if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
-						bspwm="${bspwm}"
-					else
-						bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_F_U_D %{F-}"
-					fi
-					;;
+                    U*)	# focused urgent desktop
+                    if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
+                        bspwm="${bspwm}"
+                    else
+                        bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_F_U_D %{F-}"
+                    fi
+                    ;;
 
-					o*)	# occupied desktop
-					if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
-						bspwm="${bspwm}"
-					else
-						bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_O_D %{F-}"
-					fi
-					;;
+                    o*)	# occupied desktop
+                    if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
+                        bspwm="${bspwm}"
+                    else
+                        bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_O_D %{F-}"
+                    fi
+                    ;;
 
-					f*)	# free desktop
-					if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
-						bspwm="${bspwm}"
-					else
-						bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_F_D %{F-}"
-					fi
-					;;
+                    f*)	# free desktop
+                    if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
+                        bspwm="${bspwm}"
+                    else
+                        bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_F_D %{F-}"
+                    fi
+                    ;;
 
-					u*) # urgent desktop
-					if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
-						bspwm="${bspwm}"
-					else
-						bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_U_D %{F-}"
-					fi
-					;;
-				esac
-				shift
-			done
-			;;
-	esac
-	printf "%s\n" "%{l} ${volume} ${mpd} %{c}${bspwm} %{r}${bluetooth} ${clock} "
+                    u*) # urgent desktop
+                    if [[ $name == "tv" ]] || [[ $name == "portrait" ]]; then # ignoring if the desktop is called tv
+                        bspwm="${bspwm}"
+                    else
+                        bspwm="${bspwm}%{F$COLOR_AA04} $PANEL_BSPWM_ICON_U_D %{F-}"
+                    fi
+                    ;;
+                esac
+                shift
+            done
+            ;;
+    esac
+    printf "%s\n" "%{l} ${volume} ${mpd} %{c}${bspwm} %{r}${bluetooth} ${clock} "
 done
