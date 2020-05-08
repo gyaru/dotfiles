@@ -22,8 +22,8 @@ cp -v "$DC"/zsh/prompt.zsh                                                      
 # bspwm
 cp -v "$DC"/bspwm/bspwmrc                                                       "$GC"/bspwm/bspwmrc
 
-# compton
-cp -v "$DC"/compton/config                                                      "$GC"/compton/config
+# picom
+cp -v "$DC"/picom/config                                                      "$GC"/picom/config
 
 # firefox
 cp -v ~/.mozilla/firefox/l31x8z8z.gyaru/user.js                                 "$GC"/firefox/user.js
@@ -66,9 +66,6 @@ cp -v "$DC"/ncmpcpp/config                                                      
 cp -v "$DC"/nvim/init.vim                                                       "$GC"/nvim/init.vim
 cp -v "$DC"/nvim/keybindings.vim                                                "$GC"/nvim/keybindings.vim
 cp -v "$DC"/nvim/plugins.vim                                                    "$GC"/nvim/plugins.vim
-
-# trizen
-cp -v "$DC"/trizen/trizen.conf                                                  "$GC"/trizen/trizen.conf
 
 # sxhkd
 cp -v "$DC"/sxhkd/sxhkdrc                                                       "$GC"/sxhkd/sxhkdrc

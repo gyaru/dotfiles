@@ -44,7 +44,7 @@ FONT_2="Noto Serif CJK KR:size=13"
 FONT_3="Material Icons:size=18"
 
 # panel geometry widthxheight+x+y
-PANEL_GEOMETRY="3440x35"
+PANEL_GEOMETRY="3440x35+1440"
 
 # panel icons
 PANEL_BSPWM_ICON_F_O_D=""		# focused occupied desktop

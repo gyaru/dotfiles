@@ -6,7 +6,7 @@
 
 mpd_np=""
 mpd_icon=""
-mpd=$(mpc status)
+mpd=$(mpc -h ~/.config/mpd/socket status)
 mpd_alive=$(echo "$mpd" | grep "volume" | cut -d':' -f2 | head -c4)
 if [ "$mpd_alive" = "n/a" ]; then
     mpd_np=""

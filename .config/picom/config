@@ -3,17 +3,14 @@ mark-wmwin-focused =            true;
 use-ewmh-active-win =           true;
 detect-rounded-corners =        true;
 detect-client-opacity =         true;
-paint-on-overlay =              true;
+glx-copy-from-front =           false;
 unredir-if-possible =           true;
 glx-no-stencil =                true;
 glx-no-rebind-pixmap =          true;
-glx-swap-method =               "undefined";
+use-damage =               true;
 
 # shadow
 shadow =                        true;
-no-dock-shadow =                false;
-no-dnd-shadow =                 true;
-clear-shadow =                  true;
 shadow-radius =                 6;
 shadow-offset-x =               -5;
 shadow-offset-y =               -5;
@@ -27,15 +24,21 @@ shadow-exclude = [
 ];
 
 # opacity
-menu-opacity =                  1;
 inactive-opacity =              1;
 active-opacity =                1;
 frame-opacity =                 1;
-alpha-step =                    0.06;
 opacity-rule = [
     "60:class_i *=              'presel_feedback'",
     "60:class_i *=              'slop'"
 ];
 blur-background =               false;
 blur-background-fixed =         false;
-fading =                        false;
+fading =                        false
+wintypes: {
+    dropdown_menu = { shadow = false; };
+    popup_menu    = { shadow = false; };
+    dock = { shadow = false; };
+    dnd = { shadow = false; };
+    utility       = { shadow = false; };
+};
+

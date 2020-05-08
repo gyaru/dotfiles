@@ -9,3 +9,5 @@ export PANEL_FIFO="/tmp/panel-fifo"
 if [ -z "$DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ]; then
   exec startx
 fi
+
+PATH="$PATH:$(ruby -e 'puts Gem.user_dir')/bin"

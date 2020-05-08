@@ -10,7 +10,7 @@ export XDG_CACHE_HOME=$HOME/.cache
 export XDG_DOWNLOAD_DIR=$HOME/downloads
 
 # defaults
-export BROWSER=firefox-beta
+export BROWSER=firefox-nightly
 
 # standard path
 export PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/bin"
@@ -26,13 +26,16 @@ export GOPATH="$HOME/gocode"
 export PATH="$PATH:$GOPATH/bin"
 
 # ruby
-export PATH="$PATH:$HOME/.gem/ruby/2.4.0/bin"
+export PATH="$PATH:$HOME/.gem/ruby/2.6.0/bin"
 
 # no wineshit
 export WINEDLLOVERRIDES="winemenubuilder.exe=d"
 
 # gtk - disable atk-bridge
 export NO_AT_BRIDGE=1
+
+# firefox - enable xinput2
+export MOZ_USE_XINPUT2=1
 
 # steam "if using a distribution that doesn't have proper compatible tray support"
 export STEAM_FRAME_FORCE_CLOSE=0
@@ -55,6 +58,7 @@ alias neofetch='neofetch --line_wrap off --ascii --shell_version on --cpu_shorth
 alias irc='mosh atago-eru.me --server="LANG=en_US.UTF-8 mosh-server" -- bin/irc'
 alias lsblk='lsblk --output NAME,SIZE,RO,TYPE,MOUNTPOINT,UUID'
 alias shellcheck='shellcheck -x'
+alias trizen='yay'
 
 docker-shell() {
     docker exec -i -t "$1" /bin/bash

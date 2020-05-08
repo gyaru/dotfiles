@@ -68,15 +68,11 @@ super + ctrl + Escape
     zenity --question --text 'Are you sure you want to log-out?' && bspc quit && kill -s TERM "$(cat /tmp/panel-pid)"
     #rofi -show fb -modi fb:~/bin/power-management
 
-# screensaver
-super + l
-    ~/bin/lockscreen
-
 # media
 XF86Audio{Raise,Lower}Volume
     amixer set Master -i 5%{+,-} &
 XF86Audio{Prev,Next,Play}
-    mpc -q {prev,next,toggle} &
+    mpc -h ~/.config/mpd/socket -q {prev,next,toggle} &
 
 # toggle keyboard layout (fn + y)
 XF86Calculator

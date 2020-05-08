@@ -2,7 +2,7 @@
 font =			M+ 1m 16
 allow_bold =		true
 audible_bell =		false
-browser =		firefox-beta
+browser =		firefox-nightly
 clickable_url =		true
 scrollback_lines =	10000
 search_wrap =		true

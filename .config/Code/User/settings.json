@@ -1,18 +1,12 @@
 {
-    // window
-    "window.zoomLevel": 0,
     "window.menuBarVisibility": "toggle",
-    // editor
-    "editor.fontSize": 16,
-    "editor.fontFamily": "'Fira Code', 'Noto Serif CJK KR', 'Material Icons'",
+    "editor.fontFamily": "'Ricty Diminished with Fira Code', 'Fira Code',  'Noto Serif CJK KR', 'Material Icons'",
     "editor.fontLigatures": true,
     "editor.letterSpacing": 0,
     "editor.lineHeight": 24,
-    "editor.mouseWheelZoom": true,
-    "editor.renderWhitespace": "all",
     "editor.cursorStyle": "line-thin",
     "editor.wordWrap": "off",
-    "editor.tabSize": 4,
+    "editor.tabSize": 2,
     "editor.multiCursorModifier": "alt",
     "editor.insertSpaces": true,
     "explorer.confirmDelete": false,
@@ -20,23 +14,22 @@
     "telemetry.enableTelemetry": false,
     "telemetry.enableCrashReporter": false,
     // workbench
-    "workbench.colorTheme": "Material Theme",
+    "workbench.colorTheme": "Material Theme Palenight",
     "workbench.startupEditor": "none",
-    "workbench.iconTheme": "material-icon-theme",
+    "workbench.iconTheme": "eq-material-theme-icons-palenight",
     // terminal
     "terminal.integrated.cursorStyle": "line",
     "terminal.integrated.fontSize": 17,
     // files
     "files.associations": {
-        "*.vim": "shellscript"
+        "*.vim": "shellscript",
+        "PKGBUILD": "shellscript"
     },
     "files.autoSave": "afterDelay",
-    "files.autoSaveDelay" : 1000,
+    "files.autoSaveDelay" : 5000,
     // bye
     "update.channel": "none",
     // vscode-icons
-    "vsicons.dontShowNewVersionMessage": true,
-    "vsicons.presets.jsonOfficial": true,
     // shellcheck
     "shellcheck.enable": true,
     "shellcheck.run": "onType",
@@ -54,4 +47,41 @@
     "python.formatting.provider": "autopep8",
     // docker
     "docker.showExplorer": false,
+    "git.enableSmartCommit": true,
+    "gitlens.historyExplorer.enabled": true,
+    "colorize.files_extensions": [
+        ".js"
+],
+"typescript.updateImportsOnFileMove.enabled": "always",
+"terminal.integrated.fontFamily": "Fira Code",
+"editor.fontSize": 15,
+"breadcrumbs.symbolPath": "off",
+"workbench.statusBar.feedback.visible": false,
+"workbench.tips.enabled": false,
+"editor.minimap.enabled": true,
+"colorize.ignore_files_extensions_deprecation": true,
+"gitlens.views.repositories.enabled": false,
+"gitlens.views.fileHistory.enabled": true,
+"gitlens.views.lineHistory.enabled": true,
+"colorize.ignore_search_variables_info": true,
+"window.titleBarStyle": "native",
+"explorer.confirmDragAndDrop": false,
+"editor.mouseWheelZoom": true,
+"[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+},
+"git.autofetch": true,
+"vsicons.dontShowNewVersionMessage": true,
+"rust-client.enableMultiProjectSetup": true,
+"[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+},
+"editor.fontWeight": "bold",
+"[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+},
+"javascript.updateImportsOnFileMove.enabled": "always",
+"[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+}
 }

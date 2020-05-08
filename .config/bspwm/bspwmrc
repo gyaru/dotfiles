@@ -22,14 +22,17 @@ bspc config border_width            4
 bspc config window_gap              15
 bspc config borderless_monocle      true
 bspc config gapless_monocle         true
+
 # potrait monitor
-bspc config -m DVI-I-1 top_padding  0
+bspc config -m DP-2 top_padding 0
 
 # set up desktops
-bspc monitor DP-1 -d                1 2 3 4 5
-bspc monitor DVI-I-1 -d             portrait
-bspc monitor HDMI-0 -d              tv
-bspc wm -O                          DP-1 DV-I-1 HDMI-0
+bspc monitor USB-C-0 -d                1 2 3 4 5
+bspc monitor HDMI-0 -d                6 7
+bspc wm -O                          USB-C-0 HDMI-0
+bspc config remove_disabled_monitors false
+bspc config remove_unplugged_monitors false
+bspc config merge_overlapping_monitors false
 
 # application specific rules
 # wine desktop
@@ -42,12 +45,16 @@ bspc rule -a Library state=floating &
 # libreoffice doesn't behave after opening a new file
 bspc rule -a '*:libreofficedev' state=tiled &
 bspc rule -a '*:soffice' state=tiled &
+bspc rule -a '*:Steam' desktop=4 follow=no &
 # kodi
 bspc rule -a '*:Kodi' desktop=tv state=fullscreen &
+# firefox
+bspc rule -a 'Nightly':Navigator state=tiled &
+bspc rule -a 'Nightly':Places state=floating &
+bspc rule -a 'Nightly':Popup state=floating border=off &
+bspc rule -a 'Nightly':Prompt state=floating &
+
+bspc rule -a 'Wine':fl64.exe state=tiled &
 
 # set up panel
-kill -s TERM $(cat /tmp/panel-pid) 2>/dev/null & ~/.config/lemonbar/panel &
-
-# weird workaround, hidpi gtk bullshit? need to investigate why spawning lxappearance for a sec fixes it
-#bspc rule -a  '*:lxappearance' desktop=5 &
-#lxappearance & sleep 1 && pkill lxappearance
+kill -s TERM $"(cat /tmp/panel-pid)" 2>/dev/null & ~/.config/lemonbar/panel &

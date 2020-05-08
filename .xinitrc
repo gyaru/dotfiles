@@ -2,7 +2,7 @@
 # .xinitrc
 
 # compositor
-compton --config ~/.config/compton/config -b &
+picom --config ~/.config/picom/config -b &
 
 # cursor
 xsetroot -cursor_name left_ptr &
@@ -11,7 +11,7 @@ xsetroot -cursor_name left_ptr &
 nitrogen --restore &
 
 # icc profile
-xcalib -d :0 ~/.local/share/dell_u3415w.icc &
+xcalib -d :0 ~/.local/share/u3415w.icc &
 
 # xrdb
 [[ -f ~/.Xresources ]] && xrdb -merge -I "$HOME" ~/.Xresources
