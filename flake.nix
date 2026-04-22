@@ -27,6 +27,8 @@
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    agenix.url = "github:ryantm/agenix";
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs @ {flake-parts, ...}:
@@ -108,6 +110,17 @@
                   users.lis = import ./home/lis.nix;
                 };
               }
+            ];
+          };
+          lapi = inputs.nixpkgs.lib.nixosSystem {
+            specialArgs = {
+              inherit inputs;
+              outputs = inputs.self;
+            };
+            modules = [
+              ./hosts/lapi/configuration.nix
+              inputs.agenix.nixosModules.default
+              inputs.nix-index-database.nixosModules.default
             ];
           };
         };

@@ -6,7 +6,7 @@
 stdenvNoCC.mkDerivation rec {
   pname = "lucide-icons";
   version = "0.373.0";
-  dontConfigue = true;
+  dontConfigure = true;
 
   src = fetchzip {
     url = "https://github.com/lucide-icons/lucide/releases/download/${version}/lucide-font-${version}.zip";

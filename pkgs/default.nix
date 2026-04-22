@@ -3,6 +3,7 @@ pkgs: let
     "mplus-fonts"
     "balsamiqsans"
     "lucide-icons"
+    "curseforge"
   ];
 in
   builtins.listToAttrs (map (name: {

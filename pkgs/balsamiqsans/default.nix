@@ -6,7 +6,7 @@
 stdenvNoCC.mkDerivation rec {
   pname = "balsamiqsans";
   version = "1.020";
-  dontConfigue = true;
+  dontConfigure = true;
 
   src = fetchzip {
     url = "https://github.com/balsamiq/balsamiqsans/releases/download/${version}/balsamiqsans-fonts.zip";

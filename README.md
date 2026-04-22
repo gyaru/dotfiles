@@ -11,6 +11,7 @@ modular nixos & home-manager configuration with impermanence
 ## hosts
 - **radiata** - desktop (hyprland, amd)
 - **carrot** - macbook (nix-darwin)
+- **lapi** - server
 
 ## quick start
 ```bash
