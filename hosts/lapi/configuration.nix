@@ -9,13 +9,13 @@
     ./k3s.nix
     ./zfs.nix
     ./samba.nix
-    ./kodi.nix
+    ./vfio.nix
   ];
 
   boot = {
     initrd = {
       availableKernelModules = ["nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod"];
-      kernelModules = ["vfio_pci" "vfio" "vfio_iommu_type1" "amdgpu" "drivetemp"];
+      kernelModules = ["amdgpu" "drivetemp"];
     };
     kernelModules = ["kvm-amd" "nct6775" "ntsync"];
     extraModulePackages = [];
@@ -56,29 +56,6 @@
   hardware = {
     enableRedistributableFirmware = true;
     cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-
-    graphics = {
-      enable = true;
-      extraPackages = with pkgs; [
-        libvdpau-va-gl
-        nvidia-vaapi-driver
-      ];
-    };
-
-    steam-hardware.enable = true;
-
-    nvidia = {
-      modesetting.enable = true;
-      open = false;
-      nvidiaSettings = true;
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
-      powerManagement = {
-        enable = true;
-        finegrained = false;
-      };
-    };
-
-    nvidia-container-toolkit.enable = true;
   };
 
   time.timeZone = "Europe/Stockholm";
@@ -98,30 +75,7 @@
       RuntimeMaxUse=256M
     '';
 
-    udev.extraRules = ''
-      ACTION=="add", KERNEL=="6-5", SUBSYSTEM=="usb", ATTR{authorized}="0"
-    '';
-
     tailscale.enable = true;
-    xserver.videoDrivers = ["nvidia"];
-
-    displayManager = {
-      sddm.enable = true;
-      autoLogin = {
-        enable = true;
-        user = "mikan";
-      };
-    };
-    desktopManager.plasma6.enable = true;
-
-    flatpak.enable = true;
-
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      pulse.enable = true;
-    };
-
     avahi = {
       enable = true;
       nssmdns4 = true;
@@ -131,7 +85,6 @@
         workstation = true;
       };
     };
-
     fstrim.enable = true;
   };
 
@@ -180,32 +133,6 @@
 
   programs = {
     zsh.enable = true;
-
-    gamemode = {
-      enable = true;
-      settings = {
-        general = {
-          renice = 10;
-        };
-        gpu = {
-          apply_gpu_optimisations = "accept-responsibility";
-          gpu_device = 1;
-        };
-        gamemode = {
-          whitelist = "Wow.exe";
-        };
-      };
-    };
-
-    steam = {
-      enable = true;
-      gamescopeSession.enable = true;
-      remotePlay.openFirewall = true;
-      dedicatedServer.openFirewall = false;
-      localNetworkGameTransfers.openFirewall = true;
-    };
-
-    xwayland.enable = true;
     coolercontrol.enable = true;
   };
 
@@ -252,24 +179,6 @@
         extraGroups = ["wheel" "kvm" "usbpassthrough"];
         openssh.authorizedKeys.keys = keys.lisKeys;
       };
-      mikan = {
-        isNormalUser = true;
-        shell = pkgs.zsh;
-        group = "users";
-        extraGroups = ["video" "audio" "input" "kvm" "usbpassthrough"];
-        openssh.authorizedKeys.keys = keys.mikanKeys;
-        packages = with pkgs; [
-          mpv
-          ffmpeg
-          firefox-bin
-          chromium
-          telegram-desktop
-          vesktop
-          curseforge
-          xrandr
-          protonplus
-        ];
-      };
     };
   };
 
@@ -282,28 +191,11 @@
     hybrid-sleep.enable = false;
   };
 
-  xdg.portal = {
-    enable = true;
-
-    config = {
-      kde = {
-        default = ["kde" "gtk" "gnome"];
-        "org.freedesktop.portal.FileChooser" = ["kde"];
-        "org.freedesktop.portal.OpenURI" = ["kde"];
-      };
-    };
-
-    extraPortals = with pkgs.kdePackages; [
-      xdg-desktop-portal-kde
-    ];
-  };
-
   environment.systemPackages = with pkgs; [
     pciutils
     lm_sensors
     fanctl
     ntfs3g
-    nvtopPackages.nvidia
     smartmontools
     comma
   ];
