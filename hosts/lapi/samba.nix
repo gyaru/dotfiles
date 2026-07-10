@@ -18,7 +18,7 @@ _: {
         browseable = "yes";
         "read only" = "no";
         "guest ok" = "no";
-        "valid users" = "lis mikan";
+        "valid users" = "lis";
         "write list" = "lis";
       };
       mlem = {
