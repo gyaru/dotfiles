@@ -1,6 +1,6 @@
 {
   inputs,
-  outputs,
+  flake,
   lib,
   config,
   pkgs,
@@ -8,14 +8,18 @@
 }: {
   imports = [
     (inputs.impermanence + "/nixos.nix")
-    outputs.nixosModules.amd
-    outputs.nixosModules.desktop
-    outputs.nixosModules.gaming
-    outputs.nixosModules.audio
-    outputs.nixosModules.wayland
-    outputs.nixosModules.base
-    outputs.nixosModules.impermanence
-    outputs.nixosModules.security
+    flake.nixosModules.amd
+    flake.nixosModules.desktop
+    flake.nixosModules.gaming
+    flake.nixosModules.audio
+    flake.nixosModules.wayland
+    flake.nixosModules.base
+    flake.nixosModules.impermanence
+    flake.nixosModules.security
+    inputs.lanzaboote.nixosModules.lanzaboote
+    inputs.nix-index-database.nixosModules.nix-index
+    inputs.hjem.nixosModules.default
+    ./users/lis.nix
   ];
 
   modules = {
@@ -47,24 +51,20 @@
 
   nixpkgs = {
     hostPlatform = lib.mkDefault "x86_64-linux";
-    overlays = [
-      outputs.overlays.additions
-      outputs.overlays.modifications
-      outputs.overlays.unstable-packages
-    ];
-    config = {
-      allowUnfree = true;
-    };
   };
 
   nix = {
     registry = lib.mapAttrs (_: value: {flake = value;}) inputs;
-    nixPath =
-      lib.mapAttrsToList (key: value: "${key}=${value.to.path}")
-      config.nix.registry;
+    nixPath = lib.mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
 
     settings = {
-      experimental-features = "nix-command flakes";
+      experimental-features = [
+        "nix-command"
+        "flakes"
+        "pipe-operators"
+        "cgroups"
+      ];
+      use-cgroups = true;
       auto-optimise-store = true;
       max-jobs = "auto";
       cores = 0;
@@ -76,7 +76,11 @@
         "https://nix-community.cachix.org"
         "https://nix-gaming.cachix.org"
       ];
-      system-features = ["big-parallel" "kvm" "nixos-test"];
+      system-features = [
+        "big-parallel"
+        "kvm"
+        "nixos-test"
+      ];
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
@@ -113,19 +117,37 @@
     "/" = {
       device = "/dev/disk/by-uuid/caf259ee-b2be-4cf8-b41a-752a09d344a7";
       fsType = "btrfs";
-      options = ["subvol=root" "compress=zstd:1" "noatime" "discard=async" "space_cache=v2"];
+      options = [
+        "subvol=root"
+        "compress=zstd:1"
+        "noatime"
+        "discard=async"
+        "space_cache=v2"
+      ];
     };
     # nix
     "/nix" = {
       device = "/dev/disk/by-uuid/caf259ee-b2be-4cf8-b41a-752a09d344a7";
       fsType = "btrfs";
-      options = ["subvol=nix" "compress=zstd:1" "noatime" "discard=async" "space_cache=v2"];
+      options = [
+        "subvol=nix"
+        "compress=zstd:1"
+        "noatime"
+        "discard=async"
+        "space_cache=v2"
+      ];
     };
     # persist
     "/persist" = {
       device = "/dev/disk/by-uuid/caf259ee-b2be-4cf8-b41a-752a09d344a7";
       fsType = "btrfs";
-      options = ["subvol=persist" "compress=zstd:1" "noatime" "discard=async" "space_cache=v2"];
+      options = [
+        "subvol=persist"
+        "compress=zstd:1"
+        "noatime"
+        "discard=async"
+        "space_cache=v2"
+      ];
       neededForBoot = true;
     };
     # boot
@@ -144,7 +166,12 @@
     "/mnt/shigure" = {
       device = "/dev/disk/by-uuid/CC76855576854166";
       fsType = "ntfs";
-      options = ["rw" "uid=1000" "gid=100" "umask=022"];
+      options = [
+        "rw"
+        "uid=1000"
+        "gid=100"
+        "umask=022"
+      ];
     };
   };
 
@@ -161,9 +188,15 @@
     kernelModules = [];
     extraModulePackages = [];
 
-    bootspec.enable = true;
     initrd = {
-      availableKernelModules = ["nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod"];
+      availableKernelModules = [
+        "nvme"
+        "xhci_pci"
+        "ahci"
+        "usbhid"
+        "usb_storage"
+        "sd_mod"
+      ];
       kernelModules = [];
       systemd.enable = true;
       supportedFilesystems = ["btrfs"];
@@ -218,7 +251,7 @@
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       noto-fonts-monochrome-emoji
     ];
     fontconfig = {
@@ -242,7 +275,11 @@
   # locales
   i18n = {
     defaultLocale = "en_US.UTF-8";
-    supportedLocales = ["en_US.UTF-8/UTF-8" "en_DK.UTF-8/UTF-8" "en_GB.UTF-8/UTF-8"];
+    supportedLocales = [
+      "en_US.UTF-8/UTF-8"
+      "en_DK.UTF-8/UTF-8"
+      "en_GB.UTF-8/UTF-8"
+    ];
     extraLocaleSettings = {
       LC_ADDRESS = "en_US.UTF-8";
       LC_COLLATE = "en_US.UTF-8";
@@ -289,9 +326,47 @@
       isNormalUser = true;
       shell = pkgs.zsh;
       group = "users";
-      extraGroups = ["wheel" "video" "audio" "realtime" "input" "kvm" "usbpassthrough"];
+      extraGroups = [
+        "wheel"
+        "video"
+        "audio"
+        "realtime"
+        "input"
+        "kvm"
+        "usbpassthrough"
+      ];
       hashedPasswordFile = "/persist/passwords/lis";
+      openssh.authorizedKeys.keys = flake.people.lis.sshKeys;
     };
+  };
+
+  environment.persistence."/persist".users.lis = {
+    directories = [
+      "downloads"
+      "pictures"
+      "projects"
+      "documents"
+      "videos"
+      ".gnupg"
+      ".ssh"
+      ".vscode"
+      ".var"
+      ".local/share/keyrings"
+      ".local/share/direnv"
+      ".local/share/wallpapers"
+      ".local/share/TelegramDesktop"
+      ".local/share/flatpak"
+      ".config/spotify"
+      ".config/vesktop"
+      ".cache/tealdeer"
+      ".cache/nix"
+      ".cache/starship"
+      ".cache/nix-index"
+      ".cache/flatpak"
+      ".mozilla"
+      ".cache/mozilla"
+    ];
+    files = [".zsh_history"];
   };
 
   # time

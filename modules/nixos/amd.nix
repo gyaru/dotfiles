@@ -12,7 +12,10 @@ _: {
 
     kernelModules = ["kvm-amd"];
 
-    initrd.kernelModules = ["amdgpu" "nct6775"];
+    initrd.kernelModules = [
+      "amdgpu"
+      "nct6775"
+    ];
   };
 
   hardware = {

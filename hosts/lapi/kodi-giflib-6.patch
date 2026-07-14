@@ -1,0 +1,19 @@
+diff --git a/tools/depends/native/TexturePacker/src/decoder/GifHelper.cpp b/tools/depends/native/TexturePacker/src/decoder/GifHelper.cpp
+index 1503df0185..216708632e 100644
+--- a/tools/depends/native/TexturePacker/src/decoder/GifHelper.cpp
++++ b/tools/depends/native/TexturePacker/src/decoder/GifHelper.cpp
+@@ -53,3 +53,3 @@ bool GifHelper::Open(GifFileType*& gif, void *dataPtr, InputFunc readFunc)
+   int err = 0;
+-#if GIFLIB_MAJOR == 5
++#if GIFLIB_MAJOR >= 5
+   gif = DGifOpen(dataPtr, readFunc, &err);
+@@ -75,3 +75,3 @@ void GifHelper::Close(GifFileType* gif)
+   int reason = 0;
+-#if GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1
++#if GIFLIB_MAJOR > 5 || (GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1)
+   err = DGifCloseFile(gif, &reason);
+@@ -183,3 +183,3 @@ bool GifHelper::Slurp(GifFileType* gif)
+     int reason = 0;
+-#if GIFLIB_MAJOR == 5
++#if GIFLIB_MAJOR >= 5
+     reason = gif->Error;

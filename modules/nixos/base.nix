@@ -9,7 +9,6 @@
     curl
     fd
     file
-    home-manager
     jq
     man-pages
     man-pages-posix

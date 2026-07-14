@@ -1,25 +1,43 @@
 {
   config,
-  outputs,
+  flake,
+  inputs,
   lib,
   pkgs,
   ...
 }: {
   imports = [
-    ./k3s.nix
+    inputs.agenix.nixosModules.default
+    inputs.nix-index-database.nixosModules.default
+    flake.nixosModules.zfs
+    ./services/k3s.nix
     ./zfs.nix
-    ./samba.nix
-    # ./vfio.nix
+    ./services/samba.nix
     ./vm.nix
     ./gaming.nix
+    ./kodi.nix
   ];
 
   boot = {
     initrd = {
-      availableKernelModules = ["nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod"];
-      kernelModules = ["amdgpu" "drivetemp"];
+      availableKernelModules = [
+        "nvme"
+        "xhci_pci"
+        "ahci"
+        "usbhid"
+        "usb_storage"
+        "sd_mod"
+      ];
+      kernelModules = [
+        "amdgpu"
+        "drivetemp"
+      ];
     };
-    kernelModules = ["kvm-amd" "nct6775" "ntsync"];
+    kernelModules = [
+      "kvm-amd"
+      "nct6775"
+      "ntsync"
+    ];
     extraModulePackages = [];
 
     loader = {
@@ -39,7 +57,7 @@
 
     kernel.sysctl."vm.min_free_kbytes" = 524288;
     blacklistedKernelModules = ["nouveau"];
-    kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
+    kernelPackages = pkgs.linuxKernel.packages.linux_xanmod;
   };
 
   fileSystems."/" = {
@@ -50,7 +68,10 @@
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/C629-83F6";
     fsType = "vfat";
-    options = ["fmask=0077" "dmask=0077"];
+    options = [
+      "fmask=0077"
+      "dmask=0077"
+    ];
   };
 
   swapDevices = [];
@@ -61,6 +82,11 @@
   };
 
   time.timeZone = "Europe/Stockholm";
+
+  i18n = {
+    defaultLocale = "en_US.UTF-8";
+    extraLocaleSettings.LC_TIME = "en_GB.UTF-8";
+  };
 
   services = {
     openssh = {
@@ -92,14 +118,6 @@
 
   nixpkgs = {
     hostPlatform = lib.mkDefault "x86_64-linux";
-    overlays = [
-      outputs.overlays.additions
-      outputs.overlays.modifications
-      outputs.overlays.unstable-packages
-    ];
-    config = {
-      allowUnfree = true;
-    };
   };
 
   zramSwap = {
@@ -109,7 +127,13 @@
 
   nix = {
     settings = {
-      experimental-features = "nix-command flakes";
+      experimental-features = [
+        "nix-command"
+        "flakes"
+        "pipe-operators"
+        "cgroups"
+      ];
+      use-cgroups = true;
       auto-optimise-store = true;
       max-jobs = "auto";
       cores = 0;
@@ -118,7 +142,11 @@
         "https://cache.nixos.org?priority=10"
         "https://nix-community.cachix.org"
       ];
-      system-features = ["big-parallel" "kvm" "nixos-test"];
+      system-features = [
+        "big-parallel"
+        "kvm"
+        "nixos-test"
+      ];
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
@@ -168,25 +196,31 @@
     group = "root";
   };
 
-  users = let
-    keys = import ../../keys.nix;
-  in {
+  users = {
     mutableUsers = true;
     users = {
-      root.openssh.authorizedKeys.keys = keys.adminSshKeys;
+      root.openssh.authorizedKeys.keys = flake.adminSshKeys;
       lis = {
         isNormalUser = true;
         shell = pkgs.zsh;
         group = "users";
-        extraGroups = ["wheel" "kvm" "usbpassthrough"];
-        openssh.authorizedKeys.keys = keys.lisKeys;
+        extraGroups = [
+          "wheel"
+          "kvm"
+          "usbpassthrough"
+        ];
+        openssh.authorizedKeys.keys = flake.people.lis.sshKeys;
       };
       mikan = {
         isNormalUser = true;
         shell = pkgs.zsh;
         group = "users";
-        extraGroups = ["wheel" "kvm" "usbpassthrough"];
-        openssh.authorizedKeys.keys = keys.mikanKeys;
+        extraGroups = [
+          "wheel"
+          "kvm"
+          "usbpassthrough"
+        ];
+        openssh.authorizedKeys.keys = flake.people.mikan.sshKeys;
       };
     };
   };

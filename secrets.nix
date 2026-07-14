@@ -1,5 +1,5 @@
 let
-  keys = import ./keys.nix;
+  entities = import ./lib/entities.nix;
 in {
-  "secrets/k3s-token.age".publicKeys = keys.adminSshKeys ++ keys.systemKeys;
+  "secrets/k3s-token.age".publicKeys = entities.adminSshKeys ++ entities.machines.lapi.sshKeys;
 }

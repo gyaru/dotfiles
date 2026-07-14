@@ -14,7 +14,10 @@ in {
     };
 
     compositor = lib.mkOption {
-      type = lib.types.enum ["hyprland" "sway"];
+      type = lib.types.enum [
+        "hyprland"
+        "sway"
+      ];
       default = "hyprland";
       description = "Wayland compositor to use";
     };
@@ -35,9 +38,15 @@ in {
       wlr.enable = cfg.compositor == "sway";
       extraPortals = with pkgs;
         if cfg.compositor == "hyprland"
-        then [xdg-desktop-portal-hyprland xdg-desktop-portal-gtk]
+        then [
+          xdg-desktop-portal-hyprland
+          xdg-desktop-portal-gtk
+        ]
         else if cfg.compositor == "sway"
-        then [xdg-desktop-portal-wlr xdg-desktop-portal-gtk]
+        then [
+          xdg-desktop-portal-wlr
+          xdg-desktop-portal-gtk
+        ]
         else [xdg-desktop-portal-gtk];
 
       config = {
