@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -22,6 +23,51 @@
       '';
   };
 
+  kodiConfigure = pkgs.writeShellApplication {
+    name = "kodi-configure";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.xmlstarlet
+    ];
+    text =
+      /*
+      bash
+      */
+      ''
+        settings="''${KODI_SETTINGS:-/var/lib/kodi-tv/.kodi/userdata/guisettings.xml}"
+        password="$(< "$1")"
+
+        install --directory "$(dirname "$settings")"
+        if [[ ! -e "$settings" ]]; then
+          printf '<settings version="2"></settings>\n' > "$settings"
+        fi
+
+        set_setting() {
+          local id="$1"
+          local value="$2"
+
+          if [[ "$(xmlstarlet select --template --value-of "count(/settings/setting[@id='$id'])" "$settings")" != 0 ]]; then
+            xmlstarlet edit --inplace --update "/settings/setting[@id='$id']" --value "$value" "$settings"
+          else
+            xmlstarlet edit --inplace --subnode /settings --type elem --name setting --value "$value" "$settings"
+            xmlstarlet edit --inplace --insert "/settings/setting[last()]" --type attr --name id --value "$id" "$settings"
+          fi
+
+          xmlstarlet edit --inplace --delete "/settings/setting[@id='$id']/@default" "$settings"
+        }
+
+        set_setting services.devicename "Kodi TV"
+        set_setting services.zeroconf true
+        set_setting services.webserver true
+        set_setting services.webserverport 8080
+        set_setting services.webserverauthentication true
+        set_setting services.webserverusername kodi
+        set_setting services.webserverpassword "$password"
+        set_setting services.esenabled true
+        set_setting services.esallinterfaces true
+      '';
+  };
+
   kodiTv = pkgs.writeShellApplication {
     name = "kodi-tv";
     text =
@@ -40,6 +86,13 @@
       '';
   };
 in {
+  age.secrets.kodi-password = {
+    file = ../../secrets/kodi-password.age;
+    mode = "0400";
+    owner = "kodi-tv";
+    group = "kodi-tv";
+  };
+
   environment.systemPackages = singleton kodiTv;
 
   users = {
@@ -80,6 +133,8 @@ in {
       HOME = "/var/lib/kodi-tv";
       XDG_RUNTIME_DIR = "/run/kodi-tv";
     };
+
+    preStart = "${getExe kodiConfigure} ${config.age.secrets.kodi-password.path}";
 
     serviceConfig = {
       ExecStart = getExe kodiTv;

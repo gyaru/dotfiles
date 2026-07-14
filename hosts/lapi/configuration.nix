@@ -97,7 +97,7 @@
         KbdInteractiveAuthentication = false;
       };
     };
-
+    avahi.allowInterfaces = ["eno1"];
     journald.extraConfig = ''
       SystemMaxUse=2G
       RuntimeMaxUse=256M
@@ -241,6 +241,8 @@
     ntfs3g
     smartmontools
     comma
+    ripgrep
+    jq
   ];
 
   systemd.services.disable-bad-usb4-port5 = {

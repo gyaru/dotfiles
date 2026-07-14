@@ -29,6 +29,14 @@ _: {
         "valid users" = "lis";
         "write list" = "lis";
       };
+      personal = {
+        path = "/mlem/personal/lis";
+        browseable = "yes";
+        "read only" = "no";
+        "guest ok" = "no";
+        "valid users" = "lis";
+        "write list" = "lis";
+      };
     };
   };
 
