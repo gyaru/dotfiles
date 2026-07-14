@@ -36,6 +36,10 @@ _: {
         "guest ok" = "no";
         "valid users" = "lis";
         "write list" = "lis";
+        "create mask" = "0600";
+        "directory mask" = "0700";
+        "force create mode" = "0600";
+        "force directory mode" = "0700";
       };
     };
   };
