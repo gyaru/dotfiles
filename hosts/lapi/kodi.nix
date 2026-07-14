@@ -7,9 +7,11 @@
   inherit (lib.lists) singleton;
   inherit (lib.meta) getExe;
 
-  kodiWayland = pkgs.kodi-wayland.overrideAttrs (old: {
-    patches = (old.patches or []) ++ [./kodi-giflib-6.patch];
-  });
+  kodiWayland =
+    (pkgs.kodi-wayland.overrideAttrs (old: {
+      patches = (old.patches or []) ++ [./kodi-giflib-6.patch];
+    })).withPackages
+    (_: []);
 
   kodiClient = pkgs.writeShellApplication {
     name = "kodi-client";

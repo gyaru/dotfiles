@@ -1,4 +1,10 @@
-{pkgs, ...}: let
+{
+  lib,
+  pkgs,
+  ...
+}: let
+  inherit (lib.meta) getExe;
+
   battleNet = pkgs.writeShellApplication {
     name = "battle-net";
     text =
@@ -6,17 +12,18 @@
       bash
       */
       ''
+        export GAMEID="umu-battlenet"
+        export PROTONPATH="/home/mikan/.steam/steam/compatibilitytools.d/GE-Proton11-1"
         export WINEPREFIX="/home/mikan/games/battle.net"
         export WINE_SIMULATE_WRITECOPY=1
         export PROTON_ENABLE_WAYLAND=0
 
-        wine="/home/mikan/.steam/steam/compatibilitytools.d/GE-Proton11-1/files/bin/wine"
         launcher="$WINEPREFIX/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe"
 
-        [[ -x "$wine" ]] || { printf 'Missing Proton Wine runner: %s\n' "$wine" >&2; exit 1; }
+        [[ -x "$PROTONPATH/proton" ]] || { printf 'Missing Proton runner: %s\n' "$PROTONPATH" >&2; exit 1; }
         [[ -f "$launcher" ]] || { printf 'Missing Battle.net launcher: %s\n' "$launcher" >&2; exit 1; }
 
-        exec "$wine" "$launcher"
+        exec ${getExe pkgs.umu-launcher} "$launcher"
       '';
   };
 
@@ -37,6 +44,9 @@ in {
       mangohud
       protonup-qt
       curseforge
+      umu-launcher
+      vesktop
+      telegram-desktop
       firefox
       battleNet
       battleNetDesktop
