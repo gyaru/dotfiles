@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -60,6 +61,7 @@ in {
       modesetting.enable = true;
       open = false;
       nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
     };
   };
 

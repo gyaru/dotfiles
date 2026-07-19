@@ -20,7 +20,15 @@
       bash
       */
       ''
-        ${getExe pkgs.wlr-randr} --output HDMI-A-1 --mode 3840x2160@60Hz
+        (
+          while sleep 2; do
+            if ! ${getExe pkgs.wlr-randr} 2>/dev/null | grep -A1 '^HDMI-A-1 ' | grep -q '3840x2160 px, 60.000000 Hz (current)'; then
+              ${getExe pkgs.wlr-randr} --output HDMI-A-1 --mode 3840x2160@60Hz 2>/dev/null || true
+            fi
+          done
+        ) &
+
+        ${getExe pkgs.wlr-randr} --output HDMI-A-1 --mode 3840x2160@60Hz || true
         exec ${getExe kodiWayland} --standalone --windowing=x11
       '';
   };

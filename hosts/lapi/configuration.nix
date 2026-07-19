@@ -243,6 +243,8 @@
     comma
     ripgrep
     jq
+    atool
+    unrar
   ];
 
   systemd.services.disable-bad-usb4-port5 = {
