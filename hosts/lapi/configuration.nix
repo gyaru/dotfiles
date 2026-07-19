@@ -11,6 +11,7 @@
     inputs.nix-index-database.nixosModules.default
     flake.nixosModules.zfs
     ./services/k3s.nix
+    ./services/grafana/default.nix
     ./zfs.nix
     ./services/samba.nix
     ./vm.nix
@@ -52,6 +53,7 @@
       "amd_iommu=on"
       "iommu=pt"
       "amd_pstate=active"
+      "ahci.mobile_lpm_policy=1"
       "split_lock_detect=off"
     ];
 

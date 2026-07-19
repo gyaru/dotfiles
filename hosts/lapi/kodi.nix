@@ -45,6 +45,7 @@
       */
       ''
         settings="''${KODI_SETTINGS:-/var/lib/kodi-tv/.kodi/userdata/guisettings.xml}"
+        advancedSettings="$(dirname "$settings")/advancedsettings.xml"
         password="$(< "$1")"
 
         install --directory "$(dirname "$settings")"
@@ -75,6 +76,20 @@
         set_setting services.webserverpassword "$password"
         set_setting services.esenabled true
         set_setting services.esallinterfaces true
+
+        if [[ ! -e "$advancedSettings" ]]; then
+          printf '<advancedsettings version="1.0"></advancedsettings>\n' > "$advancedSettings"
+        fi
+
+        xmlstarlet edit --inplace \
+          --delete /advancedsettings/cache \
+          "$advancedSettings"
+        xmlstarlet edit --inplace \
+          --subnode /advancedsettings --type elem --name cache \
+          --subnode /advancedsettings/cache --type elem --name buffermode --value 1 \
+          --subnode /advancedsettings/cache --type elem --name memorysize --value 536870912 \
+          --subnode /advancedsettings/cache --type elem --name readfactor --value 8 \
+          "$advancedSettings"
       '';
   };
 
