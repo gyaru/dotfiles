@@ -163,11 +163,13 @@ in {
 
     serviceConfig = {
       ExecStart = getExe kodiTv;
+      ExecStop = "${getExe pkgs.curl} --fail --silent --show-error --max-time 5 --request POST --header Content-Type:application/json --data {\"jsonrpc\":\"2.0\",\"method\":\"Application.Quit\",\"id\":1} http://127.0.0.1:8080/jsonrpc";
       Restart = "on-failure";
       RestartSec = "2s";
       RuntimeDirectory = "kodi-tv";
       RuntimeDirectoryMode = "0700";
       StateDirectory = "kodi-tv";
+      TimeoutStopSec = "15s";
       User = "kodi-tv";
       Group = "kodi-tv";
     };
