@@ -241,6 +241,7 @@
     lm_sensors
     fanctl
     ntfs3g
+    kubernetes-helm
     smartmontools
     comma
     ripgrep
