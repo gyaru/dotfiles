@@ -41,8 +41,16 @@ spec:
               value: "Europe/Stockholm"
             - name: HERMES_DASHBOARD
               value: "1"
-            - name: HERMES_DASHBOARD_INSECURE
-              value: "1"
+            - name: HERMES_DASHBOARD_BASIC_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-dashboard-auth
+                  key: username
+            - name: HERMES_DASHBOARD_BASIC_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-dashboard-auth
+                  key: password
           volumeMounts:
             - name: data
               mountPath: /opt/data

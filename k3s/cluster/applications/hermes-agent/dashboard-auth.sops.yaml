@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: hermes-dashboard-auth
+stringData:
+    username: ENC[AES256_GCM,data:VclQbM0=,iv:dnYqAHSQEgnnbktnnlv944k5hpIe9TklmGTu/aI4HB4=,tag:vGM3+NNuNPh5rJpaiKLyRw==,type:str]
+    password: ENC[AES256_GCM,data:smsOSgGiBC1WkQGaX+GqpjgXXkUQTPcBXRaZ/uX8Yc0=,iv:CMc0FluvxMnaSBEHjrLTqoDwoVEeNpnhymJk/joNCFk=,tag:KDUon2jObPNGtQiVyJ2E0w==,type:str]
+    password-hash: ENC[AES256_GCM,data:pleobdkq73LsFOH1SEl5r9O5z5PImGJ6sozMKFIjndmUzQ5UaEy0dJHi57nmoryFX/+6o1y1rNkx21ZH/tU0/2qhw4MIoCzsmWR+GA8o6g3sJxKGi30=,iv:bWclZgu8RF0aMb0kMTEQGDvVDtUSD4e/w2/oRGfwr4g=,tag:UYdk1APHrie+itC/y+gU3A==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBtTVFyTWpzZXNTL0IySEZ6
+            RXBIU2c0SlA3d2V2R2M3QTJ2RjgrVHBQUkNRCkxHRXgxK0FHeWhGRDg2aFlqUFpz
+            ZTlMQnNTUHdHV21kQ0NrVTRHRUxKVXcKLS0tIEU2NTI4MW1VKzd6eVB0a2Z4aVJJ
+            RDJyYllQanZPeU9aMVJxeXg4bis5ME0KjhOapTG49m0kY/tqs6CNxioYczHKtv6H
+            VTRShlE0vErkzZhov1wK85bJpzd7arF+bNGtl1sKbdoMhpZ8LrS7lQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1tspqtc45fa0yjy0dckqfnuwr99t9kxfwfd34cm4tfr8nx8jm9pcqg8n2lr
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-07-20T22:52:35Z"
+    mac: ENC[AES256_GCM,data:G/KFB0KXHN6DVW9Vo3lGHrsrnjswK3vrK8DmiiO1g55iJbiaAtPmd1u06V8kmTnX+3LCKhmCWA1Ril+k9YclfAaZUhDZhXNEorgGlrZYbF5cuCkLlIrHffuWOvHR9c+0QSdOwPC9ia8N71VDZkl36Tx5212kx82ENwtGjC1syzY=,iv:AY45Y+PO83T+j5wqj+dTeNf7fnc8rH2AnU/VrKTwlAA=,tag:TEKLHFoOAwe8TUtIMSyRag==,type:str]
+    version: 3.13.2
