@@ -6,7 +6,6 @@
 }: let
   kubeTokenFile = "/var/lib/prometheus/k3s-token";
   kubeCAFile = "/var/lib/prometheus/k3s-ca.crt";
-  kubeManifest = ./kube-state-metrics.yaml;
 in {
   networking.firewall.extraCommands = ''
     iptables -A nixos-fw -p tcp --dport 3000 -s 192.168.1.0/24 -j nixos-fw-accept
@@ -145,8 +144,8 @@ in {
   };
 
   systemd.services = {
-    k3s-monitoring = {
-      description = "Provision k3s monitoring resources";
+    k3s-prometheus-credentials = {
+      description = "Sync k3s credentials for Prometheus";
       wantedBy = ["multi-user.target"];
       after = ["k3s.service"];
       requires = ["k3s.service"];
@@ -160,7 +159,6 @@ in {
         bash
         */
         ''
-          kubectl apply --filename ${kubeManifest}
           kubectl --namespace monitoring wait \
             --for=jsonpath='{.data.token}' \
             secret/prometheus-token \
@@ -204,8 +202,8 @@ in {
     };
 
     prometheus = {
-      after = ["k3s-monitoring.service"];
-      requires = ["k3s-monitoring.service"];
+      after = ["k3s-prometheus-credentials.service"];
+      requires = ["k3s-prometheus-credentials.service"];
       serviceConfig.ReadOnlyPaths = [
         kubeCAFile
         kubeTokenFile
