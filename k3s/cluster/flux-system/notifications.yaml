@@ -1,0 +1,32 @@
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Provider
+metadata:
+  name: discord
+  namespace: flux-system
+spec:
+  address: https://discord.com/api/webhooks/
+  secretRef:
+    name: discord-webhook
+  type: discord
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Alert
+metadata:
+  name: discord
+  namespace: flux-system
+spec:
+  eventMetadata:
+    cluster: lapi
+  eventSeverity: error
+  eventSources:
+    - kind: GitRepository
+      name: "*"
+    - kind: HelmRelease
+      name: "*"
+      namespace: "*"
+    - kind: HelmRepository
+      name: "*"
+    - kind: Kustomization
+      name: "*"
+  providerRef:
+    name: discord
