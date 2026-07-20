@@ -1,4 +1,13 @@
-_: {
+{lib, ...}: {
+  systemd.services.samba-smbd.unitConfig.RequiresMountsFor =
+    lib.mkForce
+    <| lib.concatStringsSep " " [
+      "/var/lib/samba"
+      "/mlem"
+      "/mlem/media"
+      "/mlem/personal/lis"
+    ];
+
   services.samba = {
     enable = true;
     openFirewall = true;

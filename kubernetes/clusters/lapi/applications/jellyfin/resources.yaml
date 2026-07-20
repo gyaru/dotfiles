@@ -1,0 +1,151 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jellyfin-network-config
+data:
+  network.xml: |
+    <?xml version="1.0" encoding="utf-8"?>
+    <NetworkConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <BaseUrl>/jellyfin</BaseUrl>
+      <EnableHttps>false</EnableHttps>
+      <RequireHttps>false</RequireHttps>
+      <EnableIPv4>true</EnableIPv4>
+      <EnableIPv6>false</EnableIPv6>
+      <PublicHttpPort>80</PublicHttpPort>
+      <PublicHttpsPort>443</PublicHttpsPort>
+    </NetworkConfiguration>
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-config
+  labels:
+    app: jellyfin
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jellyfin
+  labels:
+    app: jellyfin
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: jellyfin
+  template:
+    metadata:
+      labels:
+        app: jellyfin
+    spec:
+      initContainers:
+        - name: init-config
+          image: busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /config/config
+              cp /network-config/network.xml /config/config/network.xml
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: network-config
+              mountPath: /network-config
+      containers:
+        - name: jellyfin
+          image: jellyfin/jellyfin:10.11.11
+          securityContext:
+            privileged: true
+          ports:
+            - containerPort: 8096
+              name: http
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: cache
+              mountPath: /cache
+            - name: media
+              mountPath: /media
+              readOnly: true
+            - name: dri
+              mountPath: /dev/dri
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "1000m"
+            limits:
+              memory: "24Gi"
+              cpu: "8000m"
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: jellyfin-config
+        - name: cache
+          emptyDir: {}
+        - name: media
+          hostPath:
+            path: /mlem/media
+        - name: network-config
+          configMap:
+            name: jellyfin-network-config
+        - name: dri
+          hostPath:
+            path: /dev/dri
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jellyfin
+  labels:
+    app: jellyfin
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8096
+      targetPort: 8096
+      protocol: TCP
+      name: http
+  selector:
+    app: jellyfin
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: jellyfin-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: jellyfin
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: caddy
+        - podSelector:
+            matchLabels:
+              app: home-assistant
+      ports:
+        - protocol: TCP
+          port: 8096
+    - from:
+        - podSelector:
+            matchLabels:
+              app: cloudflared
+        - podSelector:
+            matchLabels:
+              app: seerr
+      ports:
+        - protocol: TCP
+          port: 8096

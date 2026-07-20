@@ -1,0 +1,3 @@
+creation_rules:
+  - path_regex: ^kubernetes/clusters/lapi/.*\.sops\.ya?ml$
+    age: age1tspqtc45fa0yjy0dckqfnuwr99t9kxfwfd34cm4tfr8nx8jm9pcqg8n2lr

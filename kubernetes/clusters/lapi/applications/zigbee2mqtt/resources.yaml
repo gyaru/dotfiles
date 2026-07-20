@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zigbee2mqtt-data
+  labels:
+    app: zigbee2mqtt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zigbee2mqtt
+  labels:
+    app: zigbee2mqtt
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: zigbee2mqtt
+  template:
+    metadata:
+      labels:
+        app: zigbee2mqtt
+    spec:
+      containers:
+        - name: zigbee2mqtt
+          image: koenkk/zigbee2mqtt:2.5.1
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: TZ
+              value: "Europe/Stockholm"
+            - name: ZIGBEE2MQTT_CONFIG_HOMEASSISTANT_ENABLED
+              value: "true"
+            - name: ZIGBEE2MQTT_CONFIG_FRONTEND_ENABLED
+              value: "true"
+            - name: ZIGBEE2MQTT_CONFIG_FRONTEND_PORT
+              value: "8080"
+            - name: ZIGBEE2MQTT_CONFIG_MQTT_BASE_TOPIC
+              value: zigbee2mqtt
+            - name: ZIGBEE2MQTT_CONFIG_MQTT_SERVER
+              value: mqtt://mosquitto:1883
+            - name: ZIGBEE2MQTT_CONFIG_SERIAL_PORT
+              value: /dev/zigbee
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+            - name: zigbee
+              mountPath: /dev/zigbee
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "1000m"
+          securityContext:
+            privileged: true
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: zigbee2mqtt-data
+        - name: zigbee
+          hostPath:
+            path: /dev/zigbee
+            type: CharDevice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zigbee2mqtt
+  labels:
+    app: zigbee2mqtt
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: zigbee2mqtt
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: zigbee2mqtt-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: zigbee2mqtt
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: home-assistant
+      ports:
+        - protocol: TCP
+          port: 8080

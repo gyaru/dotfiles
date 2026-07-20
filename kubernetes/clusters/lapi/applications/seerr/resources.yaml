@@ -1,0 +1,146 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: seerr-config
+  labels:
+    app: seerr
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seerr
+  labels:
+    app: seerr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seerr
+  template:
+    metadata:
+      labels:
+        app: seerr
+    spec:
+      containers:
+        - name: seerr
+          image: seerr/seerr:sha-5ae70d0
+          ports:
+            - containerPort: 5055
+              name: http
+          env:
+            - name: TZ
+              value: "Europe/Stockholm"
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          securityContext:
+            allowPrivilegeEscalation: false
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: seerr-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seerr
+  labels:
+    app: seerr
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5055
+      targetPort: 5055
+      protocol: TCP
+      name: http
+  selector:
+    app: seerr
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: seerr-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: seerr
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: caddy
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: tailscale
+        - podSelector:
+            matchLabels:
+              app: home-assistant
+      ports:
+        - protocol: TCP
+          port: 5055
+  egress:
+    - ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - podSelector:
+            matchLabels:
+              app: sonarr
+      ports:
+        - protocol: TCP
+          port: 8989
+    - to:
+        - podSelector:
+            matchLabels:
+              app: radarr
+      ports:
+        - protocol: TCP
+          port: 7878
+    - to:
+        - podSelector:
+            matchLabels:
+              app: jellyfin
+      ports:
+        - protocol: TCP
+          port: 8096
+    - ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: seerr
+  annotations:
+    tailscale.com/hostname: "seerr"
+    tailscale.com/tags: "tag:k8s"
+spec:
+  ingressClassName: tailscale
+  defaultBackend:
+    service:
+      name: seerr
+      port:
+        number: 5055
+  tls:
+    - hosts:
+        - seerr

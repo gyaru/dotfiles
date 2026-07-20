@@ -1,0 +1,93 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: music-assistant-data
+  labels:
+    app: music-assistant
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: music-assistant
+  labels:
+    app: music-assistant
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: music-assistant
+  template:
+    metadata:
+      labels:
+        app: music-assistant
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: music-assistant
+          image: ghcr.io/music-assistant/server:2.6.0
+          ports:
+            - containerPort: 8095
+              name: http
+          env:
+            - name: TZ
+              value: "Europe/Stockholm"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+          securityContext:
+            allowPrivilegeEscalation: false
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: music-assistant-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: music-assistant
+  labels:
+    app: music-assistant
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8095
+      targetPort: 8095
+      protocol: TCP
+      name: http
+  selector:
+    app: music-assistant
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: music-assistant-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: music-assistant
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: home-assistant
+      ports:
+        - protocol: TCP
+          port: 8095

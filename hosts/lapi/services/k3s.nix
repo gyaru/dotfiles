@@ -3,6 +3,13 @@
   config,
   ...
 }: {
+  age.secrets.flux-sops-age-key = {
+    file = ../../../secrets/flux-sops-age-key.age;
+    mode = "0400";
+    owner = "root";
+    group = "root";
+  };
+
   networking.firewall = {
     trustedInterfaces = [
       "cni0"
@@ -34,13 +41,17 @@
 
   environment = {
     systemPackages = with pkgs; [
+      age
+      fluxcd
       k3s
       kubectl
       runc
+      sops
     ];
   };
+
   # sonoff dongle
   services.udev.extraRules = ''
-    SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="zigbee", MODE="0666", GROUP="dialout"
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="zigbee", MODE="0660", GROUP="dialout"
   '';
 }
