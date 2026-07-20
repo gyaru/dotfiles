@@ -2,4 +2,4 @@ result
 result-*
 .pre-commit-config.yaml
 .direnv/
-kubernetes/**/kubeconfig.yaml
+k3s/**/kubeconfig.yaml

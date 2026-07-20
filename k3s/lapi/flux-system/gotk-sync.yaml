@@ -20,7 +20,7 @@ spec:
     secretRef:
       name: sops-age
   interval: 10m
-  path: ./kubernetes/clusters/lapi
+  path: ./k3s/lapi
   prune: true
   sourceRef:
     kind: GitRepository
