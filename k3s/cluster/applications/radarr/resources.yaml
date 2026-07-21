@@ -93,9 +93,6 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app: caddy
-        - podSelector:
-            matchLabels:
               app: seerr
         - namespaceSelector:
             matchLabels:

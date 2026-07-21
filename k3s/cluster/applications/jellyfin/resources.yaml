@@ -132,9 +132,6 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app: caddy
-        - podSelector:
-            matchLabels:
               app: home-assistant
         - namespaceSelector:
             matchLabels:
