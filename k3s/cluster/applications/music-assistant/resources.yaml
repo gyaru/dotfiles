@@ -88,6 +88,27 @@ spec:
         - podSelector:
             matchLabels:
               app: home-assistant
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: tailscale
       ports:
         - protocol: TCP
           port: 8095
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: music-assistant
+  annotations:
+    tailscale.com/hostname: "music-assistant"
+    tailscale.com/tags: "tag:k8s"
+spec:
+  ingressClassName: tailscale
+  defaultBackend:
+    service:
+      name: music-assistant
+      port:
+        number: 8095
+  tls:
+    - hosts:
+        - music-assistant

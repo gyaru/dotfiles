@@ -104,6 +104,27 @@ spec:
         - podSelector:
             matchLabels:
               app: home-assistant
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: tailscale
       ports:
         - protocol: TCP
           port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zigbee2mqtt
+  annotations:
+    tailscale.com/hostname: "zigbee2mqtt"
+    tailscale.com/tags: "tag:k8s"
+spec:
+  ingressClassName: tailscale
+  defaultBackend:
+    service:
+      name: zigbee2mqtt
+      port:
+        number: 8080
+  tls:
+    - hosts:
+        - zigbee2mqtt
