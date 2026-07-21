@@ -3,6 +3,10 @@ kind: ProxyClass
 metadata:
   name: default
 spec:
+  metrics:
+    enable: true
+    serviceMonitor:
+      enable: false
   statefulSet:
     pod:
       tailscaleContainer:
