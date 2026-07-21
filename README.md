@@ -2,13 +2,13 @@
   <img src="https://github.com/gyaru/gyaru/raw/main/lis.png" width="150px" alt="hi">
 </div>
 
-# lis' nix config
+# lis' dotfiles
 
 Personal NixOS configurations built with flake-parts and the dendritic pattern.
 
 ## Hosts
 
-- **lapi**: home server running K3s, ZFS and Samba.
+- **lapi**: home server configuration.
 - **radiata**: AMD/Hyprland desktop and hjem configuration.
 
 ## Usage
@@ -68,11 +68,10 @@ The host defaults to the current machine's hostname.
 
 ```text
 .
-├── cluster/                 # Kubernetes resources, deployed manually
 ├── hosts/
 │   ├── hosts.mod.nix        # Discovers host configuration.nix files
 │   ├── lapi/
-│   │   ├── services/        # K3s and Samba
+│   │   ├── services/        # Host services
 │   │   ├── configuration.nix
 │   │   ├── gaming.nix
 │   │   ├── vm.nix
@@ -80,6 +79,8 @@ The host defaults to the current machine's hostname.
 │   └── radiata/
 │       ├── users/           # Host-specific hjem users
 │       └── configuration.nix
+├── k3s/
+│   └── cluster/             # Kubernetes resources
 ├── lib/                     # Shared constructors and entity data
 ├── modules/
 │   ├── hjem/                # Reusable hjem modules
