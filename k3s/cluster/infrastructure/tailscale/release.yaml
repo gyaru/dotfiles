@@ -29,6 +29,17 @@ spec:
   upgrade:
     remediation:
       retries: 3
+  values:
+    operatorConfig:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
+    proxyConfig:
+      defaultProxyClass: default
   valuesFrom:
     - kind: Secret
       name: tailscale-operator-values

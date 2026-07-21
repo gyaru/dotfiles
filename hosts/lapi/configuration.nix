@@ -229,11 +229,31 @@
 
   powerManagement.enable = true;
 
-  systemd.targets = {
-    sleep.enable = false;
-    suspend.enable = false;
-    hibernate.enable = false;
-    hybrid-sleep.enable = false;
+  systemd = {
+    oomd.enableUserSlices = true;
+
+    targets = {
+      sleep.enable = false;
+      suspend.enable = false;
+      hibernate.enable = false;
+      hybrid-sleep.enable = false;
+    };
+
+    services.disable-bad-usb4-port5 = {
+      description = "Disable noisy usb4-port5";
+      wantedBy = ["multi-user.target"];
+      after = ["systemd-udev-settle.service"];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script = ''
+        PORT="/sys/devices/pci0000:00/0000:00:02.1/0000:03:00.0/0000:04:08.0/0000:07:00.0/0000:08:0c.0/0000:0d:00.0/usb4/4-0:1.0/usb4-port5/disable"
+        if [ -e "$PORT" ]; then
+          echo 1 > "$PORT"
+        fi
+      '';
+    };
   };
 
   environment.systemPackages = with pkgs; [
@@ -249,22 +269,6 @@
     atool
     unrar
   ];
-
-  systemd.services.disable-bad-usb4-port5 = {
-    description = "Disable noisy usb4-port5";
-    wantedBy = ["multi-user.target"];
-    after = ["systemd-udev-settle.service"];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
-      PORT="/sys/devices/pci0000:00/0000:00:02.1/0000:03:00.0/0000:04:08.0/0000:07:00.0/0000:08:0c.0/0000:0d:00.0/usb4/4-0:1.0/usb4-port5/disable"
-      if [ -e "$PORT" ]; then
-        echo 1 > "$PORT"
-      fi
-    '';
-  };
 
   system.stateVersion = "25.11";
 }
