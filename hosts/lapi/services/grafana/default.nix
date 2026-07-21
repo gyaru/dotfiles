@@ -6,6 +6,17 @@
 }: let
   kubeTokenFile = "/var/lib/prometheus/k3s-token";
   kubeCAFile = "/var/lib/prometheus/k3s-ca.crt";
+  processExporterConfig =
+    pkgs.writeText "process-exporter.yaml"
+    /*
+    yaml
+    */
+    ''
+      process_names:
+        - name: "{{.ExeBase}}"
+          cmdline:
+            - ".+"
+    '';
 in {
   networking.firewall.extraCommands = ''
     iptables -A nixos-fw -p tcp --dport 3000 -s 192.168.1.0/24 -j nixos-fw-accept
@@ -105,6 +116,12 @@ in {
           };
         }
         {
+          job_name = "processes";
+          static_configs = lib.lists.singleton {
+            targets = ["127.0.0.1:9256"];
+          };
+        }
+        {
           job_name = "k3s";
           scheme = "https";
           bearer_token_file = kubeTokenFile;
@@ -144,6 +161,21 @@ in {
   };
 
   systemd.services = {
+    prometheus-process-exporter = {
+      description = "Prometheus process exporter";
+      wantedBy = ["multi-user.target"];
+      before = ["prometheus.service"];
+      serviceConfig = {
+        ExecStart = "${pkgs.prometheus-process-exporter}/bin/process-exporter --config.path ${processExporterConfig} --web.listen-address=127.0.0.1:9256 --threads=false";
+        Restart = "on-failure";
+        DynamicUser = true;
+        ProtectSystem = "strict";
+        ProtectHome = true;
+        PrivateTmp = true;
+        NoNewPrivileges = true;
+      };
+    };
+
     k3s-prometheus-credentials = {
       description = "Sync k3s credentials for Prometheus";
       wantedBy = ["multi-user.target"];
