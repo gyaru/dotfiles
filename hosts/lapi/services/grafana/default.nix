@@ -6,6 +6,7 @@
 }: let
   kubeTokenFile = "/var/lib/prometheus/k3s-token";
   kubeCAFile = "/var/lib/prometheus/k3s-ca.crt";
+  kubeConfigFile = "/var/lib/prometheus/k3s-kubeconfig.yaml";
   processExporterConfig =
     pkgs.writeText "process-exporter.yaml"
     /*
@@ -156,6 +157,38 @@ in {
             targets = ["10.43.0.240:8080"];
           };
         }
+        {
+          job_name = "tailscale-proxies";
+          kubernetes_sd_configs = lib.lists.singleton {
+            role = "endpoints";
+            kubeconfig_file = kubeConfigFile;
+            namespaces.names = ["tailscale"];
+          };
+          relabel_configs = [
+            {
+              source_labels = ["__meta_kubernetes_service_label_tailscale_com_metrics_target"];
+              regex = ".+";
+              action = "keep";
+            }
+            {
+              source_labels = ["__meta_kubernetes_endpoint_port_name"];
+              regex = "metrics";
+              action = "keep";
+            }
+            {
+              source_labels = ["__meta_kubernetes_service_label_ts_proxy_parent_name"];
+              target_label = "proxy";
+            }
+            {
+              source_labels = ["__meta_kubernetes_service_label_ts_proxy_parent_namespace"];
+              target_label = "proxy_namespace";
+            }
+            {
+              source_labels = ["__meta_kubernetes_service_label_ts_proxy_type"];
+              target_label = "proxy_type";
+            }
+          ];
+        }
       ];
     };
   };
@@ -208,6 +241,27 @@ in {
             > ${kubeCAFile}
           chmod 0400 ${kubeCAFile}
           chown prometheus:prometheus ${kubeCAFile}
+          token="$(${pkgs.coreutils}/bin/cat ${kubeTokenFile})"
+          ${pkgs.coreutils}/bin/install --mode=0400 --owner=prometheus --group=prometheus /dev/null ${kubeConfigFile}
+          ${pkgs.coreutils}/bin/cat > ${kubeConfigFile} <<EOF
+          apiVersion: v1
+          kind: Config
+          clusters:
+            - name: k3s
+              cluster:
+                certificate-authority: ${kubeCAFile}
+                server: https://127.0.0.1:6443
+          users:
+            - name: prometheus
+              user:
+                token: $token
+          contexts:
+            - name: prometheus@k3s
+              context:
+                cluster: k3s
+                user: prometheus
+          current-context: prometheus@k3s
+          EOF
         '';
     };
 
@@ -238,6 +292,7 @@ in {
       requires = ["k3s-prometheus-credentials.service"];
       serviceConfig.ReadOnlyPaths = [
         kubeCAFile
+        kubeConfigFile
         kubeTokenFile
       ];
     };
