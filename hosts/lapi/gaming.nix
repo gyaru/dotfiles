@@ -51,6 +51,7 @@ in {
       firefox
       battleNet
       battleNetDesktop
+      steamcmd
     ];
   };
 

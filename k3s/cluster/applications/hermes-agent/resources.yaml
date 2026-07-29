@@ -56,7 +56,7 @@ spec:
               mountPath: /opt/data
           resources:
             requests:
-              memory: "768Mi"
+              memory: "1Gi"
               cpu: "100m"
             limits:
               memory: "2Gi"

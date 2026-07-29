@@ -263,12 +263,14 @@
     ntfs3g
     kubernetes-helm
     smartmontools
-    comma
     ripgrep
     jq
     atool
     unrar
+    tmux
   ];
+
+  programs.nix-index-database.comma.enable = true;
 
   system.stateVersion = "25.11";
 }
