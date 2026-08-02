@@ -7,31 +7,7 @@
   inherit (lib.lists) singleton;
   inherit (lib.meta) getExe;
 
-  kodiWayland =
-    (pkgs.kodi-wayland.overrideAttrs (old: {
-      patches = (old.patches or []) ++ [./kodi-giflib-6.patch];
-    })).withPackages
-    (_: []);
-
-  kodiClient = pkgs.writeShellApplication {
-    name = "kodi-client";
-    text =
-      /*
-      bash
-      */
-      ''
-        (
-          while sleep 2; do
-            if ! ${getExe pkgs.wlr-randr} 2>/dev/null | grep -A1 '^HDMI-A-1 ' | grep -q '3840x2160 px, 60.000000 Hz (current)'; then
-              ${getExe pkgs.wlr-randr} --output HDMI-A-1 --mode 3840x2160@60Hz 2>/dev/null || true
-            fi
-          done
-        ) &
-
-        ${getExe pkgs.wlr-randr} --output HDMI-A-1 --mode 3840x2160@60Hz || true
-        exec ${getExe kodiWayland} --standalone --windowing=x11
-      '';
-  };
+  kodiGbm = pkgs.kodi-gbm.withPackages (_: []);
 
   kodiConfigure = pkgs.writeShellApplication {
     name = "kodi-configure";
@@ -49,7 +25,7 @@
         password="$(< "$1")"
 
         install --directory "$(dirname "$settings")"
-        if [[ ! -e "$settings" ]]; then
+        if [[ ! -s "$settings" ]]; then
           printf '<settings version="2"></settings>\n' > "$settings"
         fi
 
@@ -77,7 +53,7 @@
         set_setting services.esenabled true
         set_setting services.esallinterfaces true
 
-        if [[ ! -e "$advancedSettings" ]]; then
+        if [[ ! -s "$advancedSettings" ]]; then
           printf '<advancedsettings version="1.0"></advancedsettings>\n' > "$advancedSettings"
         fi
 
@@ -100,14 +76,11 @@
       bash
       */
       ''
-        export WLR_BACKENDS=drm
-        export WLR_DRM_DEVICES=/dev/dri/amd-tv-card
-        export WLR_LIBINPUT_NO_DEVICES=1
         export LIBSEAT_BACKEND=seatd
-        export DRI_PRIME=pci-0000_11_00_0
+        export DRI_PRIME=pci-0000_11_00_0!
         export LIBVA_DRIVER_NAME=radeonsi
 
-        exec ${getExe pkgs.cage} -- ${getExe kodiClient}
+        exec ${getExe kodiGbm} --standalone --windowing=gbm
       '';
   };
 in {
@@ -139,7 +112,10 @@ in {
     seatd.enable = true;
 
     udev.extraRules = ''
-      SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:11:00.0", DRIVERS=="amdgpu", SYMLINK+="dri/amd-tv-card"
+      SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:11:00.0", DRIVERS=="amdgpu", ENV{ID_SEAT}="seat-tv", TAG+="seat", SYMLINK+="dri/amd-tv-card"
+      SUBSYSTEM=="drm", KERNEL=="card[0-9]-*", KERNELS=="0000:11:00.0", ENV{ID_SEAT}="seat-tv", TAG+="seat"
+      SUBSYSTEM=="graphics", KERNEL=="fb[0-9]*", KERNELS=="0000:11:00.0", ENV{ID_SEAT}="seat-tv", TAG+="seat"
+      SUBSYSTEM=="sound", KERNEL=="card[0-9]*", KERNELS=="0000:11:00.1", ENV{ID_SEAT}="seat-tv", TAG+="seat"
     '';
   };
 
@@ -163,7 +139,15 @@ in {
 
     serviceConfig = {
       ExecStart = getExe kodiTv;
-      ExecStop = "${getExe pkgs.curl} --fail --silent --show-error --max-time 5 --request POST --header Content-Type:application/json --data {\"jsonrpc\":\"2.0\",\"method\":\"Application.Quit\",\"id\":1} http://127.0.0.1:8080/jsonrpc";
+      InaccessiblePaths = [
+        "/dev/dri/card2"
+        "/dev/dri/renderD129"
+        "/dev/nvidia0"
+        "/dev/nvidiactl"
+        "/dev/nvidia-modeset"
+        "/dev/nvidia-uvm"
+        "/dev/nvidia-uvm-tools"
+      ];
       Restart = "on-failure";
       RestartSec = "2s";
       RuntimeDirectory = "kodi-tv";
