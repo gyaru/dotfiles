@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: bunny-plus
-          image: ghcr.io/gyaru/bunny.plus:latest
+          image: ghcr.io/bunny-plus/core:latest
           imagePullPolicy: Always
           ports:
             - name: http
