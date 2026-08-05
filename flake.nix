@@ -26,6 +26,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "";
     };
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
     flake-parts.url = "github:hercules-ci/flake-parts";
     git-hooks.url = "github:cachix/git-hooks.nix";
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";

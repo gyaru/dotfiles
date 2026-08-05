@@ -1,0 +1,36 @@
+apiVersion: v1
+data:
+    ADMIN_DISCORD_IDS: ENC[AES256_GCM,data:CBg6Sfs4Mtn2cBzQl6pX+BqXz85y3eJL,iv:iRcS356hx2Xde81rnJ8aP+uYor6Cs9/EIkoblH20CMM=,tag:WENzhC9u2MUxAlxwBjfXVA==,type:str]
+    API_URL: ENC[AES256_GCM,data:8tMnW1bhj4DobL7RTT8mE38ey+5Hv9uFc3mRY4iOjw0=,iv:Bw1njbCpiXMM7ukQtoovpGEtN/km4M0huPg8Cujheck=,tag:eYGgA879ec5zNZHiEP05uA==,type:str]
+    APP_URL: ENC[AES256_GCM,data:8m9wsN23wHUPDTL3f55lodOcMDT+Fyt9,iv:kYqBX44HTiAG5r8qBbtLSRRP1uGyaGnOa+5yJWxRI34=,tag:kfrs2wvXf50UaJRL4URRig==,type:str]
+    APP_VERSION: ENC[AES256_GCM,data:bNGcLSYN+YkdFHtNM+Hbxw==,iv:6CGzUarQchaVilkx1e6FbSuJoTATUKry3Apj1peO+J8=,tag:DNGxIBreaqwbLjCAbGVPrg==,type:str]
+    DISCORD_CLIENT_ID: ENC[AES256_GCM,data:blkPh+WYGlfCOnj4cl7ofqvC2jBk8A80VI25lw==,iv:t+BUCNUrYbjYd5lZtz+qkmnl7YeIMAnSg7MIMwDbUoU=,tag:B4/pwLu/FM+H38Bzwuvm3g==,type:str]
+    DISCORD_CLIENT_SECRET: ENC[AES256_GCM,data:em6X69Yf+XfGx+JkRGbzmncoVpMpPETGHK67ck2sDVT226jd59x8UOJk1+E=,iv:Yf5Ut2BSzCUxOeZNTC8Djq+VqrxFwetHVib6TX35nJo=,tag:dh4MAknWnvm7XLOwqOC04A==,type:str]
+    DISCORD_GUILD_ID: ENC[AES256_GCM,data:8K8GYYgXcR+tVqWojpg5fpABAi9UHBLR,iv:Win+3Mg46PoOWibloIzIctpm3ZP2k8dhKp3NGW6zz8w=,tag:E1X9d/dDFnVCtZcFEEvy0Q==,type:str]
+    DISCORD_ROLE_PERMISSIONS: ENC[AES256_GCM,data:xafXiXdEUFVvJ3rSanZTJOP2kzB2rWIFOZFMdZw80WFu+0lZmP2ha2k/fgtaI9KxsskPC+vKezlJ7xaF264R7xDon7IXgrTNCvuJN6vzEO6aOxCxf9Y8om8OZxifLkz5qnFSrYbeOHntDUN+pL1IswEP6sI=,iv:dptB95aENt65UIjJYz8QObR1G+LONxzRC0GYz46EKaE=,tag:tjL2UmG6Ppm0hE3T+NXHxg==,type:str]
+    RELAY_CONTROLLER_SECRET: ENC[AES256_GCM,data:KjSOYey9+5YuI6N3SEGO52trMUZRi73rNYtTkJ/U4cJJFRMRai/rZAu6H6DaILIUrtuc93ikoYpxQYtM,iv:Bj3fjGJHSXLpQPHmzvpD8GkguAilgcubLUpefA2yp+0=,tag:Y83vjAnfZ6Ve18bNXwu7eg==,type:str]
+    RELAY_CONTROLLER_URL: ENC[AES256_GCM,data:z1bjFZtxldtMeRKbj6sl7CWoEJtKDb7yivxHqCPlL8ujxAbpRVRy6E4quOuHcJMIMOqNBTMYizg=,iv:l7qJZBCAi69zeU6pOOGdrm25ZNKgut7uQ2QeU9ZETDc=,tag:sxYPxLp9P4RJd5FRQmIA4A==,type:str]
+    SESSION_SECRET: ENC[AES256_GCM,data:Jdy/gTDPSlOHhhJdIrDGElik7qmh6s0tSLDQTrxhV26oUEoHgVYnTa0mMtjjDsVkhfsdQCiODWVXlCMG,iv:298cdupxeKGOL+C0Ev3qgXBIn+7rTg68g5O57WgpflI=,tag:eUtky4uuWh4JpRdsUQJ9nQ==,type:str]
+    STREAM_DELAY_SECONDS: ENC[AES256_GCM,data:guPUyg==,iv:kAHEs7PD0o3E1dAjnTDM+coktKSux6cZzkuNufr5Yjk=,tag:LJEANok53/4fqzz8vsVvIQ==,type:str]
+    STREAM_URL: ENC[AES256_GCM,data:cJQNku7UqANXV6caIfOujYoJVBfIMd4Qo7hpmduQ/mJJfErOZ4onUk0Vg1T99CHGorKG7ot8kn1sMfYN,iv:BcmFU+lToFPfe6jENveuCEsjQC+X+gNE75pUW+Zlgzw=,tag:ElFnzMerOZTcT13XOsZjkA==,type:str]
+    STREMIO_ADDON_URL: ENC[AES256_GCM,data:J/BGaW9OKwQN1AZa/o0XWU/vK5+b1Hpr/dg1fECWB25HhM3a,iv:61kzu9kgDGeEb1fAGcJReSlA/J700UpD0Pqf+ldYhnQ=,tag:ZVWOAddI58xY8J3h0Cd+JQ==,type:str]
+    TMDB_API_TOKEN: ENC[AES256_GCM,data:xUr3IwlN390NFPNBzVok0Bvg4SSfndNYiPC+rmqO0SmSbEOnFN5s9CzbiDR38zOFBnYJCYQ8VDEc5Xdz7FX4AA24gfghYmlqJ+U6XGEY72VQB0HMHO7b1x7IkHFHkiSyXh90e6EkaGxu4eGNHBwWMMdjSvpiqegugYgMN3GP0/kG+F/td/tYTnCp3WSamqm6k1hBex/7Cl9YSKdyXTSWnATCpDsKksork4W0BQVIn7r5Nv9QGl7qjRixyQiD0hJJ/Awh24DWIa2ELhC0lNl6spNcgRVhJb+dEoLkJBiUceQu08dGskMH1dTSV/lXIatn9IjAdYSYZgzG3kBHZ8aSIE0KhSPhnoQCuj7rY+iXXwo2KCoEc0v9NuSVLmDd0Xt8K5dO+npsZFuiyEm4FQ6u+/3LCFdFa4xl2sAfHKBEMQ6TvtMQKmBe1A==,iv:c+eO1bE7wKEU0y8icbR7WB2UyjWNpUzHDb4ZFw1LDU4=,tag:GW8ZH8BpPl5ejAksjrplwA==,type:str]
+    TORBOX_API_KEY: ENC[AES256_GCM,data:ZBrUoQHD69wwHxb6K3f9UDOoTeIAPaZv7apEbnQedWg43UvG+NGEb/gCeOaVQOEh,iv:58HDrPJ74ijb1Q6vxdYDnBrXUIGWNR/jyUnlWkxbL6I=,tag:rYdSK6x2Yoe8783tNsxLbg==,type:str]
+kind: Secret
+metadata:
+    name: bunny-plus-env
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBKbnAwTldMbmVDUmlpVldy
+            emFidnM4SUNqUTBkMnJzRnk2L3pweUV5TTMwClE1OUpmYkhTVERocjZjVzRxTGZz
+            Y1lNOFg3QlhEYWNrY2hlWXR2ZFRVNUEKLS0tIGkrK2FPMUJJdUFRNkYzdmJaUTRF
+            cFoxTjEwV3dEMmFTUHROK1NnZFFtc3MKKimtWQDU62NLO3rjkmp8dSwCxgZAb7nh
+            g+TNCu3jtpAemPOX2viV2UXm6W40lUzajSXi3qdM9RFeI5jmINIujA==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1tspqtc45fa0yjy0dckqfnuwr99t9kxfwfd34cm4tfr8nx8jm9pcqg8n2lr
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-08-05T23:17:30Z"
+    mac: ENC[AES256_GCM,data:pI4lVMjTOllRFgJRE4K4cepYGVPlGwnmni95ZTb7xfj6Tr582GxVC1lmnQmXo29X/zWdbLX99rhEW4/ROlaOQYEkK+j2Mm5bJwzPEjwzlCd/nPxNBKgIYn8le1AajSeq6S2q9twBSKGzimC0eJmGxD7WCysk6aXFF7EX03xHmYU=,iv:hHWhg/jTiJp/zwmsIfQLK0PTtBda0v3ce018wTSA//8=,tag:ZMBu4FRB9qaVtw3L8Q+CCA==,type:str]
+    version: 3.13.3

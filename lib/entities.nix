@@ -13,5 +13,9 @@ in {
     mikan.sshKeys = keys.mikanKeys;
   };
 
-  machines.lapi.sshKeys = keys.systemKeys;
+  machines = {
+    gon.sshKeys = keys.gonSystemKeys;
+    hana.sshKeys = keys.hanaSystemKeys;
+    lapi.sshKeys = keys.systemKeys;
+  };
 }

@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bunny-plus
+  labels:
+    app: bunny-plus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bunny-plus
+  template:
+    metadata:
+      labels:
+        app: bunny-plus
+    spec:
+      containers:
+        - name: bunny-plus
+          image: ghcr.io/gyaru/bunny.plus:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8787
+          envFrom:
+            - secretRef:
+                name: bunny-plus-env
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bunny-plus
+  labels:
+    app: bunny-plus
+spec:
+  type: NodePort
+  selector:
+    app: bunny-plus
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8787
+      targetPort: http
+      nodePort: 30080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: bunny-plus
+spec:
+  podSelector:
+    matchLabels:
+      app: bunny-plus
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 192.168.1.240/32
+      ports:
+        - protocol: TCP
+          port: 8787
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - ports:
+        - protocol: TCP
+          port: 443
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.240/32
+      ports:
+        - protocol: TCP
+          port: 10000

@@ -11,6 +11,7 @@
     inputs.nix-index-database.nixosModules.default
     flake.nixosModules.zfs
     ./services/k3s.nix
+    ./services/bunny-plus.nix
     ./services/grafana/default.nix
     ./zfs.nix
     ./services/samba.nix

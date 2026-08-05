@@ -7,6 +7,14 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEirSRPdO8PvjiizAjnkPnpyl8GBRTIDKLB/mGzFy0ul"
   ];
 
+  hanaSystemKeys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMTCHaDLYZLPUCZSnbrTFDnZBlOXPGbxTR+/XF247BbJ"
+  ];
+
+  gonSystemKeys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGMnU4ocL7+USKWvtbbq00fyUioxG7W34B4UFk5ATFF2"
+  ];
+
   # users
   lisKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINlEu6q7Sv+IurL7yy61G+EJe3WpCq9LXcAU5Idz8QrE"
