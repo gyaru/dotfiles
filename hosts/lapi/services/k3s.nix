@@ -40,6 +40,11 @@
     ];
   };
 
+  systemd.services.k3s.serviceConfig = {
+    ManagedOOMPreference = "avoid";
+    OOMScoreAdjust = -900;
+  };
+
   environment = {
     systemPackages = with pkgs; [
       age

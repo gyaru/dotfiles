@@ -28,5 +28,7 @@ spec:
       name: "*"
     - kind: Kustomization
       name: "*"
+  exclusionList:
+    - ".*context deadline exceeded.*"
   providerRef:
     name: discord

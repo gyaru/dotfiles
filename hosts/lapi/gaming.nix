@@ -37,6 +37,47 @@
   };
 in {
   environment = {
+    etc = {
+      "xdg/autostart/at-spi-dbus-bus.desktop".text = ''
+        [Desktop Entry]
+        Hidden=true
+      '';
+      "xdg/autostart/org.kde.discover.notifier.desktop".text = ''
+        [Desktop Entry]
+        Hidden=true
+      '';
+      "xdg/autostart/org.kde.kaccess.desktop".text = ''
+        [Desktop Entry]
+        Hidden=true
+      '';
+      "xdg/autostart/org.kde.kactivitymanagerd.desktop".text = ''
+        [Desktop Entry]
+        Hidden=true
+      '';
+      "xdg/autostart/org.kde.kwalletd5.desktop".text = ''
+        [Desktop Entry]
+        Hidden=true
+      '';
+      "xdg/autostart/org.kde.kwalletd6.desktop".text = ''
+        [Desktop Entry]
+        Hidden=true
+      '';
+      "xdg/autostart/org.kde.plasma.geoclue2.desktop".text = ''
+        [Desktop Entry]
+        Hidden=true
+      '';
+
+      "xdg/baloofilerc".text = ''
+        [Basic Settings]
+        Indexing-Enabled=false
+      '';
+
+      "xdg/kwalletrc".text = ''
+        [Wallet]
+        Enabled=false
+      '';
+    };
+
     sessionVariables.KWIN_DRM_DEVICES = "/dev/dri/nvidia-card";
 
     systemPackages = with pkgs; [
@@ -86,6 +127,9 @@ in {
     enable = true;
     remotePlay.openFirewall = true;
   };
+
+  systemd.user.services.speech-dispatcher.enable = false;
+  systemd.user.sockets.speech-dispatcher.enable = false;
 
   security.rtkit.enable = true;
 }

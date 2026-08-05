@@ -76,6 +76,7 @@
       bash
       */
       ''
+        export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json
         export LIBSEAT_BACKEND=seatd
         export DRI_PRIME=pci-0000_11_00_0!
         export LIBVA_DRIVER_NAME=radeonsi
@@ -112,10 +113,7 @@ in {
     seatd.enable = true;
 
     udev.extraRules = ''
-      SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:11:00.0", DRIVERS=="amdgpu", ENV{ID_SEAT}="seat-tv", TAG+="seat", SYMLINK+="dri/amd-tv-card"
-      SUBSYSTEM=="drm", KERNEL=="card[0-9]-*", KERNELS=="0000:11:00.0", ENV{ID_SEAT}="seat-tv", TAG+="seat"
-      SUBSYSTEM=="graphics", KERNEL=="fb[0-9]*", KERNELS=="0000:11:00.0", ENV{ID_SEAT}="seat-tv", TAG+="seat"
-      SUBSYSTEM=="sound", KERNEL=="card[0-9]*", KERNELS=="0000:11:00.1", ENV{ID_SEAT}="seat-tv", TAG+="seat"
+      SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:11:00.0", DRIVERS=="amdgpu", SYMLINK+="dri/amd-tv-card"
     '';
   };
 
