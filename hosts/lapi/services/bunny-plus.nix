@@ -19,7 +19,7 @@
       BUNNY_CONTROLLER_PORT = "10000";
       BUNNY_OUTPUT_PASSWORD_CREDENTIAL = "1";
       BUNNY_OUTPUT_URL = "rtmp://gon:1935/bunny-plus?user=publisher";
-      BUNNY_VIDEO_ENCODER = "h264_nvenc";
+      BUNNY_VIDEO_ENCODER = "libx264";
     };
 
     serviceConfig = {
