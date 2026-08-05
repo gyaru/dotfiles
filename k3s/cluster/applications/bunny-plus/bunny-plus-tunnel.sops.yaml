@@ -1,0 +1,21 @@
+apiVersion: v1
+data:
+    token: ENC[AES256_GCM,data:TI51AFrLA5fPDTFnEz3fa1ZKbhiKaz4CgaYDO3LZEl+fPwSzRk4rwm3T0Qo09uoTYPCuIJbHzsoSLkp8+OnTuIalmdBF9SrbexPlw/umz/RI98yWfbBLSi0IEnkfMrD8WMgY2AFT4bZLbAVlWlEDB+xBYB74jSL9W70RLwnoMzLbA9kMuRN5C+rnT1pwKJZhPwvUVv3CE6XaENk1DOn81KXkuX5NOcUIRkQj22vgjmZXXAPkrvnHsiFBv5U4k3BeLxV8DiKwtOYE5qUo9uSlqesHEbB9nxFULszIQdSq07jxqfyLNSt7XoL+pq2sZ5+bw1X+CJltseU=,iv:bNplfOAF4sDypS4fViFG4ilL1h1Q/bA0earKn2pKcMw=,tag:8B7P3H+9FcyRsKobcHzvpw==,type:str]
+kind: Secret
+metadata:
+    name: bunny-plus-tunnel
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSByN1NRcW1IdDJnQ05FSVov
+            VDM3RFd0K0l0Zzh2ZFhqdStPNmIwV21VZG5ZCkN6cGtoTGtCWllkaDJhSkJQQlkw
+            SmZqMUJNMVZUSEwwVkdGZFVTTkFuWGMKLS0tIHhsWlZvVGJMdlVIR3ptaGZmdWJY
+            RHNtYVEyaW16elR6WTZpOXVoeitwVlUKJ/ZIrkQhfRV7YMZYxFcgwo6BKevnkpeB
+            NyLvaZWEYi8m9PrIP3CrTyMb3eA74p3am3SXrIRzA4wKBujKGKMCIA==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1tspqtc45fa0yjy0dckqfnuwr99t9kxfwfd34cm4tfr8nx8jm9pcqg8n2lr
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-08-05T23:37:30Z"
+    mac: ENC[AES256_GCM,data:+UxiF9Brw4TIKhkUCV6F2I7TIPTQ+tLuKGnG22YXCo48kFM8N7rW7B/xbM5/ptv9sMZfO+tHW1lEqbr9hDk671qpm/okAiQ+nenmb46KWnbDRiPJyI23q+9mHQMG7U6rpSpRNUV4HB/FOczX6QAjlRW0tiVrb/ClIH9wR9qGdRw=,iv:KFgsbwTcvUVpo19GbwNb6HqvVFTMlTfuBWSYaQ3+wGY=,tag:Qt3sWdtFYNDIWTRPrt7irQ==,type:str]
+    version: 3.13.3

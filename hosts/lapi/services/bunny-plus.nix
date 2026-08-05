@@ -4,13 +4,6 @@
   pkgs,
   ...
 }: {
-  services.caddy = {
-    enable = true;
-    virtualHosts."api.bunny.plus".extraConfig = ''
-      reverse_proxy 192.168.1.240:30080
-    '';
-  };
-
   systemd.services.bunny-stream-controller = {
     description = "Bunny+ host stream controller";
     wantedBy = ["multi-user.target"];

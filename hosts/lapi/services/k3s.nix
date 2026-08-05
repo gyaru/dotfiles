@@ -15,14 +15,12 @@
       "cni0"
       "flannel.1"
     ];
-    allowedTCPPorts = [
-      80
-      443
-      51413 # torrent
-    ];
+    allowedTCPPorts = [51413]; # torrent
     allowedUDPPorts = [51413]; # torrent
     extraCommands = ''
       iptables -A nixos-fw -p tcp --dport 8211 -s 192.168.1.0/24 -j nixos-fw-accept
+      iptables -A nixos-fw -p tcp --dport 80 -s 192.168.1.0/24 -j nixos-fw-accept
+      iptables -A nixos-fw -p tcp --dport 443 -s 192.168.1.0/24 -j nixos-fw-accept
       iptables -A nixos-fw -p tcp --dport 6443 -s 192.168.1.0/24 -j nixos-fw-accept
       iptables -A nixos-fw -p tcp --dport 8096 -s 192.168.1.0/24 -j nixos-fw-accept
       iptables -A nixos-fw -p tcp --dport 8080 -s 192.168.1.0/24 -j nixos-fw-accept

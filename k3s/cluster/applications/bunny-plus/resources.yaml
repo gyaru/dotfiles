@@ -65,7 +65,7 @@ metadata:
   labels:
     app: bunny-plus
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: bunny-plus
   ports:
@@ -73,7 +73,69 @@ spec:
       protocol: TCP
       port: 8787
       targetPort: http
-      nodePort: 30080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bunny-plus-tunnel
+  labels:
+    app: bunny-plus-tunnel
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bunny-plus-tunnel
+  template:
+    metadata:
+      labels:
+        app: bunny-plus-tunnel
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:2026.7.3
+          args:
+            - tunnel
+            - --no-autoupdate
+            - --loglevel
+            - info
+            - --metrics
+            - 0.0.0.0:2000
+            - run
+          env:
+            - name: TUNNEL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus-tunnel
+                  key: token
+          ports:
+            - name: metrics
+              containerPort: 2000
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: metrics
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+      securityContext:
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -88,8 +150,9 @@ spec:
     - Egress
   ingress:
     - from:
-        - ipBlock:
-            cidr: 192.168.1.240/32
+        - podSelector:
+            matchLabels:
+              app: bunny-plus-tunnel
       ports:
         - protocol: TCP
           port: 8787
@@ -112,3 +175,36 @@ spec:
       ports:
         - protocol: TCP
           port: 10000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: bunny-plus-tunnel
+spec:
+  podSelector:
+    matchLabels:
+      app: bunny-plus-tunnel
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - ports:
+        - protocol: UDP
+          port: 7844
+        - protocol: TCP
+          port: 7844
+    - to:
+        - podSelector:
+            matchLabels:
+              app: bunny-plus
+      ports:
+        - protocol: TCP
+          port: 8787
