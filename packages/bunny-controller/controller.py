@@ -8,6 +8,8 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import quote, urlparse
 
+from restream import StreamlinkInput
+
 
 def read_credential(name):
     with open(
@@ -22,6 +24,7 @@ if CONTROL_SECRET.startswith("BUNNY_CONTROL_SECRET="):
     CONTROL_SECRET = CONTROL_SECRET.split("=", 1)[1]
 FFMPEG = os.environ["BUNNY_FFMPEG"]
 FFPROBE = os.environ["BUNNY_FFPROBE"]
+STREAMLINK = os.environ["BUNNY_STREAMLINK"]
 LISTEN_HOST = os.environ.get("BUNNY_CONTROLLER_HOST", "127.0.0.1")
 LISTEN_PORT = int(os.environ.get("BUNNY_CONTROLLER_PORT", "10000"))
 OUTPUT_URL = os.environ.get(
@@ -37,6 +40,8 @@ RESOLUTION_HEIGHTS = [144, 240, 360, 480, 720, 1080, 1440, 2160]
 
 lock = threading.Lock()
 relay = None
+relay_input = None
+relay_kind = None
 relay_title = None
 
 
@@ -119,7 +124,7 @@ def probe_source(source):
 
 
 def stop_relay():
-    global relay, relay_title
+    global relay, relay_input, relay_kind, relay_title
     if relay is not None and relay.poll() is None:
         relay.terminate()
         try:
@@ -127,13 +132,15 @@ def stop_relay():
         except subprocess.TimeoutExpired:
             relay.kill()
             relay.wait(timeout=2)
+    if relay_input is not None:
+        relay_input.stop()
     relay = None
+    relay_input = None
+    relay_kind = None
     relay_title = None
 
 
-def start_relay(source, title, audio_index, subtitle_index, resolution_index):
-    global relay, relay_title
-    source = validate_source(source)
+def relay_command(source, audio_index, subtitle_index, resolution_index, network_source):
     audio_index = optional_index(audio_index, "audioIndex")
     subtitle_index = optional_index(subtitle_index, "subtitleIndex")
     resolution_index = optional_index(resolution_index, "resolutionIndex")
@@ -142,7 +149,6 @@ def start_relay(source, title, audio_index, subtitle_index, resolution_index):
     if resolution_index is not None and resolution_index >= len(RESOLUTION_HEIGHTS):
         raise ValueError("resolutionIndex is out of range")
 
-    stop_relay()
     command = [
         FFMPEG,
         "-hide_banner",
@@ -150,34 +156,43 @@ def start_relay(source, title, audio_index, subtitle_index, resolution_index):
         "warning",
         "-fflags",
         "+genpts+discardcorrupt",
-        "-reconnect",
-        "1",
-        "-reconnect_streamed",
-        "1",
-        "-reconnect_delay_max",
-        "5",
-        "-reconnect_delay_total_max",
-        "60",
-        "-reconnect_on_network_error",
-        "1",
-        "-reconnect_on_http_error",
-        "4xx,5xx",
-        "-multiple_requests",
-        "1",
-        "-seekable",
-        "1",
-        "-rw_timeout",
-        "45000000",
-        "-re",
-        "-i",
-        source,
-        "-map",
-        "0:v:0",
-        "-map",
-        f"0:{audio_index}" if audio_index is not None else "0:a:0?",
-        "-c:v",
-        VIDEO_ENCODER,
     ]
+    if network_source:
+        command.extend(
+            [
+                "-reconnect",
+                "1",
+                "-reconnect_streamed",
+                "1",
+                "-reconnect_delay_max",
+                "5",
+                "-reconnect_delay_total_max",
+                "60",
+                "-reconnect_on_network_error",
+                "1",
+                "-reconnect_on_http_error",
+                "4xx,5xx",
+                "-multiple_requests",
+                "1",
+                "-seekable",
+                "1",
+                "-rw_timeout",
+                "45000000",
+            ]
+        )
+    command.extend(
+        [
+            "-re",
+            "-i",
+            source,
+            "-map",
+            "0:v:0",
+            "-map",
+            f"0:{audio_index}" if audio_index is not None else "0:a:0?",
+            "-c:v",
+            VIDEO_ENCODER,
+        ]
+    )
     if VIDEO_ENCODER == "h264_nvenc":
         command.extend(["-preset", "p4", "-tune", "hq", "-profile:v", "high"])
     elif VIDEO_ENCODER == "libx264":
@@ -212,9 +227,18 @@ def start_relay(source, title, audio_index, subtitle_index, resolution_index):
             OUTPUT_URL,
         ]
     )
+    return command
+
+
+def start_relay(source, title, audio_index, subtitle_index, resolution_index):
+    global relay, relay_kind, relay_title
+    source = validate_source(source)
+    command = relay_command(source, audio_index, subtitle_index, resolution_index, True)
+    stop_relay()
     last_code = None
     for attempt in range(2):
         relay = subprocess.Popen(command)
+        relay_kind = "direct"
         relay_title = title
         for _ in range(20):
             time.sleep(0.1)
@@ -227,15 +251,42 @@ def start_relay(source, title, audio_index, subtitle_index, resolution_index):
         relay_title = None
         if attempt == 0:
             time.sleep(1)
+    relay_kind = None
     raise RuntimeError(f"FFmpeg exited while starting (code {last_code})")
 
 
+def start_restream(source, title, quality):
+    global relay, relay_input, relay_kind, relay_title
+    stop_relay()
+    stream_input = StreamlinkInput(STREAMLINK, FFMPEG, source, quality)
+    command = relay_command("pipe:0", None, None, None, False)
+    try:
+        relay = subprocess.Popen(command, stdin=stream_input.output)
+        stream_input.close_parent_output()
+        relay_input = stream_input
+        relay_kind = "restream"
+        relay_title = title
+        for _ in range(30):
+            time.sleep(0.1)
+            if relay.poll() is not None or stream_input.poll() is not None:
+                break
+        if relay.poll() is None and stream_input.poll() is None:
+            return
+        detail = stream_input.error_detail()
+        code = relay.returncode if relay.poll() is not None else stream_input.poll()
+        stop_relay()
+        raise RuntimeError(detail or f"Restream exited while starting (code {code})")
+    except Exception:
+        stream_input.stop()
+        raise
+
+
 def relay_status():
-    global relay, relay_title
-    if relay is not None and relay.poll() is not None:
-        relay = None
-        relay_title = None
-    return {"running": relay is not None, "title": relay_title}
+    if relay is not None and (
+        relay.poll() is not None or (relay_input is not None and relay_input.poll() is not None)
+    ):
+        stop_relay()
+    return {"running": relay is not None, "sourceType": relay_kind, "title": relay_title}
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -287,6 +338,14 @@ class Handler(BaseHTTPRequestHandler):
                         body.get("resolutionIndex"),
                     )
                     return self.respond(200, {"detail": "Relay started", **relay_status()})
+                if action == "restream":
+                    title = str(body.get("title", "Restream"))[:200]
+                    start_restream(
+                        body.get("source", ""),
+                        title,
+                        body.get("quality", "best"),
+                    )
+                    return self.respond(200, {"detail": "Restream started", **relay_status()})
                 if action == "stop":
                     stop_relay()
                     return self.respond(200, {"detail": "Relay stopped", **relay_status()})
