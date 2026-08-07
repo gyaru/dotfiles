@@ -34,6 +34,10 @@ spec:
           ports:
             - name: http
               containerPort: 9377
+            - name: novnc
+              containerPort: 6080
+            - name: vnc
+              containerPort: 5900
           env:
             - name: CAMOFOX_BIND_HOST
               value: "0.0.0.0"
@@ -41,6 +45,12 @@ spec:
               value: "false"
             - name: CAMOFOX_PORT
               value: "9377"
+            - name: ENABLE_VNC
+              value: "1"
+            - name: VNC_BIND
+              value: "0.0.0.0"
+            - name: VNC_RESOLUTION
+              value: "1920x1080"
           volumeMounts:
             - name: data
               mountPath: /root/.camofox
@@ -94,6 +104,22 @@ spec:
       port: 9377
       targetPort: http
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: camofox-vnc
+  labels:
+    app: camofox
+spec:
+  type: ClusterIP
+  selector:
+    app: camofox
+  ports:
+    - name: novnc
+      protocol: TCP
+      port: 6080
+      targetPort: novnc
+---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -113,6 +139,10 @@ spec:
       ports:
         - protocol: TCP
           port: 9377
+        - protocol: TCP
+          port: 6080
+        - protocol: TCP
+          port: 5900
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -131,3 +161,21 @@ spec:
   tls:
     - hosts:
         - camofox
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: camofox-vnc
+  annotations:
+    tailscale.com/hostname: "camofox-vnc"
+    tailscale.com/tags: "tag:k8s"
+spec:
+  ingressClassName: tailscale
+  defaultBackend:
+    service:
+      name: camofox-vnc
+      port:
+        number: 6080
+  tls:
+    - hosts:
+        - camofox-vnc
