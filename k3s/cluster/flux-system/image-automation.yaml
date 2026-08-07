@@ -1,0 +1,49 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: bunny-plus
+  namespace: flux-system
+spec:
+  image: ghcr.io/bunny-plus/core
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: bunny-plus
+  namespace: flux-system
+spec:
+  digestReflectionPolicy: Always
+  filterTags:
+    pattern: ^latest$
+  imageRepositoryRef:
+    name: bunny-plus
+  interval: 1m
+  policy:
+    alphabetical:
+      order: asc
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: bunny-plus
+  namespace: flux-system
+spec:
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        email: gyarubot@users.noreply.github.com
+        name: gyarubot
+      messageTemplate: "chore: update bunny-plus image"
+    push:
+      branch: main
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  update:
+    path: ./k3s/cluster/applications/bunny-plus
+    strategy: Setters

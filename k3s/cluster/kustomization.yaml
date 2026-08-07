@@ -3,6 +3,8 @@ kind: Kustomization
 resources:
   - flux-system/gotk-components.yaml
   - flux-system/discord.sops.yaml
+  - flux-system/git-auth.sops.yaml
+  - flux-system/image-automation.yaml
   - flux-system/notifications.yaml
   - flux-system/sops-check.sops.yaml
   - flux-system/gotk-sync.yaml
