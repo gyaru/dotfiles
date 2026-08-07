@@ -27,6 +27,7 @@ spec:
       labels:
         app: camofox
     spec:
+      enableServiceLinks: false
       containers:
         - name: camofox
           image: ghcr.io/jo-inc/camofox-browser:1.13.0@sha256:64b30ffdbbc4ae0e28200a66dfbd6f55ac4188229eb34ef769afcf7be40faa6e
@@ -38,6 +39,8 @@ spec:
               value: "0.0.0.0"
             - name: CAMOFOX_CRASH_REPORT_ENABLED
               value: "false"
+            - name: CAMOFOX_PORT
+              value: "9377"
           volumeMounts:
             - name: data
               mountPath: /root/.camofox
