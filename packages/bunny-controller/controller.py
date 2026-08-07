@@ -183,6 +183,8 @@ def start_relay(source, title, audio_index, subtitle_index, resolution_index):
     elif VIDEO_ENCODER == "libx264":
         command.extend(["-preset", "veryfast", "-profile:v", "high"])
 
+    command.extend(["-bf", "0"])
+
     target_height = RESOLUTION_HEIGHTS[resolution_index] if resolution_index is not None else None
     height = f"min(ih\\,{target_height})" if target_height is not None else "ih"
     command.extend(
