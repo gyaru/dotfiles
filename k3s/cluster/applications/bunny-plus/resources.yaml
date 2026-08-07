@@ -81,7 +81,7 @@ metadata:
   labels:
     app: bunny-plus-tunnel
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: bunny-plus-tunnel
