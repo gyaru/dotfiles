@@ -1,6 +1,13 @@
+import json
 import unittest
+from unittest.mock import patch
 
-from restream import streamlink_command, validate_restream_url
+from restream import (
+    fallback_restream_title,
+    resolve_restream_title,
+    streamlink_command,
+    validate_restream_url,
+)
 
 
 class RestreamTest(unittest.TestCase):
@@ -44,6 +51,21 @@ class RestreamTest(unittest.TestCase):
                     validate_restream_url(source)
         with self.assertRaises(ValueError):
             streamlink_command("streamlink", "ffmpeg", "https://twitch.tv/bunny", "source")
+
+    def test_resolves_channel_name_from_streamlink_metadata(self):
+        with patch("restream.subprocess.run") as run:
+            run.return_value.stdout = json.dumps({"metadata": {"author": "Bunny Channel"}})
+            self.assertEqual(
+                resolve_restream_title(
+                    "streamlink",
+                    "ffmpeg",
+                    "https://youtube.com/watch?v=abc123",
+                    "best",
+                ),
+                "Bunny Channel",
+            )
+        self.assertEqual(fallback_restream_title("https://twitch.tv/bunny"), "bunny")
+        self.assertEqual(fallback_restream_title("https://youtube.com/@bunny/live"), "@bunny")
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import quote, urlparse
 
-from restream import StreamlinkInput
+from restream import resolve_restream_title, StreamlinkInput
 
 
 def read_credential(name):
@@ -258,6 +258,7 @@ def start_relay(source, title, audio_index, subtitle_index, resolution_index):
 def start_restream(source, title, quality):
     global relay, relay_input, relay_kind, relay_title
     stop_relay()
+    title = resolve_restream_title(STREAMLINK, FFMPEG, source, quality)
     stream_input = StreamlinkInput(STREAMLINK, FFMPEG, source, quality)
     command = relay_command("pipe:0", None, None, None, False)
     try:

@@ -1,4 +1,5 @@
 from collections import deque
+import json
 import subprocess
 import threading
 from urllib.parse import urlparse
@@ -36,8 +37,7 @@ def validate_restream_url(source):
     return platform
 
 
-def streamlink_command(executable, ffmpeg, source, quality):
-    validate_restream_url(source)
+def streamlink_options(executable, ffmpeg, quality):
     if quality not in SUPPORTED_QUALITIES:
         raise ValueError("Choose a supported stream quality")
     command = [
@@ -50,8 +50,53 @@ def streamlink_command(executable, ffmpeg, source, quality):
     ]
     if quality != "best":
         command.extend(["--stream-sorting-excludes", f">{quality}"])
+    return command
+
+
+def streamlink_command(executable, ffmpeg, source, quality):
+    validate_restream_url(source)
+    command = streamlink_options(executable, ffmpeg, quality)
     command.extend(["--stdout", source, "best"])
     return command
+
+
+def fallback_restream_title(source):
+    platform = validate_restream_url(source)
+    path_parts = [part for part in urlparse(source).path.split("/") if part]
+    if platform == "twitch" and path_parts[0].lower() not in {
+        "directory",
+        "downloads",
+        "settings",
+        "subscriptions",
+        "turbo",
+        "videos",
+        "wallet",
+    }:
+        return path_parts[0]
+    if platform == "youtube" and path_parts[0].startswith("@"):
+        return path_parts[0]
+    return f"{platform.title()} restream"
+
+
+def resolve_restream_title(executable, ffmpeg, source, quality, timeout=15):
+    fallback = fallback_restream_title(source)
+    command = streamlink_options(executable, ffmpeg, quality)
+    command.extend(["--json", source, "best"])
+    try:
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            check=True,
+            text=True,
+            timeout=timeout,
+        )
+        metadata = json.loads(result.stdout).get("metadata") or {}
+        author = metadata.get("author")
+        if isinstance(author, str) and author.strip():
+            return author.strip()[:200]
+    except (json.JSONDecodeError, OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+        print(f"streamlink metadata unavailable: {type(error).__name__}", flush=True)
+    return fallback
 
 
 class StreamlinkInput:
