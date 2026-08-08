@@ -85,11 +85,6 @@
           {
             user = "publisher";
             pass = "sha256:Yb1sV/UCfydcnF8Ocb9mCnwdMH4l3bqQsmBQ7O1R7Dw=";
-            ips = [
-              "127.0.0.1"
-              "::1"
-              "100.64.0.0/10"
-            ];
             permissions = lib.lists.singleton {action = "publish";};
           }
           {
