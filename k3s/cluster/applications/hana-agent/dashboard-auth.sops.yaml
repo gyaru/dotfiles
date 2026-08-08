@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-    name: hermes-dashboard-auth
+    name: hana-agent-dashboard-auth
 stringData:
     username: ENC[AES256_GCM,data:VclQbM0=,iv:dnYqAHSQEgnnbktnnlv944k5hpIe9TklmGTu/aI4HB4=,tag:vGM3+NNuNPh5rJpaiKLyRw==,type:str]
     password: ENC[AES256_GCM,data:smsOSgGiBC1WkQGaX+GqpjgXXkUQTPcBXRaZ/uX8Yc0=,iv:CMc0FluvxMnaSBEHjrLTqoDwoVEeNpnhymJk/joNCFk=,tag:KDUon2jObPNGtQiVyJ2E0w==,type:str]
