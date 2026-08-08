@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: default
 resources:
   - bunny-plus
-  - hermes-agent
+  - hana-agent
   - home-assistant
   - jellyfin
   - mosquitto
