@@ -130,7 +130,7 @@ metadata:
   name: seerr
   annotations:
     tailscale.com/hostname: "seerr"
-    tailscale.com/tags: "tag:k8s"
+    tailscale.com/tags: "tag:k8s,tag:app-seerr"
 spec:
   ingressClassName: tailscale
   defaultBackend:
