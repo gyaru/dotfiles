@@ -156,7 +156,7 @@ metadata:
   name: jellyfin
   annotations:
     tailscale.com/hostname: "jellyfin"
-    tailscale.com/tags: "tag:k8s"
+    tailscale.com/tags: "tag:k8s,tag:app-jellyfin"
 spec:
   ingressClassName: tailscale
   defaultBackend:

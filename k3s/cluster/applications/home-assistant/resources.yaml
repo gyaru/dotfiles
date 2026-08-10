@@ -100,7 +100,7 @@ metadata:
   name: home-assistant
   annotations:
     tailscale.com/hostname: "home-assistant"
-    tailscale.com/tags: "tag:k8s"
+    tailscale.com/tags: "tag:k8s,tag:app-home-assistant"
 spec:
   ingressClassName: tailscale
   defaultBackend:
