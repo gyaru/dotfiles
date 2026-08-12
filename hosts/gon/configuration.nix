@@ -19,7 +19,15 @@
   };
   boot.kernel.sysctl."kernel.unprivileged_userns_clone" = lib.mkForce 0;
 
-  environment.systemPackages = lib.lists.singleton pkgs.gitMinimal;
+  environment = {
+    systemPackages = lib.lists.singleton pkgs.gitMinimal;
+
+    # MediaMTX 1.18.2 rejects the valid `%YAML 1.1` directive emitted by
+    # nixpkgs' remarshal v2. JSON is valid YAML and avoids that parser bug.
+    etc."mediamtx.yaml".source = lib.mkForce (
+      pkgs.writeText "mediamtx.yaml" (builtins.toJSON config.services.mediamtx.settings)
+    );
+  };
 
   networking.firewall = {
     enable = true;
