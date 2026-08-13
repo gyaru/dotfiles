@@ -24,6 +24,9 @@ spec:
           envFrom:
             - secretRef:
                 name: bunny-plus-env
+          volumeMounts:
+            - name: chat-history
+              mountPath: /app/data
           readinessProbe:
             httpGet:
               path: /healthz
@@ -52,11 +55,16 @@ spec:
                 - ALL
             readOnlyRootFilesystem: true
       securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
         runAsGroup: 1000
         runAsNonRoot: true
         runAsUser: 1000
         seccompProfile:
           type: RuntimeDefault
+      volumes:
+        - name: chat-history
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
