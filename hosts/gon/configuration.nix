@@ -208,7 +208,9 @@
         isNormalUser = true;
         extraGroups = ["wheel"];
         hashedPassword = "!";
-        openssh.authorizedKeys.keys = flake.people.lis.sshKeys;
+        openssh.authorizedKeys.keys = flake.people.lis.sshKeys ++ [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPRl/9b/3dl+A4HOv+MlZAHD7q0CF/4uMPvfG+tXD5fF hermes@gon-readonly"
+        ];
       };
       root = {
         hashedPassword = "!";
