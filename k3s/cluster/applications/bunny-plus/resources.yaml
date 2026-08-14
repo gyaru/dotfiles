@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: bunny-plus
-          image: ghcr.io/bunny-plus/core:latest@sha256:d53b1b81999ac37293f180df13171e6d6fc8c70c2dad8829c35df960a4122428 # {"$imagepolicy": "flux-system:bunny-plus"}
+          image: ghcr.io/bunny-plus/core:latest@sha256:b42d0ca2e76a1649ef9405bc8e32f0ae880a6db96ab24f12a505889018b48150 # {"$imagepolicy": "flux-system:bunny-plus"}
           imagePullPolicy: Always
           ports:
             - name: http
