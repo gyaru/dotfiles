@@ -148,6 +148,7 @@ in {
       ];
       Restart = "on-failure";
       RestartSec = "2s";
+      LimitNOFILE = 65536;
       RuntimeDirectory = "kodi-tv";
       RuntimeDirectoryMode = "0700";
       StateDirectory = "kodi-tv";
