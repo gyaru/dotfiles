@@ -61,6 +61,8 @@ metadata:
     app: seerr
 spec:
   type: ClusterIP
+  externalIPs:
+    - 192.168.1.240
   ports:
     - port: 5055
       targetPort: 5055
@@ -88,6 +90,8 @@ spec:
         - podSelector:
             matchLabels:
               app: home-assistant
+        - ipBlock:
+            cidr: 192.168.1.0/24
       ports:
         - protocol: TCP
           port: 5055
