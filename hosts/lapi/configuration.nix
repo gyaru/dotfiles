@@ -17,7 +17,6 @@
     ./services/samba.nix
     ./vm.nix
     ./gaming.nix
-    ./kodi.nix
   ];
 
   boot = {
