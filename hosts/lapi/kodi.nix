@@ -138,13 +138,13 @@ in {
     serviceConfig = {
       ExecStart = getExe kodiTv;
       InaccessiblePaths = [
-        "/dev/dri/card2"
-        "/dev/dri/renderD129"
-        "/dev/nvidia0"
-        "/dev/nvidiactl"
-        "/dev/nvidia-modeset"
-        "/dev/nvidia-uvm"
-        "/dev/nvidia-uvm-tools"
+        "-/dev/dri/by-path/pci-0000:01:00.0-card"
+        "-/dev/dri/by-path/pci-0000:01:00.0-render"
+        "-/dev/nvidia0"
+        "-/dev/nvidiactl"
+        "-/dev/nvidia-modeset"
+        "-/dev/nvidia-uvm"
+        "-/dev/nvidia-uvm-tools"
       ];
       Restart = "on-failure";
       RestartSec = "2s";
