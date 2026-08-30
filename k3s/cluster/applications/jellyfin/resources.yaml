@@ -110,6 +110,8 @@ metadata:
     app: jellyfin
 spec:
   type: ClusterIP
+  externalIPs:
+    - 192.168.1.240
   ports:
     - port: 8096
       targetPort: 8096
@@ -136,6 +138,8 @@ spec:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: tailscale
+        - ipBlock:
+            cidr: 192.168.1.0/24
       ports:
         - protocol: TCP
           port: 8096
