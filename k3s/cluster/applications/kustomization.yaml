@@ -6,6 +6,7 @@ resources:
   - home-assistant
   - jellyfin
   - mariadb
+  - memcached
   - mosquitto
   - music-assistant
   - radarr
