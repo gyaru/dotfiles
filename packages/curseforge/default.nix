@@ -11,7 +11,7 @@
     url = "https://curseforge.overwolf.com/downloads/curseforge-latest-linux.AppImage";
     hash = "sha256-ZH4ZkFSoT8bQgcQPkszcux4gds4DHwrD7Vyub+13mgQ=";
   };
-  extracted = appimageTools.extractType2 {inherit pname version src;};
+  extracted = appimageTools.extract {inherit pname version src;};
   appimage = appimageTools.wrapType2 {inherit pname version src;};
   icon = stdenv.mkDerivation {
     name = "${pname}-icon";
