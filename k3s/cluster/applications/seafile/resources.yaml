@@ -156,7 +156,7 @@ metadata:
   name: seafile
   annotations:
     tailscale.com/hostname: "seafile"
-    tailscale.com/tags: "tag:k8s,tag:app-seafile"
+    tailscale.com/tags: "tag:k8s"
 spec:
   ingressClassName: tailscale
   defaultBackend:
