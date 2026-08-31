@@ -58,7 +58,7 @@ spec:
           command:
             - sh
             - -c
-            - mkdir -p /shared && chown -R 8000:8000 /shared
+            - mkdir -p /shared && chown -R 0:0 /shared
           volumeMounts:
             - name: data
               mountPath: /shared
