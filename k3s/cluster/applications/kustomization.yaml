@@ -5,10 +5,12 @@ resources:
   - bunny-plus
   - home-assistant
   - jellyfin
+  - mariadb
   - mosquitto
   - music-assistant
   - radarr
   - seerr
+  - seafile
   - sonarr
   - transmission
   - zigbee2mqtt

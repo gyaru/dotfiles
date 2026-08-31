@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: mariadb
+type: Opaque
+stringData:
+    root-password: ENC[AES256_GCM,data:ww4O1u0p2Kxs76olCg76myjFLmbX+oo4JvPrINAz4P61NjBvkR/YRlnF9bFvkQbj0JM6yYi/ASZEplDceBeWOg==,iv:I8G2OICTNzHVZ5wcqKOdEyBZkohNiX4mLPGp6VqebTY=,tag:8WjpVaKPquBTxPB/anqr0w==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBnN09IL2QvZTNMT0xwNE4x
+            UGgvZ3JyVFVsdTZEMjlIOTBZMHpzT0JYOFNNCmUwVWtzQmJDbENkZ0ZOSk11Y1Bv
+            bmRwTnlObmNVK3Jod1FOWGNQWHRvRTgKLS0tIGFnWUZoUnNDZUhtNG1QWHpEa3hN
+            ckRQa0RZNFFqd01leURaVFFFY1ZHS3MKNRktsTQ8aPqp7iFyCoV6GDz9VgUX2ygh
+            ysOg0rdoNUaDO5UXP8JVsCBTTYcShMuSbwteB+LgE5nu/srRhLWMdQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1tspqtc45fa0yjy0dckqfnuwr99t9kxfwfd34cm4tfr8nx8jm9pcqg8n2lr
+    encrypted_regex: ^stringData$
+    lastmodified: "2026-08-31T20:30:39Z"
+    mac: ENC[AES256_GCM,data:RXZAW1ROZm06T+OarHIviAdbFRp5eLZ3tDzkLvrBmYc8oC/MgXgntnPOT3HFbGGlhuXyf93/5JIfQbW9upxQTfs0K+BiMKBZfYjpNfk4RXfvTJKPaJsJqSqkxTS5E06Zly9FTtBw+8eCccCFA5N1I34JoE96xNhdkO8B2qLyqHc=,iv:8oLTlMxIsmhSNJdbVh7Hs4YhvmDdXVDPBwRf+ZDtGsU=,tag:UA0vBUMUEMbAjek39SOmjA==,type:str]
+    version: 3.13.3
