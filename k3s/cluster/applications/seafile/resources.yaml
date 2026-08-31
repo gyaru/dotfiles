@@ -76,6 +76,11 @@ spec:
                 secretKeyRef:
                   name: mariadb
                   key: root-password
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: seafile
+                  key: JWT_PRIVATE_KEY
             - name: TIME_ZONE
               value: Europe/Stockholm
             - name: SEAFILE_SERVER_HOSTNAME

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: seafile
+type: Opaque
+stringData:
+    JWT_PRIVATE_KEY: ENC[AES256_GCM,data:m7YNH9+oNU6SiLH2picZFRVzyIENWfF2VRhE/MnHxjxfvzk3uDSqrVIE8ssnoN0iPXA0fsJYgsxWoo8G8m6qNA==,iv:jzQccK1toLw+ao8PfQxvIm72hHkaac4k24fvs1+rP4k=,tag:jPM41nMVvxOComFuUzOdAQ==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBTRkRjQjlnTnhyTUZHT2Rn
+            TEpVS1RYZkt6bUxpaGwvRys5a0kraUR3ekNNClpTaVJSVHBWNi9pV0NoWElrSlVC
+            Qm5zVW52QXRKRStFWFl6amxzTlZPY0kKLS0tIHlMaTBOWjVvR0crUFhFalNiSWE2
+            dlVHRHlXcElwL1B4U2llSFNjYlFGSmcKzg85bfm7d/vwF4xKxl8/Wc1w8iZxGnz8
+            mH475pfldRppISWGhlIDcEzC6uSL4FBojil9VqRV7TA0Vsosv3jNqg==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1tspqtc45fa0yjy0dckqfnuwr99t9kxfwfd34cm4tfr8nx8jm9pcqg8n2lr
+    encrypted_regex: ^stringData$
+    lastmodified: "2026-08-31T21:43:34Z"
+    mac: ENC[AES256_GCM,data:zVjBGq+601OmTxQvNF5oD6o5tBbAY21z9vU8JZ7cyHkuLcPtaUa+KvbanC3JsU243gJU9bsTnqUt2HrAWQJ/ZFCsxXTISNyxFzW2CkAaJQh2c/22YNHrllH3RugkcDDBrPbcbnK+f8f4DHrIzBIUX0adqKK9sBfliHGNWOr6hY=,iv:3uLVvkMM0qBQU8zIZsfDybf1gaO4dsj+Nosv/9YyPHI=,tag:YZfS4+anTx1uQAy8vlUecw==,type:str]
+    version: 3.13.3
