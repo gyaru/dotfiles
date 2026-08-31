@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: seafile-admin
+type: Opaque
+stringData:
+    email: ENC[AES256_GCM,data:obfRAzyDPFWYvmrtXPQ=,iv:iUZnHDxWwvvgvRvCxbrdo1WHBYqgQU0+H/0b96cEKDQ=,tag:MAodKE76HTSoczn/eOUxSA==,type:str]
+    password: ENC[AES256_GCM,data:hmQtjc6fnqze+tqYJ//eRk00N5xTC905CxQWAFQDbI0=,iv:ogGKoVAi2mSf5k1MBBj/BWDJCFR3GXDZbTSDeKl4ixw=,tag:AIp3CZqa1DKiFbAkJQdDPA==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB3cWFoMTlIZmVpZFJQalVM
+            bjlPeEU2eVZRNUp6OEsxUjZXdnYvTFJHSVU0CjZLN1cwc3pxNHE2Q1lDZGM1WkZ1
+            VDNONlIzanF3OXAvTGorRSs5ZWQ0Y0kKLS0tIG1zem1zNWdpb0xQaVRkZGRJeC9U
+            RldPdGk5Qk5mc3ByYUpaYlpyOS93cDQKqAuWq1Zc7byhzAS+s6xL/tHQLJ4QtTdf
+            jwzw/DUXosdnoIz66rkDOcSIm3tmvRrzUmaqxRW3mlqw7mUWPEdL5g==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1tspqtc45fa0yjy0dckqfnuwr99t9kxfwfd34cm4tfr8nx8jm9pcqg8n2lr
+    encrypted_regex: ^stringData$
+    lastmodified: "2026-08-31T21:51:27Z"
+    mac: ENC[AES256_GCM,data:J2gIvEzyck7oYHWp3sLetKGF1cEN3g5P3SQBnnyKrOwSZ3jGS1HdEh1GuMg4IExIvqU+LCbr5x/YmuasL2DwK9xxefCbQXi+eGUr8tKAUUGLAYIykZj7GS48kkJN7HrdS35wSsxMoZvhg1ATyxNI4mQDAO/sNu0ep2UHyMozEpQ=,iv:NamHqCutKT2s7xEJf1Hcoiz5CLJ6XNOTBpBqhdJlD3g=,tag:4BA4NhDQdqOv7qGvQ8uDqQ==,type:str]
+    version: 3.13.3

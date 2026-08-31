@@ -81,6 +81,16 @@ spec:
                 secretKeyRef:
                   name: seafile
                   key: JWT_PRIVATE_KEY
+            - name: INIT_SEAFILE_ADMIN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: seafile-admin
+                  key: email
+            - name: INIT_SEAFILE_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: seafile-admin
+                  key: password
             - name: TIME_ZONE
               value: Europe/Stockholm
             - name: SEAFILE_SERVER_HOSTNAME
