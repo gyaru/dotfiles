@@ -79,7 +79,7 @@ spec:
             - name: TIME_ZONE
               value: Europe/Stockholm
             - name: SEAFILE_SERVER_HOSTNAME
-              value: seafile
+              value: seafile.tail254553.ts.net
             - name: SEAFILE_SERVER_PROTOCOL
               value: http
           volumeMounts:
