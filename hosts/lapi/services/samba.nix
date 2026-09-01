@@ -55,6 +55,7 @@
 
   services.samba-wsdd = {
     enable = true;
+    interface = "eno1";
     openFirewall = false;
   };
 }

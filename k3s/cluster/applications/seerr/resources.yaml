@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: seerr
-          image: seerr/seerr:sha-5ae70d0
+          image: seerr/seerr:sha-5ae70d0@sha256:86c8eb6a47eabfaec07425173d87a3bf15dc1800dfc616c48447ee8fd0e47b1a
           ports:
             - containerPort: 5055
               name: http

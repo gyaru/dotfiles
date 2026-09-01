@@ -95,7 +95,7 @@
       enable = true;
       openFirewall = false;
       settings = {
-        PermitRootLogin = "prohibit-password";
+        PermitRootLogin = "no";
         PasswordAuthentication = false;
         KbdInteractiveAuthentication = false;
       };
@@ -141,6 +141,7 @@
       max-jobs = "auto";
       cores = 0;
       eval-cache = true;
+      trusted-users = lib.lists.singleton "@wheel";
       substituters = [
         "https://cache.nixos.org?priority=10"
         "https://nix-community.cachix.org"

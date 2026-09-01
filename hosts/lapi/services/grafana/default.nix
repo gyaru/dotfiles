@@ -21,7 +21,6 @@
 in {
   networking.firewall.extraCommands = ''
     iptables -A nixos-fw -p tcp --dport 3000 -s 192.168.1.0/24 -j nixos-fw-accept
-    iptables -A nixos-fw -p tcp --dport 9092 -s 192.168.1.0/24 -j nixos-fw-accept
   '';
 
   services = {
@@ -63,7 +62,7 @@ in {
     prometheus = {
       enable = true;
       checkConfig = false;
-      listenAddress = "0.0.0.0";
+      listenAddress = "127.0.0.1";
       port = 9092;
       retentionTime = "30d";
       exporters = {

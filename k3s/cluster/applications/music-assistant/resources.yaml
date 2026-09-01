@@ -33,7 +33,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: music-assistant
-          image: ghcr.io/music-assistant/server:2.6.0
+          image: ghcr.io/music-assistant/server:2.6.0@sha256:9b0b0c8476e5b208265cbede313558ca20202bbeaebfd70a3467081e75827e67
           ports:
             - containerPort: 8095
               name: http

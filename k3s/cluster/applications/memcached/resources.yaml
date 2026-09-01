@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: memcached
-          image: memcached:1.6.26
+          image: memcached:1.6.26@sha256:09eaba8e0b136af2f1d8a4985b4fda74ce2793f95ea66d82fbe5769c05b42ea3
           args:
             - --memory-limit=256
             - --conn-limit=1024
@@ -47,3 +47,22 @@ spec:
       name: memcached
   selector:
     app: memcached
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: memcached-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: memcached
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: seafile
+      ports:
+        - protocol: TCP
+          port: 11211
