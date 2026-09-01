@@ -93,6 +93,7 @@
   services = {
     openssh = {
       enable = true;
+      openFirewall = false;
       settings = {
         PermitRootLogin = "prohibit-password";
         PasswordAuthentication = false;
@@ -187,7 +188,6 @@
       enable = true;
       allowPing = false;
       logReversePathDrops = true;
-      trustedInterfaces = ["tailscale0"];
     };
   };
 
@@ -231,6 +231,12 @@
 
   systemd = {
     oomd.enableUserSlices = true;
+
+    tmpfiles.rules = [
+      "z /root/.ssh/authorized_keys 0600 root root -"
+      "z /home/lis/.ssh/authorized_keys 0600 lis users -"
+      "z /home/mikan/.ssh/authorized_keys 0600 mikan users -"
+    ];
 
     targets = {
       sleep.enable = false;

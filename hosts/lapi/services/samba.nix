@@ -10,7 +10,7 @@
 
   services.samba = {
     enable = true;
-    openFirewall = true;
+    openFirewall = false;
     settings = {
       global = {
         workgroup = "WORKGROUP";
@@ -55,6 +55,6 @@
 
   services.samba-wsdd = {
     enable = true;
-    openFirewall = true;
+    openFirewall = false;
   };
 }

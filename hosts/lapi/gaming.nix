@@ -125,7 +125,7 @@ in {
 
   programs.steam = {
     enable = true;
-    remotePlay.openFirewall = true;
+    remotePlay.openFirewall = false;
   };
 
   systemd.user.services.speech-dispatcher.enable = false;

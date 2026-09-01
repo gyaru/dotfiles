@@ -15,6 +15,34 @@
       "cni0"
       "flannel.1"
     ];
+    interfaces = {
+      eno1 = {
+        allowedTCPPorts = [
+          22
+          139
+          445
+          5357
+          27036
+          27037
+        ];
+        allowedUDPPorts = [
+          137
+          138
+          3702
+          27031
+          27032
+          27033
+          27034
+          27035
+          27036
+        ];
+      };
+      tailscale0.allowedTCPPorts = [
+        22
+        139
+        445
+      ];
+    };
     allowedTCPPorts = [51413]; # torrent
     allowedUDPPorts = [51413]; # torrent
     extraCommands = ''
