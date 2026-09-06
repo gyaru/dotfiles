@@ -69,25 +69,34 @@ spec:
               mountPath: /shared
       containers:
         - name: seafile
-          image: seafileltd/seafile-mc:12.0-latest@sha256:8d0dd6b682c12cb0e1d4f1f73ba223b0176e9e3d43805408a2f631706e9c10e8
+          image: seafileltd/seafile-mc:13.0.25@sha256:90c1aaa08731116750cd7ce16cbc6afe0c26006433002d3c7215a5f4254ec244
           startupProbe:
-            tcpSocket:
+            httpGet:
+              path: /api2/ping/
               port: http
+              httpHeaders:
+                - name: Host
+                  value: seafile.tail254553.ts.net
             periodSeconds: 10
-            timeoutSeconds: 3
-            failureThreshold: 180
+            timeoutSeconds: 5
+            failureThreshold: 360
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /api2/ping/
               port: http
+              httpHeaders:
+                - name: Host
+                  value: seafile.tail254553.ts.net
             periodSeconds: 10
             timeoutSeconds: 3
           ports:
             - containerPort: 80
               name: http
           env:
-            - name: DB_HOST
+            # DATABASE USER AND PASSWORD REMAIN IN THE EXISTING CONFIG ON /shared
+            - name: SEAFILE_MYSQL_DB_HOST
               value: mariadb
-            - name: DB_ROOT_PASSWD
+            - name: INIT_SEAFILE_MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mariadb
@@ -112,7 +121,17 @@ spec:
             - name: SEAFILE_SERVER_HOSTNAME
               value: seafile.tail254553.ts.net
             - name: SEAFILE_SERVER_PROTOCOL
-              value: http
+              value: https
+            - name: CACHE_PROVIDER
+              value: memcached
+            - name: MEMCACHED_HOST
+              value: memcached
+            - name: MEMCACHED_PORT
+              value: "11211"
+            - name: ENABLE_SEADOC
+              value: "false"
+            - name: ENABLE_NOTIFICATION_SERVER
+              value: "false"
           volumeMounts:
             - name: data
               mountPath: /shared
