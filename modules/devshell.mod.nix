@@ -37,6 +37,7 @@ in {
         nil
         nix-output-monitor
         shellcheck
+        skopeo
         statix
         yq-go
       ];
