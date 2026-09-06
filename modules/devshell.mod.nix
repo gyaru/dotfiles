@@ -24,20 +24,21 @@ in {
       name = "gyaru/nix-config";
       packages = with pkgs; [
         alejandra
+        config.packages.pani
         deadnix
+        dix
         fd
+        fluxcd
         git
         jq
-        fluxcd
         kubectl
         kustomize
-        yq-go
+        nh
         nil
         nix-output-monitor
-        nh
-        config.packages.pani
         shellcheck
         statix
+        yq-go
       ];
 
       shellHook =
