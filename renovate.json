@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["flux", "kubernetes", "nix"],
+  "automerge": false,
+  "prConcurrentLimit": 5,
+  "timezone": "Europe/Stockholm",
+  "ignorePaths": ["**/*.sops.yaml"],
+  "ignoreDeps": ["ghcr.io/bunny-plus/core"],
+  "flux": {
+    "managerFilePatterns": ["/^k3s/cluster/.*\\.ya?ml$/"]
+  },
+  "kubernetes": {
+    "managerFilePatterns": [
+      "/^k3s/cluster/(applications|infrastructure)/.*\\.ya?ml$/"
+    ]
+  },
+  "nix": {
+    "enabled": true
+  },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Keep Kubernetes images pinned to immutable digests",
+      "matchManagers": ["kubernetes"],
+      "pinDigests": true
+    },
+    {
+      "description": "Review related Nix input updates together",
+      "matchManagers": ["nix"],
+      "groupName": "Nix flake inputs"
+    }
+  ]
+}
