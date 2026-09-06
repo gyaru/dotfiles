@@ -4,126 +4,95 @@
   pkgs,
   ...
 }: let
+  inherit (lib.lists) singleton;
+  inherit (lib.modules) mkIf;
+  inherit (lib.options) mkEnableOption mkOption;
+  inherit (lib.types) nullOr str;
+  inherit (lib.types.ints) positive;
+
   cfg = config.modules.audio;
+  preferDevice = name: {
+    "monitor.alsa.rules" = singleton {
+      matches = singleton {"node.name" = name;};
+      actions.update-props = {
+        "priority.session" = 1500;
+        "priority.driver" = 1500;
+      };
+    };
+  };
 in {
   options.modules.audio = {
-    enable = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Enable PipeWire audio system";
-    };
+    enable = mkEnableOption "PipeWire audio";
 
-    defaultSink = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+    defaultSink = mkOption {
+      type = nullOr str;
       default = null;
-      description = "Default audio sink name";
+      description = "Preferred audio sink node name.";
       example = "alsa_output.pci-0000_00_1f.3.analog-stereo";
     };
 
-    defaultSource = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+    defaultSource = mkOption {
+      type = nullOr str;
       default = null;
-      description = "Default audio source name";
+      description = "Preferred audio source node name.";
       example = "alsa_input.pci-0000_00_1f.3.analog-stereo";
     };
 
-    sampleRate = lib.mkOption {
-      type = lib.types.int;
+    sampleRate = mkOption {
+      type = positive;
       default = 48000;
-      description = "Default sample rate";
+      description = "Default sample rate in Hz.";
     };
 
-    quantumSize = lib.mkOption {
-      type = lib.types.int;
+    quantumSize = mkOption {
+      type = positive;
       default = 1024;
-      description = "Quantum size (buffer size)";
+      description = "Default buffer size in samples.";
     };
 
-    extraConfig = lib.mkOption {
-      type = lib.types.attrs;
+    extraConfig = mkOption {
+      inherit (pkgs.formats.json {}) type;
       default = {};
-      description = "Extra PipeWire configuration";
+      description = "Additional PipeWire context properties.";
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = {
     services.pipewire = {
-      enable = true;
-      socketActivation = false;
-      alsa = {
-        enable = true;
-        support32Bit = true;
-      };
-      jack.enable = true;
-      pulse.enable = true;
-      wireplumber.enable = true;
+      enable = mkIf cfg.enable true;
+      socketActivation = mkIf cfg.enable false;
+      alsa.enable = mkIf cfg.enable true;
+      alsa.support32Bit = mkIf cfg.enable true;
+      jack.enable = mkIf cfg.enable true;
+      pulse.enable = mkIf cfg.enable true;
+      wireplumber.enable = mkIf cfg.enable true;
 
-      extraConfig.pipewire = {
-        "10-clock-rate" = {
-          "context.properties" =
-            {
-              "default.clock.rate" = cfg.sampleRate;
-              "default.clock.quantum" = cfg.quantumSize;
-              "default.clock.min-quantum" = 32;
-              "default.clock.max-quantum" = 8192;
-            }
-            // cfg.extraConfig;
-        };
+      extraConfig.pipewire."10-clock-rate"."context.properties" =
+        mkIf cfg.enable
+        <| {
+          "default.clock.rate" = cfg.sampleRate;
+          "default.clock.quantum" = cfg.quantumSize;
+          "default.clock.min-quantum" = 32;
+          "default.clock.max-quantum" = 8192;
+        }
+        // cfg.extraConfig;
+
+      wireplumber.extraConfig = {
+        "10-default-sink" = mkIf (cfg.enable && cfg.defaultSink != null) <| preferDevice cfg.defaultSink;
+        "10-default-source" = mkIf (cfg.enable && cfg.defaultSource != null) <| preferDevice cfg.defaultSource;
       };
     };
 
-    security.rtkit.enable = true;
+    security.rtkit.enable = mkIf cfg.enable true;
 
-    systemd.services.rtkit-daemon.serviceConfig.ExecStart = [
+    systemd.services.rtkit-daemon.serviceConfig.ExecStart = mkIf cfg.enable [
       ""
       "${pkgs.rtkit}/libexec/rtkit-daemon --our-realtime-priority=95 --max-realtime-priority=90"
     ];
 
     systemd.user.services = {
-      pipewire.wantedBy = ["default.target"];
-      pipewire-pulse.wantedBy = ["default.target"];
+      pipewire.wantedBy = mkIf cfg.enable <| singleton "default.target";
+      pipewire-pulse.wantedBy = mkIf cfg.enable <| singleton "default.target";
     };
-
-    # Set default devices using WirePlumber config
-    services.pipewire.wireplumber.extraConfig = lib.mkMerge [
-      (lib.mkIf (cfg.defaultSink != null) {
-        "10-default-sink" = {
-          "monitor.alsa.rules" = [
-            {
-              matches = [
-                {
-                  "node.name" = cfg.defaultSink;
-                }
-              ];
-              actions = {
-                update-props = {
-                  "priority.session" = 1500;
-                  "priority.driver" = 1500;
-                };
-              };
-            }
-          ];
-        };
-      })
-      (lib.mkIf (cfg.defaultSource != null) {
-        "10-default-source" = {
-          "monitor.alsa.rules" = [
-            {
-              matches = [
-                {
-                  "node.name" = cfg.defaultSource;
-                }
-              ];
-              actions = {
-                update-props = {
-                  "priority.session" = 1500;
-                  "priority.driver" = 1500;
-                };
-              };
-            }
-          ];
-        };
-      })
-    ];
   };
 }

@@ -1,7 +1,10 @@
-{lib, ...}: {
+{lib, ...}: let
+  inherit (lib.lists) singleton;
+  inherit (lib.modules) mkDefault;
+in {
   disko.devices = {
     disk.disk1 = {
-      device = lib.mkDefault "/dev/sda";
+      device = mkDefault "/dev/sda";
       type = "disk";
       content = {
         type = "gpt";
@@ -42,7 +45,7 @@
               type = "filesystem";
               format = "ext4";
               mountpoint = "/";
-              mountOptions = ["defaults"];
+              mountOptions = singleton "defaults";
             };
           };
         };

@@ -3,11 +3,14 @@
   lib,
   pkgs,
   ...
-}: {
-  packages = [pkgs.gitMinimal];
+}: let
+  inherit (lib.lists) singleton;
+  inherit (lib.generators) toGitINI;
+in {
+  packages = singleton pkgs.gitMinimal;
 
   xdg.config.files."git/config" = {
-    generator = lib.generators.toGitINI;
+    generator = toGitINI;
     value = {
       user = {
         inherit (flake.people.lis) name email;

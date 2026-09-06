@@ -3,12 +3,15 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe;
+in {
   systemd.services.bunny-stream-controller = {
     description = "Bunny+ host stream controller";
-    wantedBy = ["multi-user.target"];
+    wantedBy = singleton "multi-user.target";
     after = ["network-online.target" "tailscaled.service"];
-    wants = ["network-online.target"];
+    wants = singleton "network-online.target";
     unitConfig.ConditionPathExists = [
       "/var/lib/bunny-plus/control-secret"
       "/var/lib/bunny-plus/gon-publisher-password"
@@ -35,7 +38,7 @@
       ];
       DevicePolicy = "closed";
       DynamicUser = true;
-      ExecStart = lib.getExe flake.packages.${pkgs.stdenv.hostPlatform.system}.bunny-controller;
+      ExecStart = getExe flake.packages.${pkgs.stdenv.hostPlatform.system}.bunny-controller;
       LoadCredential = [
         "control-secret:/var/lib/bunny-plus/control-secret"
         "publisher-password:/var/lib/bunny-plus/gon-publisher-password"
@@ -62,7 +65,5 @@
     };
   };
 
-  systemd.tmpfiles.rules = [
-    "d /var/lib/bunny-plus 0700 root root -"
-  ];
+  systemd.tmpfiles.rules = singleton "d /var/lib/bunny-plus 0700 root root -";
 }

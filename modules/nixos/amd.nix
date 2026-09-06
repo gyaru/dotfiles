@@ -1,4 +1,6 @@
-_: {
+{lib, ...}: let
+  inherit (lib.lists) singleton;
+in {
   boot = {
     kernelParams = [
       "amd_pstate.shared_mem=1"
@@ -10,7 +12,7 @@ _: {
       "radeon.si_support=0"
     ];
 
-    kernelModules = ["kvm-amd"];
+    kernelModules = singleton "kvm-amd";
 
     initrd.kernelModules = [
       "amdgpu"

@@ -13,6 +13,8 @@ data:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
   name: mosquitto-data
   labels:
     app: mosquitto
@@ -41,9 +43,21 @@ spec:
       labels:
         app: mosquitto
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: mosquitto
           image: eclipse-mosquitto:2.0.22@sha256:212f89e1eaeb2c322d6441b64396e3346026674db8fa9c27beac293405c32b3c
+          startupProbe:
+            tcpSocket:
+              port: mqtt
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 180
+          readinessProbe:
+            tcpSocket:
+              port: mqtt
+            periodSeconds: 10
+            timeoutSeconds: 3
           ports:
             - containerPort: 1883
               name: mqtt

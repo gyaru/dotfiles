@@ -1,7 +1,10 @@
-{lib, ...}: {
+{lib, ...}: let
+  inherit (lib.modules) mkForce;
+  inherit (lib.strings) concatStringsSep;
+in {
   systemd.services.samba-smbd.unitConfig.RequiresMountsFor =
-    lib.mkForce
-    <| lib.concatStringsSep " " [
+    mkForce
+    <| concatStringsSep " " [
       "/var/lib/samba"
       "/mlem"
       "/mlem/media"

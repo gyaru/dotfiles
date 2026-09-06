@@ -15,14 +15,18 @@ in
       sha256 = "sha256-tQDMfPxx3zL0WfsTukELbfovATM8wIk3RuIKgZbqK/o=";
     };
 
-    installPhase = ''
-      runHook preInstall
+    installPhase =
+      /*
+      bash
+      */
+      ''
+        runHook preInstall
 
-      mkdir -p $out/share/fonts/truetype/${pname}
-      mv lucide.ttf $out/share/fonts/truetype/${pname}
+        mkdir --parents $out/share/fonts/truetype/${pname}
+        mv lucide.ttf $out/share/fonts/truetype/${pname}
 
-      runHook postInstall
-    '';
+        runHook postInstall
+      '';
 
     meta = with lib; {
       description = "Community-run fork of Feather Icons";

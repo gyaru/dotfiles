@@ -5,7 +5,8 @@
   hostName,
   module,
 }: let
-  inherit (inputs.nixpkgs.lib) mkDefault nixosSystem;
+  inherit (inputs.nixpkgs.lib.modules) mkDefault;
+  inherit (inputs.nixpkgs.lib) nixosSystem;
 in
   nixosSystem {
     specialArgs = {
@@ -22,7 +23,6 @@ in
           overlays = [
             self.overlays.additions
             self.overlays.modifications
-            self.overlays.unstable-packages
           ];
         };
       }

@@ -4,6 +4,7 @@
   pkgs,
   ...
 }: let
+  inherit (lib.lists) singleton;
   inherit (lib.meta) getExe;
 
   battleNet = pkgs.writeShellApplication {
@@ -33,49 +34,85 @@
     desktopName = "Battle.net";
     exec = "battle-net";
     icon = "applications-games";
-    categories = ["Game"];
+    categories = singleton "Game";
   };
 in {
   environment = {
     etc = {
-      "xdg/autostart/at-spi-dbus-bus.desktop".text = ''
-        [Desktop Entry]
-        Hidden=true
-      '';
-      "xdg/autostart/org.kde.discover.notifier.desktop".text = ''
-        [Desktop Entry]
-        Hidden=true
-      '';
-      "xdg/autostart/org.kde.kaccess.desktop".text = ''
-        [Desktop Entry]
-        Hidden=true
-      '';
-      "xdg/autostart/org.kde.kactivitymanagerd.desktop".text = ''
-        [Desktop Entry]
-        Hidden=true
-      '';
-      "xdg/autostart/org.kde.kwalletd5.desktop".text = ''
-        [Desktop Entry]
-        Hidden=true
-      '';
-      "xdg/autostart/org.kde.kwalletd6.desktop".text = ''
-        [Desktop Entry]
-        Hidden=true
-      '';
-      "xdg/autostart/org.kde.plasma.geoclue2.desktop".text = ''
-        [Desktop Entry]
-        Hidden=true
-      '';
+      "xdg/autostart/at-spi-dbus-bus.desktop".text =
+        /*
+        ini
+        */
+        ''
+          [Desktop Entry]
+          Hidden=true
+        '';
+      "xdg/autostart/org.kde.discover.notifier.desktop".text =
+        /*
+        ini
+        */
+        ''
+          [Desktop Entry]
+          Hidden=true
+        '';
+      "xdg/autostart/org.kde.kaccess.desktop".text =
+        /*
+        ini
+        */
+        ''
+          [Desktop Entry]
+          Hidden=true
+        '';
+      "xdg/autostart/org.kde.kactivitymanagerd.desktop".text =
+        /*
+        ini
+        */
+        ''
+          [Desktop Entry]
+          Hidden=true
+        '';
+      "xdg/autostart/org.kde.kwalletd5.desktop".text =
+        /*
+        ini
+        */
+        ''
+          [Desktop Entry]
+          Hidden=true
+        '';
+      "xdg/autostart/org.kde.kwalletd6.desktop".text =
+        /*
+        ini
+        */
+        ''
+          [Desktop Entry]
+          Hidden=true
+        '';
+      "xdg/autostart/org.kde.plasma.geoclue2.desktop".text =
+        /*
+        ini
+        */
+        ''
+          [Desktop Entry]
+          Hidden=true
+        '';
 
-      "xdg/baloofilerc".text = ''
-        [Basic Settings]
-        Indexing-Enabled=false
-      '';
+      "xdg/baloofilerc".text =
+        /*
+        ini
+        */
+        ''
+          [Basic Settings]
+          Indexing-Enabled=false
+        '';
 
-      "xdg/kwalletrc".text = ''
-        [Wallet]
-        Enabled=false
-      '';
+      "xdg/kwalletrc".text =
+        /*
+        ini
+        */
+        ''
+          [Wallet]
+          Enabled=false
+        '';
     };
 
     sessionVariables.KWIN_DRM_DEVICES = "/dev/dri/nvidia-card";
@@ -110,11 +147,15 @@ in {
   services = {
     flatpak.enable = true;
 
-    udev.extraRules = ''
-      SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:01:00.0", DRIVERS=="nvidia", SYMLINK+="dri/nvidia-card"
-    '';
+    udev.extraRules =
+      /*
+      udev
+      */
+      ''
+        SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:01:00.0", DRIVERS=="nvidia", SYMLINK+="dri/nvidia-card"
+      '';
 
-    xserver.videoDrivers = ["nvidia"];
+    xserver.videoDrivers = singleton "nvidia";
 
     displayManager.plasma-login-manager.enable = true;
 

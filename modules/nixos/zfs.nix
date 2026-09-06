@@ -6,7 +6,7 @@
 }: let
   cfg = config.modules.zfs;
   inherit (lib.attrsets) mapAttrs' nameValuePair optionalAttrs;
-  inherit (lib.lists) head;
+  inherit (lib.lists) head singleton;
   inherit (lib.meta) getExe';
   inherit (lib.options) mkOption;
   inherit (lib.strings) concatMapStringsSep escapeShellArg escapeShellArgs replaceStrings splitString;
@@ -28,13 +28,13 @@
 
   mkSnapshotPolicyService = dataset: policy: let
     pool = head (splitString "/" dataset);
-    serviceName = "zfs-snapshot-policy-${replaceStrings ["/"] ["-"] dataset}";
+    serviceName = "zfs-snapshot-policy-${replaceStrings (singleton "/") (singleton "-") dataset}";
   in
     nameValuePair serviceName {
       description = "Configure ZFS snapshot policy for ${dataset}";
-      wantedBy = ["multi-user.target"];
-      after = ["zfs-import-${pool}.service"];
-      requires = ["zfs-import-${pool}.service"];
+      wantedBy = singleton "multi-user.target";
+      after = singleton "zfs-import-${pool}.service";
+      requires = singleton "zfs-import-${pool}.service";
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -97,7 +97,7 @@ in {
     mapAttrs' mkSnapshotPolicyService cfg.snapshotPolicies
     // optionalAttrs (cfg.scrubPools != []) {
       zfs-scrub = {
-        onFailure = ["zfs-scrub-failure.service"];
+        onFailure = singleton "zfs-scrub-failure.service";
         serviceConfig.ExecStartPost = checkScrub;
       };
 

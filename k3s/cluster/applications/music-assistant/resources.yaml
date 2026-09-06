@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
   name: music-assistant-data
   labels:
     app: music-assistant
@@ -29,11 +31,25 @@ spec:
       labels:
         app: music-assistant
     spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/hostname: lapi
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: music-assistant
           image: ghcr.io/music-assistant/server:2.6.0@sha256:9b0b0c8476e5b208265cbede313558ca20202bbeaebfd70a3467081e75827e67
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 180
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
           ports:
             - containerPort: 8095
               name: http

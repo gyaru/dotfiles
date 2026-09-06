@@ -17,15 +17,19 @@ in
       hash = "sha256-jzDDUs1dKjqNjsMeTA2/4vm+akIisnOuE2mPQS7IDSA=";
     };
 
-    installPhase = ''
-      runHook preInstall
+    installPhase =
+      /*
+      bash
+      */
+      ''
+        runHook preInstall
 
-      mkdir -p $out/share/fonts/{truetype,opentype}/${pname}
-      mv fonts/ttf/* $out/share/fonts/truetype/${pname}
-      mv fonts/otf/* $out/share/fonts/opentype/${pname}
+        mkdir --parents $out/share/fonts/{truetype,opentype}/${pname}
+        mv fonts/ttf/* $out/share/fonts/truetype/${pname}
+        mv fonts/otf/* $out/share/fonts/opentype/${pname}
 
-      runHook postInstall
-    '';
+        runHook postInstall
+      '';
 
     meta = with lib; {
       description = "M+ Fonts";
