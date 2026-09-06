@@ -101,7 +101,7 @@ spec:
               memory: "2Gi"
               cpu: "1000m"
             limits:
-              devices.gyaru.dev/dri: 1
+              devices.lapi/dri: 1
               memory: "8Gi"
               cpu: "8000m"
       volumes:

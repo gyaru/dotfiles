@@ -19,7 +19,7 @@ spec:
         - name: generic-device-plugin
           image: squat/generic-device-plugin@sha256:dc192e164c69b03f156765793a1be62ca437709ae477b27ca7d8f3dcf5021576
           args:
-            - --domain=devices.gyaru.dev
+            - --domain=devices.lapi
             - --device
             - '{"name":"dri","groups":[{"paths":[{"path":"/dev/dri/card0","permissions":"rw"},{"path":"/dev/dri/card1","permissions":"rw"},{"path":"/dev/dri/renderD128","permissions":"rw"},{"path":"/dev/dri/renderD129","permissions":"rw"}]}]}'
             - --device
