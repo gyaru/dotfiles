@@ -15,6 +15,7 @@ in {
     flake.modules.nixos.kernel-hardening
     flake.modules.nixos.ssh
     flake.modules.nixos.tailscale
+    flake.modules.nixos.adguardhome
     flake.modules.nixos.firewall
     flake.modules.nixos.english-locale
     flake.modules.nixos.nix-index
