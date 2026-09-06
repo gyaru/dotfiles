@@ -5,7 +5,10 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  inherit (lib.modules) mkDefault;
+  inherit (lib.lists) singleton;
+in {
   imports = [
     inputs.agenix.nixosModules.default
     inputs.nix-index-database.nixosModules.default
@@ -58,7 +61,7 @@
     ];
 
     kernel.sysctl."vm.min_free_kbytes" = 524288;
-    blacklistedKernelModules = ["nouveau"];
+    blacklistedKernelModules = singleton "nouveau";
     kernelPackages = pkgs.linuxKernel.packages.linux_xanmod;
   };
 
@@ -80,7 +83,7 @@
 
   hardware = {
     enableRedistributableFirmware = true;
-    cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+    cpu.amd.updateMicrocode = mkDefault config.hardware.enableRedistributableFirmware;
   };
 
   time.timeZone = "Europe/Stockholm";
@@ -100,11 +103,15 @@
         KbdInteractiveAuthentication = false;
       };
     };
-    avahi.allowInterfaces = ["eno1"];
-    journald.extraConfig = ''
-      SystemMaxUse=2G
-      RuntimeMaxUse=256M
-    '';
+    avahi.allowInterfaces = singleton "eno1";
+    journald.extraConfig =
+      /*
+      ini
+      */
+      ''
+        SystemMaxUse=2G
+        RuntimeMaxUse=256M
+      '';
 
     tailscale.enable = true;
     avahi = {
@@ -120,7 +127,7 @@
   };
 
   nixpkgs = {
-    hostPlatform = lib.mkDefault "x86_64-linux";
+    hostPlatform = mkDefault "x86_64-linux";
   };
 
   zramSwap = {
@@ -141,7 +148,7 @@
       max-jobs = "auto";
       cores = 0;
       eval-cache = true;
-      trusted-users = lib.lists.singleton "@wheel";
+      trusted-users = singleton "@wheel";
       substituters = [
         "https://cache.nixos.org?priority=10"
         "https://nix-community.cachix.org"
@@ -248,18 +255,22 @@
 
     services.disable-bad-usb4-port5 = {
       description = "Disable noisy usb4-port5";
-      wantedBy = ["multi-user.target"];
-      after = ["systemd-udev-settle.service"];
+      wantedBy = singleton "multi-user.target";
+      after = singleton "systemd-udev-settle.service";
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
       };
-      script = ''
-        PORT="/sys/devices/pci0000:00/0000:00:02.1/0000:03:00.0/0000:04:08.0/0000:07:00.0/0000:08:0c.0/0000:0d:00.0/usb4/4-0:1.0/usb4-port5/disable"
-        if [ -e "$PORT" ]; then
-          echo 1 > "$PORT"
-        fi
-      '';
+      script =
+        /*
+        bash
+        */
+        ''
+          PORT="/sys/devices/pci0000:00/0000:00:02.1/0000:03:00.0/0000:04:08.0/0000:07:00.0/0000:08:0c.0/0000:0d:00.0/usb4/4-0:1.0/usb4-port5/disable"
+          if [ -e "$PORT" ]; then
+            echo 1 > "$PORT"
+          fi
+        '';
     };
   };
 

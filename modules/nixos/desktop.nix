@@ -1,12 +1,10 @@
-_: {
+{pkgs, ...}: {
+  environment.systemPackages = with pkgs.kdePackages; [ark dolphin];
+
   boot.kernel.sysctl = {
     "fs.file-max" = 2097152;
 
     "kernel.sched_autogroup_enabled" = 1;
-    "kernel.sched_child_runs_first" = 1;
-    "kernel.sched_fake_interactive_win_time_ms" = 1000;
-    "kernel.sched_migration_cost_ns" = 5000000;
-    "kernel.sched_nr_fork_threshold" = 3;
 
     "vm.dirty_background_ratio" = 2;
     "vm.dirty_ratio" = 60;
@@ -22,7 +20,7 @@ _: {
     "net.core.wmem_default" = 1048576;
     "net.core.wmem_max" = 16777216;
 
-    "net.ipv4.tcp_congestion_control" = "bbr2";
+    "net.ipv4.tcp_congestion_control" = "bbr";
     "net.ipv4.tcp_fastopen" = 3;
     "net.ipv4.tcp_keepalive_intvl" = 10;
     "net.ipv4.tcp_keepalive_probes" = 6;

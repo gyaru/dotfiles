@@ -22,8 +22,12 @@ spec:
     secretRef:
       name: sops-age
   interval: 10m
+  retryInterval: 1m
+  timeout: 5m
   path: ./k3s/cluster
-  prune: true
+  # MIGRATION: RESTORE PRUNING AFTER THE OWNERSHIP CHECK IN k3s/README.md
+  prune: false
+  deletionPolicy: Orphan
   sourceRef:
     kind: GitRepository
     name: flux-system

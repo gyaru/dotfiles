@@ -5,7 +5,10 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  inherit (lib.modules) mkDefault mkForce;
+  inherit (lib.lists) singleton;
+in {
   imports = [
     inputs.agenix.nixosModules.default
     inputs.nixos-hardware.nixosModules.raspberry-pi-4
@@ -29,7 +32,7 @@
       canTouchEfiVariables = false;
       efiSysMountPoint = "/boot";
     };
-    generic-extlinux-compatible.enable = lib.mkForce false;
+    generic-extlinux-compatible.enable = mkForce false;
     grub = {
       enable = true;
       device = "nodev";
@@ -48,7 +51,7 @@
   fileSystems."/" = {
     device = "/dev/disk/by-label/HANA_ROOT";
     fsType = "ext4";
-    options = ["noatime"];
+    options = singleton "noatime";
   };
   fileSystems."/boot" = {
     device = "/dev/disk/by-label/HANA_FW";
@@ -95,7 +98,7 @@
           method = "auto";
         };
       };
-      secrets.entries = lib.lists.singleton {
+      secrets.entries = singleton {
         matchId = "mimi";
         matchSetting = "802-11-wireless-security";
         key = "psk";
@@ -105,9 +108,6 @@
   };
 
   nix = {
-    registry = lib.mapAttrs (_: value: {flake = value;}) inputs;
-    nixPath = lib.mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
-
     settings = {
       auto-optimise-store = true;
       experimental-features = [
@@ -118,7 +118,7 @@
     };
   };
 
-  nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
+  nixpkgs.hostPlatform = mkDefault "aarch64-linux";
 
   security.sudo.wheelNeedsPassword = false;
 

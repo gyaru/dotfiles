@@ -1,216 +1,74 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+usage() {
+    printf '%s\n' \
+        'Usage: pani {switch|boot|test|build|dry-build|check} [host]' \
+        '       pani impermanence [--show-persisted] [--limit COUNT]'
+}
 
-# Always try to find the actual flake directory, not the store path
-if [[ -f "flake.nix" ]]; then
-    FLAKE_DIR="$(pwd)"
-elif command -v git &> /dev/null && git rev-parse --show-toplevel &> /dev/null; then
-    FLAKE_DIR="$(git rev-parse --show-toplevel)"
-else
-    # Fallback to home directory nix-config
-    FLAKE_DIR="$HOME/projects/nix-config"
+flake_dir="${PANI_FLAKE:-}"
+if [[ -z "$flake_dir" ]]; then
+    flake_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 fi
-
-print_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
-
-print_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-get_current_host() {
-    if [[ -f /etc/hostname ]]; then
-        cat /etc/hostname
-    else
-        hostname
-    fi
-}
+if [[ ! -f "$flake_dir/flake.nix" ]]; then
+    printf 'No flake.nix in %s; set PANI_FLAKE to the repository.\n' "$flake_dir" >&2
+    exit 1
+fi
 
 check_impermanence() {
-    local limit=""
-    local show_persisted=false
-    
-    if [[ $# -gt 0 ]]; then
-        if [[ "$1" == "--show-persisted" ]]; then
-            show_persisted=true
-        elif [[ "$1" == "-n" && $# -gt 1 && "$2" =~ ^[0-9]+$ ]]; then
-            limit=$2
-        fi
-    fi
+    local limit=0 show_persisted=false mount_point
+    local -a excludes=(--exclude /nix --exclude /persist --exclude /proc
+        --exclude /sys --exclude /dev --exclude /run --exclude /tmp
+        --exclude /boot --exclude /efi)
+    while (( $# )); do
+        case "$1" in
+            --show-persisted) show_persisted=true; shift ;;
+            --limit)
+                [[ "${2:-}" =~ ^[1-9][0-9]*$ ]] || { usage >&2; return 1; }
+                limit="$2"; shift 2 ;;
+            *) usage >&2; return 1 ;;
+        esac
+    done
 
-    echo "checking for files that would be lost on reboot..."
-    echo "reading persistence configuration from active mounts..."
-    
-    persist_dirs=()
-    while IFS= read -r line; do
-        mount_point=$(echo "$line" | awk '{print $3}')
-        persist_dirs+=("$mount_point")
-    done < <(mount | grep "^/persist" | grep -E "(type fuse|bind)")
-    
-    excludes="{tmp,sys,proc,dev,run,etc/passwd,etc/shadow,nix,persist,boot,efi"
-    
-    if [[ ${#persist_dirs[@]} -gt 0 ]]; then
-        for dir in "${persist_dirs[@]}"; do
-            excludes="$excludes,${dir#/}"
-        done
-    fi
-    
-    excludes="$excludes,var/lib/nixos,var/lib/systemd"
-    
-    excludes="$excludes}"
-    
-    echo "Found ${#persist_dirs[@]} persisted directories"
-    echo "Excluding: $excludes"
-    echo ""
-    
-    if $show_persisted; then
-        echo "Currently persisted directories:"
-        printf '%s\n' "${persist_dirs[@]}" | sort
+    local mounts
+    mounts="$(findmnt --json --list --output TARGET,SOURCE)"
+    local -a persisted=()
+    while IFS= read -r mount_point; do
+        persisted+=("$mount_point")
+        excludes+=(--exclude "$mount_point")
+    done < <(jq --raw-output '.filesystems[] | select(.source | test("^/persist(/|$)|\\[/persist(/|\\])")) | .target' <<< "$mounts")
+    if "$show_persisted"; then
+        if (( ${#persisted[@]} )); then
+            printf '%s\n' "${persisted[@]}"
+        fi
         return
     fi
-    
-    group_files() {
-        local threshold=5
-        declare -A dir_counts
-        local files=()
-        
-        while IFS= read -r file; do
-            files+=("$file")
-        done
-        
-        if [[ ${#files[@]} -gt 0 ]]; then
-            for file in "${files[@]}"; do
-                dir=$(dirname "$file")
-                if [[ "$dir" =~ ^[^/]+/[^/]+ ]]; then
-                    ((dir_counts["$dir"]=${dir_counts["$dir"]:-0}+1))
-                fi
-            done
-        fi
-        
-        declare -A grouped_dirs
-        if [[ ${#dir_counts[@]} -gt 0 ]]; then
-            for dir in "${!dir_counts[@]}"; do
-                if [ "${dir_counts[$dir]}" -ge "$threshold" ]; then
-                    grouped_dirs["$dir"]=1
-                fi
-            done
-        fi
-        
-        declare -A shown_dirs
-        if [[ ${#files[@]} -gt 0 ]]; then
-            for file in "${files[@]}"; do
-                local show=1
-                if [[ ${#grouped_dirs[@]} -gt 0 ]]; then
-                    for grouped_dir in "${!grouped_dirs[@]}"; do
-                        if [[ "$file" == "$grouped_dir"/* ]]; then
-                            if [ -z "${shown_dirs[$grouped_dir]:-}" ]; then
-                                echo "$grouped_dir/ [${dir_counts[$grouped_dir]} files]"
-                                shown_dirs["$grouped_dir"]=1
-                            fi
-                            show=0
-                            break
-                        fi
-                    done
-                fi
-                
-                if [ "$show" -eq 1 ]; then
-                    echo "$file"
-                fi
-            done
-        fi
-    }
-    
-    if [[ -n "$limit" ]]; then
-        output=$(sudo fd --one-file-system --base-directory / --type f --hidden --exclude "$excludes" | group_files)
-        line_count=$(echo "$output" | wc -l)
-        
-        if [ "$line_count" -gt "$limit" ]; then
-            echo "$output" | head -"$limit"
-            echo ""
-            echo "Note: Showing first $limit entries (was $line_count total)."
-        else
-            echo "$output"
-        fi
-    else
-        sudo fd --one-file-system --base-directory / --type f --hidden --exclude "$excludes" | group_files
-    fi
+    printf '%s\n' 'Files on the root filesystem outside detected persistence mounts:' >&2
+    sudo fd --one-file-system --base-directory / --type file --hidden --no-ignore \
+        "${excludes[@]}" | awk -v limit="$limit" 'limit == 0 || NR <= limit'
 }
 
-pani() {
-    local cmd="${1:-}"
-    local host="${2:-$(get_current_host)}"
-    
-    if [[ -z "$cmd" ]]; then
-        print_error "No command specified"
-        echo "Usage: pani <command> [host]"
-        echo ""
-        echo "Commands:"
-        echo "  switch        - Build and switch to new configuration"
-        echo "  boot          - Build and set as boot configuration"
-        echo "  test          - Build and activate configuration (without adding to bootloader)"
-        echo "  build         - Build configuration only"
-        echo "  dry-build     - Show what would be built"
-        echo "  check         - Run flake checks"
-        echo "  impermanence  - Check files that would be lost on reboot"
-        echo ""
-        echo "Current host: $(get_current_host)"
-        return 1
-    fi
-    
-    cd "$FLAKE_DIR"
-    
-    print_info "Running '$cmd' for host: $host"
-    
-    local exit_code=0
-    
-    case "$cmd" in
-        switch|boot|test|build|dry-build)
-            if sudo nixos-rebuild "$cmd" --flake "${FLAKE_DIR}#$host" --log-format internal-json |& nom --json; then
-                print_success "Operation completed successfully!"
-            else
-                exit_code=$?
-                print_error "Operation failed!"
-            fi
-            ;;
-        check)
-            if nix flake check; then
-                print_success "Flake check passed!"
-            else
-                exit_code=$?
-                print_error "Flake check failed!"
-            fi
-            ;;
-        impermanence)
-            check_impermanence "${@:2}"
-            exit_code=$?
-            ;;
-        *)
-            print_error "Unknown command: $cmd"
-            exit_code=1
-            ;;
-    esac
-    
-    return $exit_code
-}
-
-export -f pani
-
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    pani "$@"
+command="${1:-}"
+[[ -n "$command" ]] || { usage >&2; exit 1; }
+shift
+if [[ "$command" == impermanence ]]; then
+    check_impermanence "$@"
+    exit
 fi
+(( $# <= 1 )) || { usage >&2; exit 1; }
+host="${1:-$(cat /etc/hostname)}"
+cd "$flake_dir"
+case "$command" in
+    switch|boot|test)
+        sudo nixos-rebuild "$command" --flake "$flake_dir#$host" --log-format internal-json |& nom --json
+        ;;
+    build)
+        nix build "$flake_dir#nixosConfigurations.$host.config.system.build.toplevel" --log-format internal-json |& nom --json
+        ;;
+    dry-build)
+        nix build "$flake_dir#nixosConfigurations.$host.config.system.build.toplevel" --dry-run
+        ;;
+    check) nix flake check ;;
+    *) usage >&2; exit 1 ;;
+esac

@@ -8,8 +8,10 @@ Personal NixOS configurations built with flake-parts and the dendritic pattern.
 
 ## Hosts
 
-- **lapi**: home server configuration.
-- **radiata**: AMD/Hyprland desktop and hjem configuration.
+- **lapi**: home server configuration
+- **radiata**: AMD/Niri desktop with hjem
+- **hana**: raspberry pi 4
+- **gon**: MediaMTX server
 
 ## Usage
 
@@ -48,6 +50,18 @@ Run all checks:
 pani check
 ```
 
+Evaluate every host and both Linux architectures without building them:
+
+```bash
+nix flake check --all-systems --no-build
+```
+
+The checks include Nix formatting/linting, ShellCheck, and a rendered cluster
+check for image digests, storage retention, single-writer rollouts, node
+placement, and PVC references, plus offline Kubernetes and Flux schema validation.
+See [cluster operations](k3s/README.md) for
+rollout order and the remaining infrastructure migration work.
+
 ## Pani
 
 `pani <command> [host]` wraps common `nixos-rebuild` operations:
@@ -63,6 +77,10 @@ pani check
 | `impermanence` | Show files that would be lost after reboot |
 
 The host defaults to the current machine's hostname.
+Run from the repository, or set `PANI_FLAKE` to its path. Builds run as the
+current user; activation requires sudo. The impermanence report lists files
+outside detected persistence mounts; it is an inspection aid, not a backup or
+a complete prediction of initrd rollback behavior.
 
 ## Structure
 
@@ -101,7 +119,9 @@ derive outputs from directory contents:
 - `modules/nixos/<name>.nix` becomes `nixosModules.<name>`.
 - `modules/hjem/<name>.nix` becomes `hjemModules.<name>`.
 - `packages/<name>/default.nix` becomes `packages.<system>.<name>` and is added
-  to the local package overlay.
+  to the local package overlay. Package outputs exclude unsupported platforms.
+- Standalone concerns can define their outputs directly in a `*.mod.nix` file,
+  such as `packages/niri-pick-color.mod.nix`.
 
 Adding or removing a host, module, or package therefore does not require
 editing a central declaration list.

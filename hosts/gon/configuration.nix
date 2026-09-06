@@ -5,7 +5,12 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  inherit (lib.meta) getExe;
+  inherit (lib.modules) mkForce;
+  inherit (lib.lists) singleton;
+  inherit (lib.strings) toJSON;
+in {
   imports = [
     inputs.disko.nixosModules.disko
     flake.nixosModules.base
@@ -17,16 +22,14 @@
     efiSupport = true;
     efiInstallAsRemovable = true;
   };
-  boot.kernel.sysctl."kernel.unprivileged_userns_clone" = lib.mkForce 0;
+  boot.kernel.sysctl."kernel.unprivileged_userns_clone" = mkForce 0;
 
   environment = {
-    systemPackages = lib.lists.singleton pkgs.gitMinimal;
+    systemPackages = singleton pkgs.gitMinimal;
 
     # MediaMTX 1.18.2 rejects the valid `%YAML 1.1` directive emitted by
     # nixpkgs' remarshal v2. JSON is valid YAML and avoids that parser bug.
-    etc."mediamtx.yaml".source = lib.mkForce (
-      pkgs.writeText "mediamtx.yaml" (builtins.toJSON config.services.mediamtx.settings)
-    );
+    etc."mediamtx.yaml".source = mkForce <| pkgs.writeText "mediamtx.yaml" <| toJSON config.services.mediamtx.settings;
   };
 
   networking.firewall = {
@@ -54,9 +57,6 @@
   ];
 
   nix = {
-    registry = lib.mapAttrs (_: value: {flake = value;}) inputs;
-    nixPath = lib.mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
-
     settings = {
       auto-optimise-store = true;
       experimental-features = [
@@ -74,14 +74,18 @@
   services = {
     caddy = {
       enable = true;
-      virtualHosts."gon.bunny.plus".extraConfig = ''
-        handle /__bunny/control {
-          reverse_proxy 127.0.0.1:10000
-        }
-        handle {
-          reverse_proxy 127.0.0.1:8888
-        }
-      '';
+      virtualHosts."gon.bunny.plus".extraConfig =
+        /*
+        caddyfile
+        */
+        ''
+          handle /__bunny/control {
+            reverse_proxy 127.0.0.1:10000
+          }
+          handle {
+            reverse_proxy 127.0.0.1:8888
+          }
+        '';
     };
 
     mediamtx = {
@@ -95,7 +99,7 @@
           {
             user = "publisher";
             pass = "sha256:Yb1sV/UCfydcnF8Ocb9mCnwdMH4l3bqQsmBQ7O1R7Dw=";
-            permissions = lib.lists.singleton {action = "publish";};
+            permissions = singleton {action = "publish";};
           }
           {
             user = "controller";
@@ -103,7 +107,7 @@
               "127.0.0.1"
               "::1"
             ];
-            permissions = lib.lists.singleton {
+            permissions = singleton {
               action = "publish";
               path = "bunny-plus";
             };
@@ -122,7 +126,7 @@
               "::1"
               "100.64.0.0/10"
             ];
-            permissions = lib.lists.singleton {action = "api";};
+            permissions = singleton {action = "api";};
           }
         ];
         paths = {
@@ -133,8 +137,8 @@
           };
           all_others = {};
         };
-        rtspTransports = ["tcp"];
-        webrtcAdditionalHosts = ["gon.bunny.plus"];
+        rtspTransports = singleton "tcp";
+        webrtcAdditionalHosts = singleton "gon.bunny.plus";
       };
     };
 
@@ -142,7 +146,7 @@
       enable = true;
       openFirewall = false;
       settings = {
-        AllowUsers = ["lis"];
+        AllowUsers = singleton "lis";
         DisableForwarding = true;
         KbdInteractiveAuthentication = false;
         MaxAuthTries = 3;
@@ -153,16 +157,16 @@
 
     tailscale = {
       enable = true;
-      extraSetFlags = ["--accept-dns=false"];
+      extraSetFlags = singleton "--accept-dns=false";
       openFirewall = true;
     };
   };
 
   systemd.services.bunny-stream-controller = {
     description = "Bunny+ stream controller";
-    wantedBy = ["multi-user.target"];
+    wantedBy = singleton "multi-user.target";
     after = ["mediamtx.service" "network-online.target"];
-    wants = ["network-online.target"];
+    wants = singleton "network-online.target";
 
     environment = {
       BUNNY_CONTROLLER_HOST = "127.0.0.1";
@@ -173,7 +177,7 @@
 
     serviceConfig = {
       DynamicUser = true;
-      ExecStart = lib.getExe flake.packages.${pkgs.stdenv.hostPlatform.system}.bunny-controller;
+      ExecStart = getExe flake.packages.${pkgs.stdenv.hostPlatform.system}.bunny-controller;
       LoadCredential = "control-secret:/var/lib/bunny-plus/controller.env";
       LockPersonality = true;
       NoNewPrivileges = true;
@@ -208,11 +212,9 @@
     users = {
       lis = {
         isNormalUser = true;
-        extraGroups = ["wheel"];
+        extraGroups = singleton "wheel";
         hashedPassword = "!";
-        openssh.authorizedKeys.keys = flake.people.lis.sshKeys ++ [
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPRl/9b/3dl+A4HOv+MlZAHD7q0CF/4uMPvfG+tXD5fF hermes@gon-readonly"
-        ];
+        openssh.authorizedKeys.keys = flake.people.lis.sshKeys ++ (singleton "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPRl/9b/3dl+A4HOv+MlZAHD7q0CF/4uMPvfG+tXD5fF hermes@gon-readonly");
       };
       root = {
         hashedPassword = "!";

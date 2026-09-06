@@ -14,6 +14,7 @@ spec:
       labels:
         app: memcached
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: memcached
           image: memcached:1.6.26@sha256:09eaba8e0b136af2f1d8a4985b4fda74ce2793f95ea66d82fbe5769c05b42ea3
@@ -21,6 +22,17 @@ spec:
             - --memory-limit=256
             - --conn-limit=1024
             - --threads=4
+          startupProbe:
+            tcpSocket:
+              port: memcached
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 180
+          readinessProbe:
+            tcpSocket:
+              port: memcached
+            periodSeconds: 10
+            timeoutSeconds: 3
           ports:
             - containerPort: 11211
               name: memcached

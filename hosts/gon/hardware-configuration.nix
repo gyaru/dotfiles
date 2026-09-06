@@ -2,7 +2,10 @@
   lib,
   modulesPath,
   ...
-}: {
+}: let
+  inherit (lib.lists) singleton;
+  inherit (lib.modules) mkDefault;
+in {
   imports = [(modulesPath + "/profiles/qemu-guest.nix")];
 
   boot = {
@@ -14,9 +17,9 @@
       "sd_mod"
     ];
     initrd.kernelModules = [];
-    kernelModules = ["kvm-intel"];
+    kernelModules = singleton "kvm-intel";
     extraModulePackages = [];
   };
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  nixpkgs.hostPlatform = mkDefault "x86_64-linux";
 }

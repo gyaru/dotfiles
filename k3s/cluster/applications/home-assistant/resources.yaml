@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
   name: home-assistant-config
   labels:
     app: home-assistant
@@ -29,11 +31,25 @@ spec:
       labels:
         app: home-assistant
     spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/hostname: lapi
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: home-assistant
           image: homeassistant/home-assistant:2026.7.2@sha256:1476924357b46e80735c13e94232ba5c853cac052e9df4bb28d50fa56348097b
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 180
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
           ports:
             - containerPort: 8123
               name: http

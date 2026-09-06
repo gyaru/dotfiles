@@ -1,14 +1,20 @@
-_: {
+{lib, ...}: let
+  inherit (lib.lists) singleton;
+in {
   boot = {
-    supportedFilesystems = ["zfs"];
+    supportedFilesystems = singleton "zfs";
     zfs = {
       forceImportRoot = false;
-      extraPools = ["mlem"];
+      extraPools = singleton "mlem";
     };
 
-    extraModprobeConfig = ''
-      options zfs zfs_arc_max=4294967296
-    '';
+    extraModprobeConfig =
+      /*
+      modprobe
+      */
+      ''
+        options zfs zfs_arc_max=4294967296
+      '';
   };
 
   networking.hostId = "a8c06e77";
@@ -18,14 +24,14 @@ _: {
       frequent = false;
       hourly = false;
     };
-    scrubPools = ["mlem"];
+    scrubPools = singleton "mlem";
   };
 
   services.zfs = {
     autoScrub = {
       enable = true;
       interval = "Mon *-*-01..07 04:00:00";
-      pools = ["mlem"];
+      pools = singleton "mlem";
       randomizedDelaySec = "0";
     };
     autoSnapshot = {

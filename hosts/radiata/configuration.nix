@@ -5,36 +5,38 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  inherit (lib.lists) singleton;
+  inherit (lib.modules) mkDefault mkForce;
+  windowsBootEntry =
+    pkgs.writeText "windows.conf"
+    /*
+    ini
+    */
+    ''
+      title Windows 11
+      efi /efi/edk2-uefi-shell/shell.efi
+      options -nointerrupt -nomap -noversion HD0b:EFI\Microsoft\Boot\Bootmgfw.efi
+      sort-key 00-windows
+    '';
+in {
   imports = [
-    (inputs.impermanence + "/nixos.nix")
-    flake.nixosModules.amd
-    flake.nixosModules.desktop
-    flake.nixosModules.gaming
-    flake.nixosModules.audio
-    flake.nixosModules.wayland
-    flake.nixosModules.base
-    flake.nixosModules.impermanence
-    flake.nixosModules.security
+    inputs.hjem.nixosModules.default
     inputs.lanzaboote.nixosModules.lanzaboote
     inputs.nix-index-database.nixosModules.nix-index
-    inputs.hjem.nixosModules.default
+    flake.nixosModules.amd
+    flake.nixosModules.audio
+    flake.nixosModules.base
+    flake.nixosModules.desktop
+    flake.nixosModules.gaming
+    flake.nixosModules.security
+    flake.nixosModules.wayland
     ./users/lis.nix
   ];
 
-  modules = {
-    wayland = {
-      enable = true;
-      compositor = "hyprland";
-    };
-    impermanence = {
-      enable = true;
-      btrfsRootUuid = "caf259ee-b2be-4cf8-b41a-752a09d344a7";
-      persistentDirectories = [
-        "/var/lib/flatpak"
-        "/etc/coolercontrol"
-      ];
-    };
+  modules.wayland = {
+    enable = true;
+    compositor = "niri";
   };
 
   modules.audio = {
@@ -50,13 +52,10 @@
   };
 
   nixpkgs = {
-    hostPlatform = lib.mkDefault "x86_64-linux";
+    hostPlatform = mkDefault "x86_64-linux";
   };
 
   nix = {
-    registry = lib.mapAttrs (_: value: {flake = value;}) inputs;
-    nixPath = lib.mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
-
     settings = {
       experimental-features = [
         "nix-command"
@@ -69,24 +68,10 @@
       max-jobs = "auto";
       cores = 0;
       eval-cache = true;
-      substituters = [
-        "https://cache.nixos.org?priority=10"
-        "https://anyrun.cachix.org"
-        "https://hyprland.cachix.org"
-        "https://nix-community.cachix.org"
-        "https://nix-gaming.cachix.org"
-      ];
       system-features = [
         "big-parallel"
         "kvm"
         "nixos-test"
-      ];
-      trusted-public-keys = [
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-        "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
-        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
       ];
     };
     gc = {
@@ -98,86 +83,51 @@
 
   networking = {
     hostName = "radiata";
-    useDHCP = lib.mkDefault true;
+    networkmanager.enable = true;
+    useDHCP = mkDefault true;
     nameservers = [
       "1.1.1.1"
       "1.0.0.1"
       "8.8.8.8"
       "8.8.4.4"
-    ]; # cloudflare, google as backup
+    ];
     firewall = {
       enable = true;
       allowPing = false;
+      checkReversePath = "loose";
       logReversePathDrops = true;
     };
   };
 
   fileSystems = {
-    # root
     "/" = {
-      device = "/dev/disk/by-uuid/caf259ee-b2be-4cf8-b41a-752a09d344a7";
+      device = "/dev/disk/by-uuid/1828ab6b-52a6-4723-86b8-54629eb390e1";
       fsType = "btrfs";
-      options = [
-        "subvol=root"
-        "compress=zstd:1"
-        "noatime"
-        "discard=async"
-        "space_cache=v2"
-      ];
     };
-    # nix
-    "/nix" = {
-      device = "/dev/disk/by-uuid/caf259ee-b2be-4cf8-b41a-752a09d344a7";
-      fsType = "btrfs";
-      options = [
-        "subvol=nix"
-        "compress=zstd:1"
-        "noatime"
-        "discard=async"
-        "space_cache=v2"
-      ];
-    };
-    # persist
-    "/persist" = {
-      device = "/dev/disk/by-uuid/caf259ee-b2be-4cf8-b41a-752a09d344a7";
-      fsType = "btrfs";
-      options = [
-        "subvol=persist"
-        "compress=zstd:1"
-        "noatime"
-        "discard=async"
-        "space_cache=v2"
-      ];
-      neededForBoot = true;
-    };
-    # boot
-    "/boot" = {
-      device = "/dev/disk/by-uuid/601B-12CD";
-      fsType = "vfat";
-      neededForBoot = true;
-    };
-    # efi
     "/efi" = {
-      device = "/dev/disk/by-uuid/6A71-B54B";
+      device = "/dev/disk/by-uuid/020A-56A8";
       fsType = "vfat";
+      options = ["fmask=0022" "dmask=0022"];
       neededForBoot = true;
     };
-    # shigure
-    "/mnt/shigure" = {
+    "/boot" = {
+      device = "/dev/disk/by-uuid/027C-6880";
+      fsType = "vfat";
+      options = ["fmask=0022" "dmask=0022"];
+      neededForBoot = true;
+    };
+    "/mnt/koharu" = {
       device = "/dev/disk/by-uuid/CC76855576854166";
-      fsType = "ntfs";
-      options = [
-        "rw"
-        "uid=1000"
-        "gid=100"
-        "umask=022"
-      ];
+      fsType = "ntfs-3g";
+      options = ["nofail" "uid=1000" "gid=100" "umask=0022"];
     };
   };
 
+  swapDevices = [];
+
   boot = {
     # consoleLogLevel = 0;
-    # kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
+    kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
     kernelParams = [
       "mitigations=off"
       "preempt=full"
@@ -185,21 +135,22 @@
       "udev.log_level=3"
     ];
 
-    kernelModules = [];
+    kernelModules = singleton "kvm-amd";
     extraModulePackages = [];
 
     initrd = {
       availableKernelModules = [
         "nvme"
-        "xhci_pci"
         "ahci"
+        "xhci_pci"
+        "thunderbolt"
         "usbhid"
         "usb_storage"
         "sd_mod"
       ];
       kernelModules = [];
       systemd.enable = true;
-      supportedFilesystems = ["btrfs"];
+      supportedFilesystems = singleton "btrfs";
     };
 
     lanzaboote = {
@@ -211,37 +162,59 @@
       efi.canTouchEfiVariables = true;
       efi.efiSysMountPoint = "/efi";
       systemd-boot = {
-        enable = lib.mkForce (!config.boot.lanzaboote.enable);
-        configurationLimit = 1;
+        enable = mkForce false;
+        configurationLimit = 5;
         consoleMode = "max";
         editor = false;
+        xbootldrMountPoint = "/boot";
       };
     };
   };
 
+  # a signed EDK2 shell and its windows chainloader entry into boot
+  systemd.services.lanzaboote-windows-entry = {
+    description = "Install the Windows Lanzaboote entry";
+    wantedBy = singleton "multi-user.target";
+    after = ["efi.mount" "boot.mount"];
+    requires = ["efi.mount" "boot.mount"];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script =
+      /*
+      bash
+      */
+      ''
+        ${pkgs.coreutils}/bin/install -d -m 0755 /boot/efi/edk2-uefi-shell
+        shell_tmp=$(${pkgs.coreutils}/bin/mktemp /boot/efi/edk2-uefi-shell/shell.efi.XXXXXX)
+        trap '${pkgs.coreutils}/bin/rm -f "$shell_tmp"' EXIT
+        ${pkgs.sbsigntool}/bin/sbsign \
+          --key '${config.boot.lanzaboote.privateKeyFile}' \
+          --cert '${config.boot.lanzaboote.publicKeyFile}' \
+          --output "$shell_tmp" \
+          '${pkgs.edk2-uefi-shell}/shell.efi'
+        ${pkgs.coreutils}/bin/install -m 0644 "$shell_tmp" /boot/efi/edk2-uefi-shell/shell.efi
+        ${pkgs.coreutils}/bin/install -Dm 0644 '${windowsBootEntry}' /boot/loader/entries/windows.conf
+      '';
+  };
+
   hardware = {
     enableRedistributableFirmware = true;
+    cpu.amd.updateMicrocode = mkDefault config.hardware.enableRedistributableFirmware;
   };
 
   environment = {
     binsh = "${pkgs.zsh}/bin/zsh";
-    pathsToLink = ["/share/zsh"];
+    pathsToLink = singleton "/share/zsh";
     shells = with pkgs; [zsh];
     systemPackages = with pkgs; [
-      qemu
-      (qemu.override {
-        gtkSupport = true;
-        openGLSupport = true;
-        virglSupport = true;
-      })
       git
       ntfs3g
       sbctl
-      qemu_kvm
     ];
   };
 
-  # fonts
   fonts = {
     packages = with pkgs; [
       balsamiqsans
@@ -255,10 +228,10 @@
       noto-fonts-monochrome-emoji
     ];
     fontconfig = {
-      enable = lib.mkDefault true;
+      enable = mkDefault true;
       defaultFonts = {
-        monospace = ["M PLUS 1 Code"];
-        emoji = ["Noto Color Emoji"];
+        monospace = singleton "M PLUS 1 Code";
+        emoji = singleton "Noto Color Emoji";
       };
       antialias = true;
       hinting = {
@@ -272,7 +245,6 @@
     };
   };
 
-  # locales
   i18n = {
     defaultLocale = "en_US.UTF-8";
     supportedLocales = [
@@ -296,81 +268,38 @@
     };
   };
 
-  # programs
+  users.users.lis = {
+    isNormalUser = true;
+    shell = pkgs.zsh;
+    group = "users";
+    extraGroups = singleton "wheel";
+  };
+
   programs = {
     command-not-found.enable = false;
     zsh.enable = true;
-    fuse.userAllowOther = true; # impermanence
-    coolercontrol.enable = true; # fancontrol
     nix-index-database.comma.enable = true;
   };
 
-  # security
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  xdg.portal = {
+    enable = true;
+    config.common.default = singleton "gnome";
+    extraPortals = [];
+  };
+
   security = {
     sudo.wheelNeedsPassword = false;
   };
 
-  # services
-  services = {
-    journald.extraConfig = lib.mkForce "";
-    udev.extraRules = ''
-      SUBSYSTEM=="usb", ATTRS{idVendor}=="0c45", ATTRS{idProduct}=="636d", MODE="0660", GROUP="usbpassthrough", TAG+="uaccess"
-    '';
+  time = {
+    timeZone = "Europe/Stockholm";
+    hardwareClockInLocalTime = true;
   };
 
-  # users
-  users = {
-    mutableUsers = false;
-    users.root.hashedPasswordFile = "/persist/passwords/root";
-    users.lis = {
-      isNormalUser = true;
-      shell = pkgs.zsh;
-      group = "users";
-      extraGroups = [
-        "wheel"
-        "video"
-        "audio"
-        "realtime"
-        "input"
-        "kvm"
-        "usbpassthrough"
-      ];
-      hashedPasswordFile = "/persist/passwords/lis";
-      openssh.authorizedKeys.keys = flake.people.lis.sshKeys;
-    };
-  };
-
-  environment.persistence."/persist".users.lis = {
-    directories = [
-      "downloads"
-      "pictures"
-      "projects"
-      "documents"
-      "videos"
-      ".gnupg"
-      ".ssh"
-      ".vscode"
-      ".var"
-      ".local/share/keyrings"
-      ".local/share/direnv"
-      ".local/share/wallpapers"
-      ".local/share/TelegramDesktop"
-      ".local/share/flatpak"
-      ".config/spotify"
-      ".config/vesktop"
-      ".cache/tealdeer"
-      ".cache/nix"
-      ".cache/starship"
-      ".cache/nix-index"
-      ".cache/flatpak"
-      ".mozilla"
-      ".cache/mozilla"
-    ];
-    files = [".zsh_history"];
-  };
-
-  # time
-  time.timeZone = "Europe/Stockholm";
-
-  system.stateVersion = "23.11";
+  system.stateVersion = "26.05";
 }

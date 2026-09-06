@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
   name: radarr-config
   labels:
     app: radarr
@@ -19,6 +21,8 @@ metadata:
     app: radarr
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: radarr
@@ -27,9 +31,23 @@ spec:
       labels:
         app: radarr
     spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/hostname: lapi
       containers:
         - name: radarr
           image: linuxserver/radarr:6.3.0@sha256:e35056574cdc695a9ee745aa1ecda9eab3842450bf4b7b8471b023790fa3861d
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 180
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
           ports:
             - containerPort: 7878
               name: http

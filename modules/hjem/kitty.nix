@@ -9,7 +9,7 @@ _: {
       mouse_hide_wait = 0;
       clear_all_shortcuts = "yes";
       window_padding_width = 5;
-      # colours
+      # COLOURS
       foreground = "#575279";
       background = "#faf4ed";
       selection_foreground = "#575279";

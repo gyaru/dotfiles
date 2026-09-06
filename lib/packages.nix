@@ -7,7 +7,7 @@
 
   packageDirectories =
     readDir ../packages
-    |> filterAttrs (_: type: type == "directory");
+    |> filterAttrs (name: type: type == "directory" && (readDir ../packages/${name}) ? "default.nix");
 in
   packageDirectories
   |> mapAttrs (name: _: pkgs.callPackage ../packages/${name} {})

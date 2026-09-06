@@ -8,5 +8,4 @@ resources:
   - flux-system/notifications.yaml
   - flux-system/sops-check.sops.yaml
   - flux-system/gotk-sync.yaml
-  - infrastructure
-  - applications
+  - flux-system/reconciliations.yaml

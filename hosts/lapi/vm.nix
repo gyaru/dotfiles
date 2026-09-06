@@ -1,4 +1,10 @@
-{pkgs, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: let
+  inherit (lib.lists) singleton;
+in {
   virtualisation.libvirtd = {
     enable = true;
     onBoot = "ignore";
@@ -29,7 +35,5 @@
     "kvm"
   ];
 
-  networking.firewall.trustedInterfaces = [
-    "virbr0"
-  ];
+  networking.firewall.trustedInterfaces = singleton "virbr0";
 }

@@ -1,27 +1,49 @@
 {
   config,
+  flake,
   lib,
   pkgs,
   ...
 }: let
-  kubeTokenFile = "/var/lib/prometheus/k3s-token";
-  kubeCAFile = "/var/lib/prometheus/k3s-ca.crt";
-  kubeConfigFile = "/var/lib/prometheus/k3s-kubeconfig.yaml";
-  processExporterConfig =
-    pkgs.writeText "process-exporter.yaml"
+  inherit (lib.lists) singleton;
+  inherit (lib.strings) toJSON;
+  kubeTokenFile = "/var/lib/${config.services.prometheus.stateDir}/k3s-token";
+  kubeCAFile = "/var/lib/${config.services.prometheus.stateDir}/k3s-ca.crt";
+  kubeConfigFile =
+    pkgs.writeText "prometheus-kubeconfig.json"
+    <| toJSON {
+      apiVersion = "v1";
+      kind = "Config";
+      clusters = singleton {
+        name = "k3s";
+        cluster = {
+          certificate-authority = kubeCAFile;
+          server = "https://127.0.0.1:6443";
+        };
+      };
+      users = singleton {
+        name = "prometheus";
+        user.tokenFile = kubeTokenFile;
+      };
+      contexts = singleton {
+        name = "prometheus@k3s";
+        context = {
+          cluster = "k3s";
+          user = "prometheus";
+        };
+      };
+      current-context = "prometheus@k3s";
+    };
+in {
+  imports = singleton flake.nixosModules.prometheus-endpointslice;
+
+  networking.firewall.extraCommands =
     /*
-    yaml
+    bash
     */
     ''
-      process_names:
-        - name: "{{.ExeBase}}"
-          cmdline:
-            - ".+"
+      iptables --append nixos-fw --protocol tcp --dport 3000 --source 192.168.1.0/24 --jump nixos-fw-accept
     '';
-in {
-  networking.firewall.extraCommands = ''
-    iptables -A nixos-fw -p tcp --dport 3000 -s 192.168.1.0/24 -j nixos-fw-accept
-  '';
 
   services = {
     grafana = {
@@ -33,24 +55,24 @@ in {
           http_port = 3000;
           domain = config.networking.hostName;
         };
-        security.secret_key = "$__file{/var/lib/grafana/secret-key}";
+        security.secret_key = "$__file{${config.services.grafana.dataDir}/secret-key}";
       };
       provision = {
         enable = true;
         datasources.settings = {
           apiVersion = 1;
-          datasources = lib.lists.singleton {
+          datasources = singleton {
             name = "Prometheus";
             type = "prometheus";
             access = "proxy";
-            url = "http://127.0.0.1:9092";
+            url = "http://127.0.0.1:${toString config.services.prometheus.port}";
             uid = "prometheus";
             isDefault = true;
           };
         };
         dashboards.settings = {
           apiVersion = 1;
-          providers = lib.lists.singleton {
+          providers = singleton {
             name = "Lapi";
             folder = "Lapi";
             options.path = ./dashboards;
@@ -61,15 +83,25 @@ in {
 
     prometheus = {
       enable = true;
-      checkConfig = false;
+      checkConfig = "syntax-only";
       listenAddress = "127.0.0.1";
       port = 9092;
       retentionTime = "30d";
       exporters = {
+        process = {
+          enable = true;
+          listenAddress = "127.0.0.1";
+          extraFlags = singleton "--threads=false";
+          settings.process_names = singleton {
+            name = "{{.ExeBase}}";
+            cmdline = singleton ".+";
+          };
+        };
+
         node = {
           enable = true;
           listenAddress = "127.0.0.1";
-          enabledCollectors = ["systemd"];
+          enabledCollectors = singleton "systemd";
         };
         nvidia-gpu = {
           enable = true;
@@ -87,38 +119,38 @@ in {
       scrapeConfigs = [
         {
           job_name = "prometheus";
-          static_configs = lib.lists.singleton {
-            targets = ["127.0.0.1:9092"];
+          static_configs = singleton {
+            targets = singleton "127.0.0.1:${toString config.services.prometheus.port}";
           };
         }
         {
           job_name = "node";
-          static_configs = lib.lists.singleton {
-            targets = ["127.0.0.1:9100"];
+          static_configs = singleton {
+            targets = singleton "127.0.0.1:${toString config.services.prometheus.exporters.node.port}";
           };
         }
         {
           job_name = "nvidia";
-          static_configs = lib.lists.singleton {
-            targets = ["127.0.0.1:9835"];
+          static_configs = singleton {
+            targets = singleton "127.0.0.1:${toString config.services.prometheus.exporters.nvidia-gpu.port}";
           };
         }
         {
           job_name = "smartctl";
-          static_configs = lib.lists.singleton {
-            targets = ["127.0.0.1:9633"];
+          static_configs = singleton {
+            targets = singleton "127.0.0.1:${toString config.services.prometheus.exporters.smartctl.port}";
           };
         }
         {
           job_name = "zfs";
-          static_configs = lib.lists.singleton {
-            targets = ["127.0.0.1:9134"];
+          static_configs = singleton {
+            targets = singleton "127.0.0.1:${toString config.services.prometheus.exporters.zfs.port}";
           };
         }
         {
           job_name = "processes";
-          static_configs = lib.lists.singleton {
-            targets = ["127.0.0.1:9256"];
+          static_configs = singleton {
+            targets = singleton "127.0.0.1:${toString config.services.prometheus.exporters.process.port}";
           };
         }
         {
@@ -126,64 +158,64 @@ in {
           scheme = "https";
           bearer_token_file = kubeTokenFile;
           tls_config.ca_file = kubeCAFile;
-          static_configs = lib.lists.singleton {
-            targets = ["127.0.0.1:6443"];
+          static_configs = singleton {
+            targets = singleton "127.0.0.1:6443";
           };
         }
         {
           job_name = "kubelet";
           scheme = "https";
-          metrics_path = "/api/v1/nodes/lapi/proxy/metrics";
+          metrics_path = "/api/v1/nodes/${config.networking.hostName}/proxy/metrics";
           bearer_token_file = kubeTokenFile;
           tls_config.ca_file = kubeCAFile;
-          static_configs = lib.lists.singleton {
-            targets = ["127.0.0.1:6443"];
+          static_configs = singleton {
+            targets = singleton "127.0.0.1:6443";
           };
         }
         {
           job_name = "cadvisor";
           scheme = "https";
-          metrics_path = "/api/v1/nodes/lapi/proxy/metrics/cadvisor";
+          metrics_path = "/api/v1/nodes/${config.networking.hostName}/proxy/metrics/cadvisor";
           bearer_token_file = kubeTokenFile;
           tls_config.ca_file = kubeCAFile;
-          static_configs = lib.lists.singleton {
-            targets = ["127.0.0.1:6443"];
+          static_configs = singleton {
+            targets = singleton "127.0.0.1:6443";
           };
         }
         {
           job_name = "kube-state-metrics";
-          static_configs = lib.lists.singleton {
-            targets = ["10.43.0.240:8080"];
+          static_configs = singleton {
+            targets = singleton "10.43.0.240:8080";
           };
         }
         {
           job_name = "tailscale-proxies";
-          kubernetes_sd_configs = lib.lists.singleton {
-            role = "endpoints";
-            kubeconfig_file = kubeConfigFile;
-            namespaces.names = ["tailscale"];
+          kubernetes_sd_configs = singleton {
+            role = "endpointslice";
+            kubeconfig_file = "${kubeConfigFile}";
+            namespaces.names = singleton "tailscale";
           };
           relabel_configs = [
             {
-              source_labels = ["__meta_kubernetes_service_label_tailscale_com_metrics_target"];
+              source_labels = singleton "__meta_kubernetes_service_label_tailscale_com_metrics_target";
               regex = ".+";
               action = "keep";
             }
             {
-              source_labels = ["__meta_kubernetes_endpoint_port_name"];
+              source_labels = singleton "__meta_kubernetes_endpointslice_port_name";
               regex = "metrics";
               action = "keep";
             }
             {
-              source_labels = ["__meta_kubernetes_service_label_ts_proxy_parent_name"];
+              source_labels = singleton "__meta_kubernetes_service_label_ts_proxy_parent_name";
               target_label = "proxy";
             }
             {
-              source_labels = ["__meta_kubernetes_service_label_ts_proxy_parent_namespace"];
+              source_labels = singleton "__meta_kubernetes_service_label_ts_proxy_parent_namespace";
               target_label = "proxy_namespace";
             }
             {
-              source_labels = ["__meta_kubernetes_service_label_ts_proxy_type"];
+              source_labels = singleton "__meta_kubernetes_service_label_ts_proxy_type";
               target_label = "proxy_type";
             }
           ];
@@ -192,108 +224,78 @@ in {
     };
   };
 
-  systemd.services = {
-    prometheus-process-exporter = {
-      description = "Prometheus process exporter";
-      wantedBy = ["multi-user.target"];
-      before = ["prometheus.service"];
-      serviceConfig = {
-        ExecStart = "${pkgs.prometheus-process-exporter}/bin/process-exporter --config.path ${processExporterConfig} --web.listen-address=127.0.0.1:9256 --threads=false";
-        Restart = "on-failure";
-        DynamicUser = true;
-        ProtectSystem = "strict";
-        ProtectHome = true;
-        PrivateTmp = true;
-        NoNewPrivileges = true;
-      };
+  systemd.timers.k3s-prometheus-credentials = {
+    wantedBy = singleton "timers.target";
+    timerConfig = {
+      OnBootSec = "1min";
+      OnUnitActiveSec = "30min";
     };
+  };
 
+  systemd.services = {
     k3s-prometheus-credentials = {
       description = "Sync k3s credentials for Prometheus";
-      wantedBy = ["multi-user.target"];
-      after = ["k3s.service"];
-      requires = ["k3s.service"];
-      path = [pkgs.k3s];
+      before = singleton "prometheus.service";
+      wantedBy = singleton "multi-user.target";
+      after = singleton "k3s.service";
+      requires = singleton "k3s.service";
+      unitConfig.StartLimitIntervalSec = 0;
+      path = singleton pkgs.kubectl;
+      environment.KUBECONFIG = "/etc/rancher/k3s/k3s.yaml";
       serviceConfig = {
         Type = "oneshot";
-        RemainAfterExit = true;
+        UMask = "0077";
+        Restart = "on-failure";
+        RestartSec = "10s";
       };
       script =
         /*
         bash
         */
         ''
-          kubectl --namespace monitoring wait \
-            --for=jsonpath='{.data.token}' \
-            secret/prometheus-token \
-            --timeout=60s
-          install --directory --mode=0750 --owner=prometheus --group=prometheus /var/lib/prometheus
-          kubectl --namespace monitoring get secret prometheus-token \
-            --output=jsonpath='{.data.token}' \
-            | ${pkgs.coreutils}/bin/base64 --decode \
-            > ${kubeTokenFile}
-          chmod 0400 ${kubeTokenFile}
-          chown prometheus:prometheus ${kubeTokenFile}
-          kubectl --namespace monitoring get secret prometheus-token \
-            --output=jsonpath='{.data.ca\.crt}' \
-            | ${pkgs.coreutils}/bin/base64 --decode \
-            > ${kubeCAFile}
-          chmod 0400 ${kubeCAFile}
-          chown prometheus:prometheus ${kubeCAFile}
-          token="$(${pkgs.coreutils}/bin/cat ${kubeTokenFile})"
-          ${pkgs.coreutils}/bin/install --mode=0400 --owner=prometheus --group=prometheus /dev/null ${kubeConfigFile}
-          ${pkgs.coreutils}/bin/cat > ${kubeConfigFile} <<EOF
-          apiVersion: v1
-          kind: Config
-          clusters:
-            - name: k3s
-              cluster:
-                certificate-authority: ${kubeCAFile}
-                server: https://127.0.0.1:6443
-          users:
-            - name: prometheus
-              user:
-                token: $token
-          contexts:
-            - name: prometheus@k3s
-              context:
-                cluster: k3s
-                user: prometheus
-          current-context: prometheus@k3s
-          EOF
+          set -euo pipefail
+          install --directory --mode=0750 --owner=prometheus --group=prometheus /var/lib/${config.services.prometheus.stateDir}
+          token_file="$(mktemp /var/lib/${config.services.prometheus.stateDir}/.k3s-token.XXXXXX)"
+          ca_file="$(mktemp /var/lib/${config.services.prometheus.stateDir}/.k3s-ca.XXXXXX)"
+          trap 'rm --force "$token_file" "$ca_file"' EXIT
+          kubectl --namespace=monitoring create token prometheus --duration=24h > "$token_file"
+          kubectl config view --raw --minify --output=jsonpath='{.clusters[0].cluster.certificate-authority-data}' \
+            | base64 --decode > "$ca_file"
+          test -s "$token_file"
+          test -s "$ca_file"
+          chmod 0400 "$token_file" "$ca_file"
+          chown prometheus:prometheus "$token_file" "$ca_file"
+          mv --force "$ca_file" ${kubeCAFile}
+          mv --force "$token_file" ${kubeTokenFile}
         '';
     };
 
     grafana-secret-key = {
       description = "Generate Grafana secret key";
-      wantedBy = ["grafana.service"];
-      before = ["grafana.service"];
+      requiredBy = singleton "grafana.service";
+      before = singleton "grafana.service";
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
+        UMask = "0077";
       };
       script =
         /*
         bash
         */
         ''
-          install --directory --mode=0750 --owner=grafana --group=grafana /var/lib/grafana
-          if [ ! -s /var/lib/grafana/secret-key ]; then
-            ${pkgs.openssl}/bin/openssl rand -hex 32 > /var/lib/grafana/secret-key
+          install --directory --mode=0750 --owner=grafana --group=grafana ${config.services.grafana.dataDir}
+          if [ ! -s ${config.services.grafana.dataDir}/secret-key ]; then
+            ${pkgs.openssl}/bin/openssl rand -hex 32 > ${config.services.grafana.dataDir}/secret-key
           fi
-          chmod 0400 /var/lib/grafana/secret-key
-          chown grafana:grafana /var/lib/grafana/secret-key
+          chmod 0400 ${config.services.grafana.dataDir}/secret-key
+          chown grafana:grafana ${config.services.grafana.dataDir}/secret-key
         '';
     };
 
     prometheus = {
-      after = ["k3s-prometheus-credentials.service"];
-      requires = ["k3s-prometheus-credentials.service"];
-      serviceConfig.ReadOnlyPaths = [
-        kubeCAFile
-        kubeConfigFile
-        kubeTokenFile
-      ];
+      after = singleton "k3s-prometheus-credentials.service";
+      requires = singleton "k3s-prometheus-credentials.service";
     };
   };
 }
