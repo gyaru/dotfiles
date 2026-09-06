@@ -4,8 +4,11 @@
       audio
       base
       desktop
+      network-tuning
+      flatpak
       gaming
       security
+      kernel-hardening
       wayland
       nix-builder
       home

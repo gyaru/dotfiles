@@ -1,5 +1,6 @@
 {
   config,
+  flake,
   lib,
   pkgs,
   ...
@@ -37,6 +38,8 @@
     categories = singleton "Game";
   };
 in {
+  imports = singleton flake.modules.nixos.flatpak;
+
   environment = {
     etc = {
       "xdg/autostart/at-spi-dbus-bus.desktop".text =
@@ -145,8 +148,6 @@ in {
   };
 
   services = {
-    flatpak.enable = true;
-
     udev.extraRules =
       /*
       udev

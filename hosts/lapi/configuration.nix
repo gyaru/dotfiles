@@ -12,6 +12,7 @@ in {
   imports = [
     inputs.agenix.nixosModules.default
     flake.modules.nixos.nix-builder
+    flake.modules.nixos.kernel-hardening
     flake.modules.nixos.ssh
     flake.modules.nixos.tailscale
     flake.modules.nixos.firewall
@@ -67,7 +68,6 @@ in {
       "split_lock_detect=off"
     ];
 
-    kernel.sysctl."vm.min_free_kbytes" = 524288;
     blacklistedKernelModules = singleton "nouveau";
     kernelPackages = pkgs.linuxKernel.packages.linux_xanmod;
   };
