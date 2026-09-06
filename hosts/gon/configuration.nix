@@ -6,14 +6,16 @@
   pkgs,
   ...
 }: let
-  inherit (lib.meta) getExe;
   inherit (lib.modules) mkForce;
   inherit (lib.lists) singleton;
-  inherit (lib.strings) toJSON;
 in {
   imports = [
     inputs.disko.nixosModules.disko
-    flake.nixosModules.base
+    flake.modules.nixos.base
+    flake.modules.nixos.bunny-stream-gateway
+    flake.modules.nixos.ssh
+    flake.modules.nixos.tailscale
+    flake.modules.nixos.firewall
     ./disk-config.nix
     ./hardware-configuration.nix
   ];
@@ -26,184 +28,34 @@ in {
 
   environment = {
     systemPackages = singleton pkgs.gitMinimal;
-
-    # MediaMTX 1.18.2 rejects the valid `%YAML 1.1` directive emitted by
-    # nixpkgs' remarshal v2. JSON is valid YAML and avoids that parser bug.
-    etc."mediamtx.yaml".source = mkForce <| pkgs.writeText "mediamtx.yaml" <| toJSON config.services.mediamtx.settings;
   };
 
   networking.firewall = {
-    enable = true;
-    allowPing = false;
-    allowedTCPPorts = [
-      80
-      443
-      1935
-      8554
-      8888
-      8889
-    ];
-    allowedUDPPorts = [
-      8189
-      8890
-    ];
     interfaces.tailscale0.allowedTCPPorts = config.services.openssh.ports ++ [9997];
     logRefusedConnections = false;
-    logReversePathDrops = true;
   };
   networking.nameservers = [
     "1.1.1.1"
     "1.0.0.1"
   ];
 
-  nix = {
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [
-        "flakes"
-        "nix-command"
-        "pipe-operators"
-      ];
-      trusted-users = [
-        "root"
-        "lis"
-      ];
-    };
-  };
+  nix.settings.trusted-users = ["root" "lis"];
 
   services = {
-    caddy = {
-      enable = true;
-      virtualHosts."gon.bunny.plus".extraConfig =
-        /*
-        caddyfile
-        */
-        ''
-          handle /__bunny/control {
-            reverse_proxy 127.0.0.1:10000
-          }
-          handle {
-            reverse_proxy 127.0.0.1:8888
-          }
-        '';
-    };
-
-    mediamtx = {
-      enable = true;
-      settings = {
-        api = true;
-        # Low-Latency HLS uses fragmented MP4 and supports modern codecs such as
-        # H.265/HEVC and AV1 when the browser has a compatible decoder.
-        hlsVariant = "lowLatency";
-        authInternalUsers = [
-          {
-            user = "publisher";
-            pass = "sha256:Yb1sV/UCfydcnF8Ocb9mCnwdMH4l3bqQsmBQ7O1R7Dw=";
-            permissions = singleton {action = "publish";};
-          }
-          {
-            user = "controller";
-            ips = [
-              "127.0.0.1"
-              "::1"
-            ];
-            permissions = singleton {
-              action = "publish";
-              path = "bunny-plus";
-            };
-          }
-          {
-            user = "any";
-            permissions = [
-              {action = "read";}
-              {action = "playback";}
-            ];
-          }
-          {
-            user = "any";
-            ips = [
-              "127.0.0.1"
-              "::1"
-              "100.64.0.0/10"
-            ];
-            permissions = singleton {action = "api";};
-          }
-        ];
-        paths = {
-          bunny-plus = {
-            alwaysAvailable = true;
-            alwaysAvailableFile = "/var/lib/bunny-plus-media/offline.mp4";
-            overridePublisher = true;
-          };
-          all_others = {};
-        };
-        rtspTransports = singleton "tcp";
-        webrtcAdditionalHosts = singleton "gon.bunny.plus";
-      };
-    };
-
     openssh = {
-      enable = true;
       openFirewall = false;
       settings = {
         AllowUsers = singleton "lis";
         DisableForwarding = true;
         KbdInteractiveAuthentication = false;
         MaxAuthTries = 3;
-        PasswordAuthentication = false;
-        PermitRootLogin = "no";
       };
     };
-
     tailscale = {
-      enable = true;
       extraSetFlags = singleton "--accept-dns=false";
       openFirewall = true;
     };
   };
-
-  systemd.services.bunny-stream-controller = {
-    description = "Bunny+ stream controller";
-    wantedBy = singleton "multi-user.target";
-    after = ["mediamtx.service" "network-online.target"];
-    wants = singleton "network-online.target";
-
-    environment = {
-      BUNNY_CONTROLLER_HOST = "127.0.0.1";
-      BUNNY_CONTROLLER_PORT = "10000";
-      BUNNY_MEDIAMTX_PATH_URL = "http://127.0.0.1:9997/v3/paths/get/bunny-plus";
-      BUNNY_OUTPUT_URL = "rtmp://127.0.0.1:1935/bunny-plus?user=controller";
-    };
-
-    serviceConfig = {
-      DynamicUser = true;
-      ExecStart = getExe flake.packages.${pkgs.stdenv.hostPlatform.system}.bunny-controller;
-      LoadCredential = "control-secret:/var/lib/bunny-plus/controller.env";
-      LockPersonality = true;
-      NoNewPrivileges = true;
-      PrivateDevices = true;
-      PrivateTmp = true;
-      ProtectClock = true;
-      ProtectControlGroups = true;
-      ProtectHome = true;
-      ProtectHostname = true;
-      ProtectKernelLogs = true;
-      ProtectKernelModules = true;
-      ProtectKernelTunables = true;
-      ProtectSystem = "strict";
-      Restart = "on-failure";
-      RestartSec = 5;
-      RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
-      RestrictRealtime = true;
-      SystemCallArchitectures = "native";
-    };
-  };
-
-  systemd.tmpfiles.rules = [
-    "d /var/lib/bunny-plus 0700 root root -"
-    "d /var/lib/bunny-plus-media 0755 root root -"
-    "z /var/lib/bunny-plus/controller.env 0600 root root -"
-  ];
 
   security.sudo.wheelNeedsPassword = false;
 

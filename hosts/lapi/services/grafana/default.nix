@@ -35,7 +35,7 @@
       current-context = "prometheus@k3s";
     };
 in {
-  imports = singleton flake.nixosModules.prometheus-endpointslice;
+  imports = singleton flake.modules.nixos.prometheus-endpointslice;
 
   networking.firewall.extraCommands =
     /*

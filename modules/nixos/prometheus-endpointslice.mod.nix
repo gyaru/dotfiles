@@ -1,5 +1,5 @@
 _: {
-  flake.nixosModules.prometheus-endpointslice = {lib, ...}: let
+  flake.modules.nixos.prometheus-endpointslice = {lib, ...}: let
     inherit (lib.lists) singleton;
     inherit (lib.options) mkOption;
     inherit (lib.types) enum listOf nullOr submodule;

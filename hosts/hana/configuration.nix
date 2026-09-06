@@ -12,7 +12,9 @@ in {
   imports = [
     inputs.agenix.nixosModules.default
     inputs.nixos-hardware.nixosModules.raspberry-pi-4
-    flake.nixosModules.base
+    flake.modules.nixos.base
+    flake.modules.nixos.ssh
+    flake.modules.nixos.stockholm-time
   ];
 
   age.secrets.hana-wifi-password = {
@@ -107,17 +109,6 @@ in {
     };
   };
 
-  nix = {
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [
-        "flakes"
-        "nix-command"
-        "pipe-operators"
-      ];
-    };
-  };
-
   nixpkgs.hostPlatform = mkDefault "aarch64-linux";
 
   security.sudo.wheelNeedsPassword = false;
@@ -138,22 +129,12 @@ in {
       user = "lis";
     };
 
-    openssh = {
-      enable = true;
-      settings = {
-        PasswordAuthentication = false;
-        PermitRootLogin = "no";
-      };
-    };
-
     pipewire = {
       enable = true;
       alsa.enable = true;
       pulse.enable = true;
     };
   };
-
-  time.timeZone = "Europe/Stockholm";
 
   users.users.lis = {
     isNormalUser = true;

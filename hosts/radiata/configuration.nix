@@ -21,16 +21,9 @@
     '';
 in {
   imports = [
-    inputs.hjem.nixosModules.default
     inputs.lanzaboote.nixosModules.lanzaboote
-    inputs.nix-index-database.nixosModules.nix-index
-    flake.nixosModules.amd
-    flake.nixosModules.audio
-    flake.nixosModules.base
-    flake.nixosModules.desktop
-    flake.nixosModules.gaming
-    flake.nixosModules.security
-    flake.nixosModules.wayland
+    flake.modules.nixos.amd
+    flake.modules.nixos.workstation
     ./users/lis.nix
   ];
 
@@ -55,32 +48,6 @@ in {
     hostPlatform = mkDefault "x86_64-linux";
   };
 
-  nix = {
-    settings = {
-      experimental-features = [
-        "nix-command"
-        "flakes"
-        "pipe-operators"
-        "cgroups"
-      ];
-      use-cgroups = true;
-      auto-optimise-store = true;
-      max-jobs = "auto";
-      cores = 0;
-      eval-cache = true;
-      system-features = [
-        "big-parallel"
-        "kvm"
-        "nixos-test"
-      ];
-    };
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 30d";
-    };
-  };
-
   networking = {
     hostName = "radiata";
     networkmanager.enable = true;
@@ -92,10 +59,7 @@ in {
       "8.8.4.4"
     ];
     firewall = {
-      enable = true;
-      allowPing = false;
       checkReversePath = "loose";
-      logReversePathDrops = true;
     };
   };
 
@@ -212,60 +176,8 @@ in {
       git
       ntfs3g
       sbctl
+      dix
     ];
-  };
-
-  fonts = {
-    packages = with pkgs; [
-      balsamiqsans
-      lucide-icons
-      maple-mono.NF
-      mplus-fonts
-      noto-fonts
-      noto-fonts-cjk-sans
-      noto-fonts-cjk-serif
-      noto-fonts-color-emoji
-      noto-fonts-monochrome-emoji
-    ];
-    fontconfig = {
-      enable = mkDefault true;
-      defaultFonts = {
-        monospace = singleton "M PLUS 1 Code";
-        emoji = singleton "Noto Color Emoji";
-      };
-      antialias = true;
-      hinting = {
-        enable = true;
-        style = "full";
-      };
-      subpixel = {
-        rgba = "rgb";
-        lcdfilter = "default";
-      };
-    };
-  };
-
-  i18n = {
-    defaultLocale = "en_US.UTF-8";
-    supportedLocales = [
-      "en_US.UTF-8/UTF-8"
-      "en_DK.UTF-8/UTF-8"
-      "en_GB.UTF-8/UTF-8"
-    ];
-    extraLocaleSettings = {
-      LC_ADDRESS = "en_US.UTF-8";
-      LC_COLLATE = "en_US.UTF-8";
-      LC_CTYPE = "en_US.UTF-8";
-      LC_IDENTIFICATION = "en_DK.UTF-8";
-      LC_MEASUREMENT = "en_DK.UTF-8";
-      LC_MESSAGES = "en_US.UTF-8";
-      LC_MONETARY = "en_DK.UTF-8";
-      LC_NAME = "en_US.UTF-8";
-      LC_NUMERIC = "en_US.UTF-8";
-      LC_PAPER = "en_DK.UTF-8";
-      LC_TELEPHONE = "en_DK.UTF-8";
-      LC_TIME = "en_GB.UTF-8";
-    };
   };
 
   users.users.lis = {
@@ -277,12 +189,9 @@ in {
 
   programs = {
     command-not-found.enable = false;
-    zsh.enable = true;
-    nix-index-database.comma.enable = true;
   };
 
   services.tailscale = {
-    enable = true;
     openFirewall = true;
   };
 
@@ -297,7 +206,6 @@ in {
   };
 
   time = {
-    timeZone = "Europe/Stockholm";
     hardwareClockInLocalTime = true;
   };
 

@@ -15,6 +15,8 @@ in
     };
 
     modules = [
+      self.modules.nixos.nix
+      self.modules.nixos.ssh-client
       {
         networking.hostName = mkDefault hostName;
 

@@ -11,14 +11,21 @@
 in {
   imports = [
     inputs.agenix.nixosModules.default
-    inputs.nix-index-database.nixosModules.default
-    flake.nixosModules.zfs
+    flake.modules.nixos.nix-builder
+    flake.modules.nixos.ssh
+    flake.modules.nixos.tailscale
+    flake.modules.nixos.firewall
+    flake.modules.nixos.english-locale
+    flake.modules.nixos.nix-index
+    flake.modules.nixos.shell
+    flake.modules.nixos.stockholm-time
+    flake.modules.nixos.zfs
     ./services/k3s.nix
     ./services/bunny-plus.nix
     ./services/grafana/default.nix
     ./zfs.nix
     ./services/samba.nix
-    ./vm.nix
+    flake.modules.nixos.virtual-machines
     ./gaming.nix
   ];
 
@@ -86,20 +93,10 @@ in {
     cpu.amd.updateMicrocode = mkDefault config.hardware.enableRedistributableFirmware;
   };
 
-  time.timeZone = "Europe/Stockholm";
-
-  i18n = {
-    defaultLocale = "en_US.UTF-8";
-    extraLocaleSettings.LC_TIME = "en_GB.UTF-8";
-  };
-
   services = {
     openssh = {
-      enable = true;
       openFirewall = false;
       settings = {
-        PermitRootLogin = "no";
-        PasswordAuthentication = false;
         KbdInteractiveAuthentication = false;
       };
     };
@@ -113,7 +110,6 @@ in {
         RuntimeMaxUse=256M
       '';
 
-    tailscale.enable = true;
     avahi = {
       enable = true;
       nssmdns4 = true;
@@ -137,43 +133,21 @@ in {
 
   nix = {
     settings = {
-      experimental-features = [
-        "nix-command"
-        "flakes"
-        "pipe-operators"
-        "cgroups"
-      ];
-      use-cgroups = true;
-      auto-optimise-store = true;
-      max-jobs = "auto";
-      cores = 0;
-      eval-cache = true;
       trusted-users = singleton "@wheel";
       substituters = [
         "https://cache.nixos.org?priority=10"
         "https://nix-community.cachix.org"
-      ];
-      system-features = [
-        "big-parallel"
-        "kvm"
-        "nixos-test"
       ];
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       ];
     };
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 30d";
-    };
     daemonCPUSchedPolicy = "idle";
     daemonIOSchedClass = "idle";
   };
 
   programs = {
-    zsh.enable = true;
     coolercontrol.enable = true;
   };
 
@@ -192,11 +166,6 @@ in {
       "1.0.0.1"
       "8.8.8.8"
     ];
-    firewall = {
-      enable = true;
-      allowPing = false;
-      logReversePathDrops = true;
-    };
   };
 
   age.secrets.k3s-token = {
@@ -218,6 +187,7 @@ in {
           "wheel"
           "kvm"
           "usbpassthrough"
+          "libvirtd"
         ];
         openssh.authorizedKeys.keys = flake.people.lis.sshKeys;
       };
@@ -287,8 +257,6 @@ in {
     unrar
     tmux
   ];
-
-  programs.nix-index-database.comma.enable = true;
 
   system.stateVersion = "25.11";
 }

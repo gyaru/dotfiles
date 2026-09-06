@@ -14,8 +14,17 @@ in {
   };
 
   machines = {
-    gon.sshKeys = keys.gonSystemKeys;
-    hana.sshKeys = keys.hanaSystemKeys;
-    lapi.sshKeys = keys.systemKeys;
+    gon = {
+      sshKeys = keys.gonSystemKeys;
+      ssh.enable = true;
+    };
+    hana = {
+      sshKeys = keys.hanaSystemKeys;
+      ssh.enable = true;
+    };
+    lapi = {
+      sshKeys = keys.systemKeys;
+      ssh.enable = true;
+    };
   };
 }
