@@ -3,8 +3,20 @@ set -euo pipefail
 
 usage() {
     printf '%s\n' \
-        'Usage: pani {switch|boot|test|build|dry-build|check} [host]'
+        'Usage: pani {switch|boot|test|build|dry-build} [host] [nh options...]' \
+        '       pani check [nix flake check options...]' \
+        '' \
+        'Without a host, build and activate locally.' \
+        'With a different host, build and activate there over SSH.' \
+        'Build actions never activate a configuration.'
 }
+
+action="${1:-}"
+case "$action" in
+    --help) usage; exit 0 ;;
+    switch|boot|test|build|dry-build|check) shift ;;
+    *) usage >&2; exit 1 ;;
+esac
 
 flake_dir="${PANI_FLAKE:-}"
 if [[ -z "$flake_dir" ]]; then
@@ -15,22 +27,28 @@ if [[ ! -f "$flake_dir/flake.nix" ]]; then
     exit 1
 fi
 
-command="${1:-}"
-[[ -n "$command" ]] || { usage >&2; exit 1; }
-shift
-(( $# <= 1 )) || { usage >&2; exit 1; }
-host="${1:-$(cat /etc/hostname)}"
 cd "$flake_dir"
-case "$command" in
-    switch|boot|test)
-        sudo nixos-rebuild "$command" --flake "$flake_dir#$host" --log-format internal-json |& nom --json
-        ;;
-    build)
-        nix build "$flake_dir#nixosConfigurations.$host.config.system.build.toplevel" --log-format internal-json |& nom --json
-        ;;
-    dry-build)
-        nix build "$flake_dir#nixosConfigurations.$host.config.system.build.toplevel" --dry-run
-        ;;
-    check) nix flake check ;;
-    *) usage >&2; exit 1 ;;
-esac
+if [[ "$action" == check ]]; then
+    exec nix flake check . "$@"
+fi
+
+host=""
+if [[ $# -gt 0 && "$1" != -* ]]; then
+    host="$1"
+    shift
+fi
+
+args=()
+if [[ -n "$host" ]]; then
+    args+=(--hostname "$host")
+    if [[ "$host" != "$(uname --nodename)" ]]; then
+        args+=(--build-host "$host" --target-host "$host")
+    fi
+fi
+
+if [[ "$action" == dry-build ]]; then
+    action=build
+    args+=(--dry)
+fi
+
+exec nh os "$action" . "${args[@]}" "$@"

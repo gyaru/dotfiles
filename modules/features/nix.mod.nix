@@ -1,5 +1,7 @@
 _: {
   flake.modules.nixos.nix = {
+    programs.nh.enable = true;
+
     nix.channel.enable = false;
 
     nix.settings = {

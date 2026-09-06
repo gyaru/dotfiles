@@ -3,7 +3,6 @@
   lib,
   ...
 }: let
-  inherit (lib.strings) fileContents;
   inherit (lib.lists) singleton;
 in {
   imports = singleton inputs.git-hooks.flakeModule;
@@ -12,13 +11,7 @@ in {
     config,
     pkgs,
     ...
-  }: let
-    pani = pkgs.writeShellApplication {
-      name = "pani";
-      runtimeInputs = with pkgs; [coreutils git nix nix-output-monitor nixos-rebuild];
-      text = fileContents ../scripts/pani.sh;
-    };
-  in {
+  }: {
     pre-commit.settings.hooks = {
       alejandra.enable = true;
       deadnix.enable = true;
@@ -41,7 +34,8 @@ in {
         yq-go
         nil
         nix-output-monitor
-        pani
+        nh
+        config.packages.pani
         shellcheck
         statix
       ];
