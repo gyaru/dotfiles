@@ -34,7 +34,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: seerr
-          image: seerr/seerr:sha-5ae70d0@sha256:86c8eb6a47eabfaec07425173d87a3bf15dc1800dfc616c48447ee8fd0e47b1a
+          image: seerr/seerr:v3.4.1@sha256:f4768de5f616248d723e05891f3345a1402123775d03bf0890dbfedc0831bda1
           startupProbe:
             tcpSocket:
               port: http

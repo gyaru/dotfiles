@@ -36,7 +36,7 @@ spec:
         kubernetes.io/hostname: lapi
       containers:
         - name: zigbee2mqtt
-          image: koenkk/zigbee2mqtt:2.5.1@sha256:1e639d3144960f246dcecc21d993169fd6844b5817e939bca498b2abf2c23159
+          image: koenkk/zigbee2mqtt:2.14.1@sha256:fef0de769dcd04c27b3a6d277b61046eb96284bdd4198dcb1687c3a01b3020f3
           startupProbe:
             tcpSocket:
               port: http

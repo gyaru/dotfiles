@@ -17,7 +17,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: memcached
-          image: memcached:1.6.26@sha256:09eaba8e0b136af2f1d8a4985b4fda74ce2793f95ea66d82fbe5769c05b42ea3
+          image: memcached:1.6.45@sha256:75c93cc91e76853da7c029e74d6e8dbd44774dd3713c93be8cd1971ad26120a4
           args:
             - --memory-limit=256
             - --conn-limit=1024
