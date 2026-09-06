@@ -17,6 +17,7 @@ spec:
         kubernetes.io/hostname: lapi
       containers:
         - name: generic-device-plugin
+          terminationMessagePath: /run/plugin/termination-log
           image: squat/generic-device-plugin@sha256:dc192e164c69b03f156765793a1be62ca437709ae477b27ca7d8f3dcf5021576
           args:
             - --domain=devices.lapi
@@ -44,12 +45,18 @@ spec:
             limits:
               memory: 128Mi
           volumeMounts:
+            - name: runtime
+              mountPath: /run/plugin
             - name: devices
               mountPath: /dev
               readOnly: true
             - name: plugins
               mountPath: /var/lib/kubelet/device-plugins
       volumes:
+        - name: runtime
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Mi
         - name: devices
           hostPath:
             path: /dev
