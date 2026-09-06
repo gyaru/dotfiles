@@ -26,7 +26,7 @@ in {
     ./zfs.nix
     ./services/samba.nix
     flake.modules.nixos.virtual-machines
-    ./gaming.nix
+    # ./gaming.nix
   ];
 
   boot = {
