@@ -37,7 +37,13 @@ Rebuild the current host:
 pani switch
 ```
 
-Build or inspect another host:
+Build and switch on another host over Tailscale:
+
+```bash
+pani switch lapi
+```
+
+Build on another host without activating, or build its configuration locally:
 
 ```bash
 pani build lapi
@@ -62,29 +68,29 @@ placement, and PVC references, plus offline Kubernetes and Flux schema validatio
 
 ## Pani
 
-`pani <command> [host]` wraps common `nixos-rebuild` operations:
+`pani <command> [host] [nh options...]` supplies repository and host defaults
+to [nh](https://github.com/nix-community/nh).
 
 | Command | Purpose |
 | --- | --- |
-| `switch` | Build and activate the configuration |
+| `switch` | Build, activate, and select the configuration for next boot |
 | `boot` | Build and select the configuration for next boot |
 | `test` | Activate without changing the bootloader |
 | `build` | Build without activation |
-| `dry-build` | Show what would be built |
-| `check` | Run flake checks |
+| `dry-build` | Preview NH's build actions with `nh os build --dry` |
+| `check` | Run `nix flake check`, forwarding its options |
 
-The host defaults to the current machine's hostname.
-Run from the repository, or set `PANI_FLAKE` to its path. Builds run as the
-current user; activation requires sudo.
+With no host, or with the local hostname, operations run locally. A different
+host selects that NixOS configuration and sets both NH's build and target host.
+`build` and `dry-build` never activate a configuration.
+
+Run from anywhere inside the repository, or set `PANI_FLAKE` to its path.
+Run Pani as your user; NH handles elevation when needed. Pani is available in
+the devshell and through `nix run .#pani -- <command>`.
 
 ```bash
-nixos-rebuild switch \
-  --flake path:.#lapi \
-  --build-host lis@lapi \
-  --target-host lis@lapi \
-  --elevate sudo \
-  --ask-elevate-password \
-  --accept-flake-config
+pani switch lapi --ask
+pani check --all-systems --no-build
 ```
 
 ## Structure
@@ -97,7 +103,6 @@ nixos-rebuild switch \
 │   │   ├── services/        # Host services
 │   │   ├── configuration.nix
 │   │   ├── gaming.nix
-│   │   ├── vm.nix
 │   │   └── zfs.nix
 │   └── radiata/
 │       ├── users/           # Host-specific hjem users
@@ -106,27 +111,13 @@ nixos-rebuild switch \
 │   └── cluster/             # Kubernetes resources
 ├── lib/                     # Shared constructors and entity data
 ├── modules/
-│   ├── hjem/                # Reusable hjem modules
-│   └── nixos/               # Reusable NixOS modules
+│   ├── features/            # Named NixOS and hjem features (*.mod.nix)
+│   ├── profiles.mod.nix     # Feature bundles, such as workstation
+│   ├── module-classes.mod.nix # flake-parts module classes
+│   └── entities.mod.nix     # Typed people and machine metadata
 ├── overlays/                # Nixpkgs overlays
-├── packages/                # Custom packages
+├── packages/                # Custom packages, including pani.mod.nix
 ├── scripts/                 # Development helpers
 ├── flake.nix
 └── secrets.nix              # Agenix recipient declarations
 ```
-
-## Automatic Discovery
-
-The flake recursively imports every `*.mod.nix` file. Registry modules then
-derive outputs from directory contents:
-
-- `hosts/<name>/configuration.nix` becomes `nixosConfigurations.<name>`.
-- `modules/nixos/<name>.nix` becomes `nixosModules.<name>`.
-- `modules/hjem/<name>.nix` becomes `hjemModules.<name>`.
-- `packages/<name>/default.nix` becomes `packages.<system>.<name>` and is added
-  to the local package overlay. Package outputs exclude unsupported platforms.
-- Standalone concerns can define their outputs directly in a `*.mod.nix` file,
-  such as `packages/niri-pick-color.mod.nix`.
-
-Adding or removing a host, module, or package therefore does not require
-editing a central declaration list.
