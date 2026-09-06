@@ -28,7 +28,7 @@ the repository setting for the first evaluation:
 nix --accept-flake-config develop
 ```
 
-After activating either host configuration, ordinary Nix commands work without
+After activating a host configuration, ordinary Nix commands work without
 that flag.
 
 Rebuild the current host:
@@ -59,8 +59,6 @@ nix flake check --all-systems --no-build
 The checks include Nix formatting/linting, ShellCheck, and a rendered cluster
 check for image digests, storage retention, single-writer rollouts, node
 placement, and PVC references, plus offline Kubernetes and Flux schema validation.
-See [cluster operations](k3s/README.md) for
-rollout order and the remaining infrastructure migration work.
 
 ## Pani
 
@@ -78,6 +76,16 @@ rollout order and the remaining infrastructure migration work.
 The host defaults to the current machine's hostname.
 Run from the repository, or set `PANI_FLAKE` to its path. Builds run as the
 current user; activation requires sudo.
+
+```bash
+nixos-rebuild switch \
+  --flake path:.#lapi \
+  --build-host lis@lapi \
+  --target-host lis@lapi \
+  --elevate sudo \
+  --ask-elevate-password \
+  --accept-flake-config
+```
 
 ## Structure
 
