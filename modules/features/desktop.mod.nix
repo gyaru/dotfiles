@@ -1,7 +1,5 @@
 _: {
-  flake.modules.nixos.desktop = {pkgs, ...}: {
-    environment.systemPackages = with pkgs.kdePackages; [ark dolphin];
-
+  flake.modules.nixos.desktop = {
     boot.kernel.sysctl = {
       "fs.file-max" = 2097152;
 
@@ -16,7 +14,5 @@ _: {
     boot.tmp.useTmpfs = true;
 
     services.earlyoom.enable = true;
-
-    hardware.bluetooth.enable = true;
   };
 }

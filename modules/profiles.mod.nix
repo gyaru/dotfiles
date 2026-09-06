@@ -4,6 +4,8 @@
       audio
       base
       desktop
+      bluetooth
+      file-manager
       network-tuning
       flatpak
       gaming
