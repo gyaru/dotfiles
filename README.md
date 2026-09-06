@@ -37,13 +37,13 @@ Rebuild the current host:
 pani switch
 ```
 
-Build and switch on another host over Tailscale:
+Build Lapi's configuration locally, then switch Lapi over Tailscale:
 
 ```bash
 pani switch lapi
 ```
 
-Build on another host without activating, or build its configuration locally:
+Build another host's configuration locally without activating:
 
 ```bash
 pani build lapi
@@ -80,9 +80,10 @@ to [nh](https://github.com/nix-community/nh).
 | `dry-build` | Preview NH's build actions with `nh os build --dry` |
 | `check` | Run `nix flake check`, forwarding its options |
 
-With no host, or with the local hostname, operations run locally. A different
-host selects that NixOS configuration and sets both NH's build and target host.
-`build` and `dry-build` never activate a configuration.
+Builds run locally by default. The host selects `nixosConfigurations.<host>`;
+for `switch`, `boot`, and `test`, a different host also becomes the SSH target.
+With no host, or with the local hostname, activation is local too.
+`build` and `dry-build` only select the configuration and never activate it.
 
 Run from anywhere inside the repository, or set `PANI_FLAKE` to its path.
 Run Pani as your user; NH handles elevation when needed. Pani is available in
@@ -91,6 +92,12 @@ the devshell and through `nix run .#pani -- <command>`.
 ```bash
 pani switch lapi --ask
 pani check --all-systems --no-build
+```
+
+To build remotely as well, pass NH's `--build-host` option:
+
+```bash
+pani switch lapi --build-host lapi
 ```
 
 ## Structure

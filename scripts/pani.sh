@@ -7,7 +7,8 @@ usage() {
         '       pani check [nix flake check options...]' \
         '' \
         'Without a host, build and activate locally.' \
-        'With a different host, build and activate there over SSH.' \
+        'With a different host, build locally and activate there over SSH.' \
+        'Use --build-host HOST to build remotely instead.' \
         'Build actions never activate a configuration.'
 }
 
@@ -41,8 +42,8 @@ fi
 args=()
 if [[ -n "$host" ]]; then
     args+=(--hostname "$host")
-    if [[ "$host" != "$(uname --nodename)" ]]; then
-        args+=(--build-host "$host" --target-host "$host")
+    if [[ "$host" != "$(uname --nodename)" && "$action" != build && "$action" != dry-build ]]; then
+        args+=(--target-host "$host")
     fi
 fi
 
