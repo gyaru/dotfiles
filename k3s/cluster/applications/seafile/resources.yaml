@@ -79,7 +79,7 @@ spec:
                   value: seafile.tail254553.ts.net
             periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 360
+            failureThreshold: 180
           readinessProbe:
             httpGet:
               path: /api2/ping/
