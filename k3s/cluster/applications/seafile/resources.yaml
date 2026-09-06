@@ -93,7 +93,6 @@ spec:
             - containerPort: 80
               name: http
           env:
-            # DATABASE USER AND PASSWORD REMAIN IN THE EXISTING CONFIG ON /shared
             - name: SEAFILE_MYSQL_DB_HOST
               value: mariadb
             - name: INIT_SEAFILE_MYSQL_ROOT_PASSWORD
