@@ -14,6 +14,8 @@ jq --exit-status '
       (map(identity) | length) == (map(identity) | unique | length);
       "Duplicate Kubernetes resource")
   | require(all(.[]; .apiVersion and .kind and .metadata.name); "Incomplete resource identity")
+  | require(all(.[]; .kind != "Secret" or .type != "kubernetes.io/service-account-token");
+      "Use short-lived TokenRequest credentials instead of service-account-token Secrets")
   | require(all(.[] | select(.kind == "Deployment" and .metadata.namespace != "flux-system") | .spec.template.spec;
       all((.containers + (.initContainers // []))[]; .image | test("@sha256:[0-9a-f]{64}$")));
       "Deployment images must be pinned by digest")

@@ -41,15 +41,6 @@ subjects:
     namespace: monitoring
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: prometheus-token
-  namespace: monitoring
-  annotations:
-    kubernetes.io/service-account.name: prometheus
-type: kubernetes.io/service-account-token
----
-apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kube-state-metrics
