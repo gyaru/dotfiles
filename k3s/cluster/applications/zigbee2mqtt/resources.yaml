@@ -69,25 +69,24 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /app/data
-            - name: zigbee
-              mountPath: /dev/zigbee
           resources:
             requests:
               memory: "256Mi"
               cpu: "100m"
             limits:
+              devices.gyaru.dev/zigbee: 1
               memory: "512Mi"
               cpu: "1000m"
           securityContext:
-            privileged: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: zigbee2mqtt-data
-        - name: zigbee
-          hostPath:
-            path: /dev/zigbee
-            type: CharDevice
 ---
 apiVersion: v1
 kind: Service

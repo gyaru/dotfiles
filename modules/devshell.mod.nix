@@ -15,7 +15,7 @@ in {
   }: let
     pani = pkgs.writeShellApplication {
       name = "pani";
-      runtimeInputs = with pkgs; [coreutils fd gawk git jq nix nix-output-monitor nixos-rebuild util-linux];
+      runtimeInputs = with pkgs; [coreutils git nix nix-output-monitor nixos-rebuild];
       text = fileContents ../scripts/pani.sh;
     };
   in {

@@ -16,9 +16,12 @@ jq --exit-status '
   | require(all(.[]; .apiVersion and .kind and .metadata.name); "Incomplete resource identity")
   | require(all(.[]; .kind != "Secret" or .type != "kubernetes.io/service-account-token");
       "Use short-lived TokenRequest credentials instead of service-account-token Secrets")
-  | require(all(.[] | select(.kind == "Deployment" and .metadata.namespace != "flux-system") | .spec.template.spec;
+  | require(all(.[] | select((.kind == "Deployment" or .kind == "DaemonSet") and .metadata.namespace != "flux-system") | .spec.template.spec;
       all((.containers + (.initContainers // []))[]; .image | test("@sha256:[0-9a-f]{64}$")));
-      "Deployment images must be pinned by digest")
+      "Workload images must be pinned by digest")
+  | require(all(.[] | select(.kind == "Deployment" and .metadata.namespace == "default") | .spec.template.spec;
+      all((.containers + (.initContainers // []))[]; .securityContext.privileged != true));
+      "Applications must use allocated devices instead of privileged containers")
   | require(all(.[] | select(.kind == "Deployment" and .metadata.namespace == "default");
       .spec.template.spec.automountServiceAccountToken == false);
       "Application pods must explicitly disable API token mounts")
@@ -29,7 +32,7 @@ jq --exit-status '
   | require(all(.[] | select(.kind == "PersistentVolume" or .kind == "PersistentVolumeClaim");
       .metadata.annotations."kustomize.toolkit.fluxcd.io/prune" == "disabled");
       "Persistent storage must be protected from Flux pruning")
-  | require(all(.[] | select(.kind == "Deployment") | .spec.template.spec;
+  | require(all(.[] | select(.kind == "Deployment" or .kind == "DaemonSet") | .spec.template.spec;
       if .hostNetwork == true or any(.volumes[]?; has("hostPath"))
       then .nodeSelector."kubernetes.io/hostname" == "lapi" else true end);
       "Host-bound workloads must be scheduled on lapi")

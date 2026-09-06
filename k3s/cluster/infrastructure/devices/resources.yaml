@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: generic-device-plugin
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: generic-device-plugin
+  template:
+    metadata:
+      labels:
+        app: generic-device-plugin
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/hostname: lapi
+      containers:
+        - name: generic-device-plugin
+          image: squat/generic-device-plugin@sha256:dc192e164c69b03f156765793a1be62ca437709ae477b27ca7d8f3dcf5021576
+          args:
+            - --domain=devices.gyaru.dev
+            - --device
+            - '{"name":"dri","groups":[{"paths":[{"path":"/dev/dri/card0","permissions":"rw"},{"path":"/dev/dri/card1","permissions":"rw"},{"path":"/dev/dri/renderD128","permissions":"rw"},{"path":"/dev/dri/renderD129","permissions":"rw"}]}]}'
+            - --device
+            - '{"name":"zigbee","groups":[{"paths":[{"path":"/dev/zigbee","mountPath":"/dev/zigbee","permissions":"rw"}]}]}'
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            tcpSocket:
+              port: http
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          volumeMounts:
+            - name: devices
+              mountPath: /dev
+              readOnly: true
+            - name: plugins
+              mountPath: /var/lib/kubelet/device-plugins
+      volumes:
+        - name: devices
+          hostPath:
+            path: /dev
+            type: Directory
+        - name: plugins
+          hostPath:
+            path: /var/lib/kubelet/device-plugins
+            type: Directory

@@ -74,13 +74,10 @@ rollout order and the remaining infrastructure migration work.
 | `build` | Build without activation |
 | `dry-build` | Show what would be built |
 | `check` | Run flake checks |
-| `impermanence` | Show files that would be lost after reboot |
 
 The host defaults to the current machine's hostname.
 Run from the repository, or set `PANI_FLAKE` to its path. Builds run as the
-current user; activation requires sudo. The impermanence report lists files
-outside detected persistence mounts; it is an inspection aid, not a backup or
-a complete prediction of initrd rollback behavior.
+current user; activation requires sudo.
 
 ## Structure
 

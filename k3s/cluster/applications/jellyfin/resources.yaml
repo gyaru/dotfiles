@@ -69,7 +69,11 @@ spec:
         - name: jellyfin
           image: jellyfin/jellyfin:10.11.11@sha256:aefb67e6a7ff1debdd154a78a7bbb780fd0c873d8639210a7f6a2016ad2b35db
           securityContext:
-            privileged: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
           startupProbe:
             tcpSocket:
               port: http
@@ -92,13 +96,12 @@ spec:
             - name: media
               mountPath: /media
               readOnly: true
-            - name: dri
-              mountPath: /dev/dri
           resources:
             requests:
               memory: "2Gi"
               cpu: "1000m"
             limits:
+              devices.gyaru.dev/dri: 1
               memory: "8Gi"
               cpu: "8000m"
       volumes:
@@ -113,10 +116,6 @@ spec:
         - name: network-config
           configMap:
             name: jellyfin-network-config
-        - name: dri
-          hostPath:
-            path: /dev/dri
-            type: Directory
 ---
 apiVersion: v1
 kind: Service
