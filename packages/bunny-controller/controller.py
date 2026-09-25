@@ -9,6 +9,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import quote, urlparse
 
 from restream import resolve_restream_title, StreamlinkInput
+from jellyfin import prepare_jellyfin_input
 
 
 def read_credential(name):
@@ -140,7 +141,7 @@ def stop_relay():
     relay_title = None
 
 
-def relay_command(source, audio_index, subtitle_index, resolution_index, network_source):
+def relay_command(source, audio_index, subtitle_index, resolution_index, network_source, input_headers=None):
     audio_index = optional_index(audio_index, "audioIndex")
     subtitle_index = optional_index(subtitle_index, "subtitleIndex")
     resolution_index = optional_index(resolution_index, "resolutionIndex")
@@ -180,6 +181,8 @@ def relay_command(source, audio_index, subtitle_index, resolution_index, network
                 "45000000",
             ]
         )
+    if input_headers is not None:
+        command.extend(["-headers", input_headers])
     command.extend(
         [
             "-re",
@@ -230,15 +233,15 @@ def relay_command(source, audio_index, subtitle_index, resolution_index, network
     return command
 
 
-def start_relay(source, title, audio_index, subtitle_index, resolution_index):
+def start_relay(source, title, audio_index, subtitle_index, resolution_index, *, input_headers=None, source_type="direct"):
     global relay, relay_kind, relay_title
     source = validate_source(source)
-    command = relay_command(source, audio_index, subtitle_index, resolution_index, True)
+    command = relay_command(source, audio_index, subtitle_index, resolution_index, True, input_headers)
     stop_relay()
     last_code = None
     for attempt in range(2):
         relay = subprocess.Popen(command)
-        relay_kind = "direct"
+        relay_kind = source_type
         relay_title = title
         for _ in range(20):
             time.sleep(0.1)
@@ -253,6 +256,11 @@ def start_relay(source, title, audio_index, subtitle_index, resolution_index):
             time.sleep(1)
     relay_kind = None
     raise RuntimeError(f"FFmpeg exited while starting (code {last_code})")
+
+
+def start_jellyfin(source, api_key, title, audio_index, resolution_index):
+    headers = prepare_jellyfin_input(source, api_key)
+    start_relay(source, title, audio_index, None, resolution_index, input_headers=headers, source_type="jellyfin")
 
 
 def start_restream(source, title, quality):
@@ -325,10 +333,21 @@ class Handler(BaseHTTPRequestHandler):
             if length <= 0 or length > 65536:
                 return self.respond(400, {"error": "Invalid request size"})
             body = json.loads(self.rfile.read(length))
+            if not isinstance(body, dict):
+                raise ValueError("A JSON object is required")
             action = body.get("action")
             if action == "probe":
                 return self.respond(200, probe_source(body.get("source", "")))
             with lock:
+                if action == "jellyfin":
+                    start_jellyfin(
+                        body.get("source", ""),
+                        body.get("apiKey"),
+                        str(body.get("title", "Jellyfin stream"))[:200],
+                        body.get("audioIndex"),
+                        body.get("resolutionIndex"),
+                    )
+                    return self.respond(200, {"detail": "Jellyfin relay started", **relay_status()})
                 if action == "start":
                     title = str(body.get("title", "TorBox stream"))[:200]
                     start_relay(

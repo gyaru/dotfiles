@@ -16,6 +16,8 @@ data:
     STREMIO_ADDON_URL: ENC[AES256_GCM,data:J/BGaW9OKwQN1AZa/o0XWU/vK5+b1Hpr/dg1fECWB25HhM3a,iv:61kzu9kgDGeEb1fAGcJReSlA/J700UpD0Pqf+ldYhnQ=,tag:ZVWOAddI58xY8J3h0Cd+JQ==,type:str]
     TMDB_API_TOKEN: ENC[AES256_GCM,data:xUr3IwlN390NFPNBzVok0Bvg4SSfndNYiPC+rmqO0SmSbEOnFN5s9CzbiDR38zOFBnYJCYQ8VDEc5Xdz7FX4AA24gfghYmlqJ+U6XGEY72VQB0HMHO7b1x7IkHFHkiSyXh90e6EkaGxu4eGNHBwWMMdjSvpiqegugYgMN3GP0/kG+F/td/tYTnCp3WSamqm6k1hBex/7Cl9YSKdyXTSWnATCpDsKksork4W0BQVIn7r5Nv9QGl7qjRixyQiD0hJJ/Awh24DWIa2ELhC0lNl6spNcgRVhJb+dEoLkJBiUceQu08dGskMH1dTSV/lXIatn9IjAdYSYZgzG3kBHZ8aSIE0KhSPhnoQCuj7rY+iXXwo2KCoEc0v9NuSVLmDd0Xt8K5dO+npsZFuiyEm4FQ6u+/3LCFdFa4xl2sAfHKBEMQ6TvtMQKmBe1A==,iv:c+eO1bE7wKEU0y8icbR7WB2UyjWNpUzHDb4ZFw1LDU4=,tag:GW8ZH8BpPl5ejAksjrplwA==,type:str]
     TORBOX_API_KEY: ENC[AES256_GCM,data:ZBrUoQHD69wwHxb6K3f9UDOoTeIAPaZv7apEbnQedWg43UvG+NGEb/gCeOaVQOEh,iv:58HDrPJ74ijb1Q6vxdYDnBrXUIGWNR/jyUnlWkxbL6I=,tag:rYdSK6x2Yoe8783tNsxLbg==,type:str]
+    JELLYFIN_URL: ENC[AES256_GCM,data:/zanO8OweoS/Ocq6xenicpfA3WmtR7GnvLsHKWJhH1lOKZoieFU6XvWC2H1QmB1DJhZ4XrmB3BaPBYJa,iv:x5KIBAbJCo7a/NZ6gA2ZTzNTf1gPuINtrTFNBEej420=,tag:9M07Pj3kQaeCvH0dVhv4Ow==,type:str]
+    JELLYFIN_API_KEY: ENC[AES256_GCM,data:/Isgs74CnmJEbFcTsVMJVbhafXFc+0CGAEMVywJA0sXGb/PiSAx1asfQs30=,iv:SHM/SCwAb89saW4tpaoVAo0CH2xXmJ0bmZx3WbXOxyg=,tag:MqGf5PyGhIA63xXa3L5Dlw==,type:str]
 kind: Secret
 metadata:
     name: bunny-plus-env
@@ -31,6 +33,6 @@ sops:
             -----END AGE ENCRYPTED FILE-----
           recipient: age1tspqtc45fa0yjy0dckqfnuwr99t9kxfwfd34cm4tfr8nx8jm9pcqg8n2lr
     encrypted_regex: ^(data|stringData)$
-    lastmodified: "2026-08-05T23:17:30Z"
-    mac: ENC[AES256_GCM,data:pI4lVMjTOllRFgJRE4K4cepYGVPlGwnmni95ZTb7xfj6Tr582GxVC1lmnQmXo29X/zWdbLX99rhEW4/ROlaOQYEkK+j2Mm5bJwzPEjwzlCd/nPxNBKgIYn8le1AajSeq6S2q9twBSKGzimC0eJmGxD7WCysk6aXFF7EX03xHmYU=,iv:hHWhg/jTiJp/zwmsIfQLK0PTtBda0v3ce018wTSA//8=,tag:ZMBu4FRB9qaVtw3L8Q+CCA==,type:str]
+    lastmodified: "2026-09-25T23:01:45Z"
+    mac: ENC[AES256_GCM,data:YPq4nxmmSybeuSn35b9Oruku9cq6tOomqJDTr9PXwZyaD3aCnqjqG/JcyVd58aCyEHRGj98s8hFypYrbXjeByCDRCdgWVHbu8pHRFmdnGaWZkPr7N4lFatntwWB5wS2JZp37X1jRD0ESZlk3tR/kMipI7J0Sh/ZSRbat3SmaHoo=,iv:/fK78T4TVpme61ytqvhdsa+56+zNbq/yppVOSe3p6dw=,tag:hRLptZsgJX7kaAoOOzAfSQ==,type:str]
     version: 3.13.3

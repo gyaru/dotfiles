@@ -23,6 +23,7 @@ in
       ''
         install -D --mode=755 $src $out/libexec/bunny-controller.py
         install -D --mode=644 ${./restream.py} $out/libexec/restream.py
+        install -D --mode=644 ${./jellyfin.py} $out/libexec/jellyfin.py
         makeWrapper ${getExe python3} $out/bin/bunny-controller \
           --add-flags $out/libexec/bunny-controller.py \
           --set BUNNY_FFMPEG ${getExe ffmpeg-headless} \
@@ -37,6 +38,7 @@ in
       */
       ''
         PYTHONPATH=${./.} ${getExe python3} ${./test_restream.py}
+        PYTHONPATH=${./.} ${getExe python3} ${./test_jellyfin.py}
       '';
 
     meta.mainProgram = "bunny-controller";
