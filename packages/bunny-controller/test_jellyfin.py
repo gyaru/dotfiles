@@ -16,6 +16,19 @@ TOKEN = "b" * 32
 
 class JellyfinInputTests(unittest.TestCase):
     @patch("jellyfin.build_opener")
+    def test_http_requires_the_exact_configured_origin(self, opener):
+        headers = Message()
+        headers["Content-Type"] = "video/x-matroska"
+        opener.return_value.open.return_value.__enter__.return_value.headers = headers
+        source = SOURCE.replace("https://jellyfin.test", "http://192.168.1.240:8096")
+        with patch.dict(os.environ, {"BUNNY_JELLYFIN_HTTP_ORIGIN": "http://192.168.1.240:8096"}):
+            prepare_jellyfin_input(source, TOKEN)
+            for rejected in [source.replace(":8096", ":8080"), source.replace("192.168.1.240", "192.168.1.241")]:
+                with self.assertRaises(ValueError):
+                    prepare_jellyfin_input(rejected, TOKEN)
+        self.assertEqual(opener.return_value.open.call_count, 1)
+
+    @patch("jellyfin.build_opener")
     def test_checks_media_without_putting_token_in_url(self, opener):
         headers = Message()
         headers["Content-Type"] = "video/x-matroska"
@@ -96,6 +109,16 @@ class ControllerTests(unittest.TestCase):
             self.controller.stop_relay()
             process.terminate.assert_called_once()
             self.assertFalse(self.controller.relay_status()["running"])
+
+    def test_http_is_available_only_to_validated_jellyfin_playback(self):
+        source = SOURCE.replace("https://jellyfin.test", "http://192.168.1.240:8096")
+        process = MagicMock()
+        process.poll.return_value = None
+        with patch.object(self.controller, "prepare_jellyfin_input", return_value=f"X-Emby-Token: {TOKEN}\r\n"), patch.object(self.controller.subprocess, "Popen", return_value=process), patch.object(self.controller.time, "sleep"):
+            self.controller.start_jellyfin(source, TOKEN, "Movie", None, None)
+            self.controller.stop_relay()
+            with self.assertRaises(ValueError):
+                self.controller.start_relay(source, "Movie", None, None, None)
 
 
 if __name__ == "__main__":

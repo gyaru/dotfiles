@@ -1,5 +1,6 @@
 """Authenticated Jellyfin input for the shared FFmpeg relay."""
 
+import os
 import re
 from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlparse
@@ -15,15 +16,19 @@ def prepare_jellyfin_input(source, api_key):
     if not isinstance(source, str) or len(source) > 4096:
         raise ValueError("A Jellyfin video URL is required")
     url = urlparse(source)
+    allowed_http = (
+        url.scheme == "http"
+        and f"{url.scheme}://{url.netloc}" == os.environ.get("BUNNY_JELLYFIN_HTTP_ORIGIN")
+    )
     if (
-        url.scheme != "https"
+        (url.scheme != "https" and not allowed_http)
         or not url.hostname
         or url.username is not None
         or url.password is not None
         or url.fragment
         or not re.search(r"/Videos/[a-fA-F0-9-]{32,36}/stream$", url.path)
     ):
-        raise ValueError("Jellyfin requires an HTTPS video stream URL")
+        raise ValueError("Jellyfin requires HTTPS or the configured HTTP origin")
     query = parse_qs(url.query)
     if (
         set(query) != {"Static", "MediaSourceId"}

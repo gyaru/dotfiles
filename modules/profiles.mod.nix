@@ -29,9 +29,12 @@
     imports = with self.modules.hjem; [
       home
       browser
+      xdg-user-dirs
       development
+      slop
       shell
       desktop-apps
+      obsidian
       onepassword
       git
       kitty

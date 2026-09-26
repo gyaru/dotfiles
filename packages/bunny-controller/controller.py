@@ -235,7 +235,8 @@ def relay_command(source, audio_index, subtitle_index, resolution_index, network
 
 def start_relay(source, title, audio_index, subtitle_index, resolution_index, *, input_headers=None, source_type="direct"):
     global relay, relay_kind, relay_title
-    source = validate_source(source)
+    if source_type != "jellyfin":
+        source = validate_source(source)
     command = relay_command(source, audio_index, subtitle_index, resolution_index, True, input_headers)
     stop_relay()
     last_code = None

@@ -24,6 +24,8 @@ in {
     inputs.lanzaboote.nixosModules.lanzaboote
     flake.modules.nixos.amd
     flake.modules.nixos.workstation
+    flake.modules.nixos.smb-mounts
+    flake.modules.nixos.yubikey
     ./users/lis.nix
   ];
 
@@ -40,7 +42,6 @@ in {
     quantumSize = 1024;
     extraConfig = {
       "resample.quality" = 10;
-      "pulse.min.quantum" = 1024;
     };
   };
 
@@ -82,6 +83,11 @@ in {
     };
     "/mnt/koharu" = {
       device = "/dev/disk/by-uuid/CC76855576854166";
+      fsType = "ntfs-3g";
+      options = ["nofail" "uid=1000" "gid=100" "umask=0022"];
+    };
+    "/mnt/suzu" = {
+      device = "/dev/disk/by-uuid/3AA40FAFA40F6CA7";
       fsType = "ntfs-3g";
       options = ["nofail" "uid=1000" "gid=100" "umask=0022"];
     };
@@ -177,6 +183,8 @@ in {
       ntfs3g
       sbctl
       dix
+      mpv
+      slack
     ];
   };
 
@@ -199,10 +207,6 @@ in {
     enable = true;
     config.common.default = singleton "gnome";
     extraPortals = [];
-  };
-
-  security = {
-    sudo.wheelNeedsPassword = false;
   };
 
   time = {

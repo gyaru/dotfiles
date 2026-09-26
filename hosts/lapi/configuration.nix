@@ -13,6 +13,7 @@ in {
     inputs.agenix.nixosModules.default
     flake.modules.nixos.nix-builder
     flake.modules.nixos.kernel-hardening
+    flake.modules.nixos.amd-server-power
     flake.modules.nixos.ssh
     flake.modules.nixos.tailscale
     flake.modules.nixos.adguardhome
@@ -64,8 +65,7 @@ in {
     kernelParams = [
       "amd_iommu=on"
       "iommu=pt"
-      "amd_pstate=active"
-      "ahci.mobile_lpm_policy=1"
+      "ahci.mobile_lpm_policy=3"
       "split_lock_detect=off"
     ];
 
@@ -102,14 +102,10 @@ in {
       };
     };
     avahi.allowInterfaces = singleton "eno1";
-    journald.extraConfig =
-      /*
-      ini
-      */
-      ''
-        SystemMaxUse=2G
-        RuntimeMaxUse=256M
-      '';
+    journald.settings.Journal = {
+      SystemMaxUse = "2G";
+      RuntimeMaxUse = "256M";
+    };
 
     avahi = {
       enable = true;
@@ -160,6 +156,14 @@ in {
     group = "root";
   };
 
+  security.sudo.extraRules = singleton {
+    users = singleton "lis";
+    commands = singleton {
+      command = "ALL";
+      options = singleton "NOPASSWD";
+    };
+  };
+
   users = {
     mutableUsers = true;
     users = {
@@ -189,8 +193,6 @@ in {
       };
     };
   };
-
-  powerManagement.enable = true;
 
   systemd = {
     oomd.enableUserSlices = true;

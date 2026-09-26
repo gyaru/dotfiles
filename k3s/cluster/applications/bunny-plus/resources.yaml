@@ -25,6 +25,11 @@ spec:
           envFrom:
             - secretRef:
                 name: bunny-plus-env
+          env:
+            - name: JELLYFIN_URL
+              value: http://jellyfin.default.svc.cluster.local:8096/jellyfin
+            - name: JELLYFIN_STREAM_URL
+              value: http://192.168.1.240:8096/jellyfin
           volumeMounts:
             - name: chat-history
               mountPath: /app/data
@@ -167,6 +172,13 @@ spec:
         - protocol: TCP
           port: 8787
   egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: jellyfin
+      ports:
+        - protocol: TCP
+          port: 8096
     - to:
         - namespaceSelector:
             matchLabels:

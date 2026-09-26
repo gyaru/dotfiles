@@ -23,6 +23,7 @@ in {
       BUNNY_OUTPUT_PASSWORD_CREDENTIAL = "1";
       BUNNY_OUTPUT_URL = "rtmp://gon:1935/bunny-plus?user=publisher";
       BUNNY_VIDEO_ENCODER = "libx264";
+      BUNNY_JELLYFIN_HTTP_ORIGIN = "http://192.168.1.240:8096";
     };
 
     serviceConfig = {

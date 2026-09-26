@@ -1,5 +1,6 @@
 {self, ...}: {
   flake.modules.hjem.niri = {
+    config,
     lib,
     pkgs,
     ...
@@ -22,7 +23,7 @@
         fi
       '';
   in {
-    environment.sessionVariables.XCURSOR_SIZE = "18";
+    environment.sessionVariables.XCURSOR_SIZE = "14";
 
     packages = with pkgs; [
       fuzzel
@@ -68,6 +69,8 @@
         */
         ''
           input {
+            focus-follows-mouse
+
             keyboard {
               xkb {
                 layout "us,se"
@@ -86,7 +89,7 @@
           }
 
           layout {
-            gaps 16
+            gaps 10
             center-focused-column "never"
 
             preset-column-widths {
@@ -98,13 +101,13 @@
             default-column-width { proportion 0.5; }
 
             focus-ring {
-              width 4
-              active-color "#7fc8ff"
-              inactive-color "#505050"
+              off
             }
 
             border {
-              off
+              width 2
+              active-color "#d7827e"
+              inactive-color "#ea9d34"
             }
           }
 
@@ -125,6 +128,17 @@
             position x=-200 y=1440
           }
 
+          workspace "1" { open-on-output "DP-2"; }
+          workspace "2" { open-on-output "DP-2"; }
+          workspace "3" { open-on-output "DP-2"; }
+          workspace "4" { open-on-output "DP-2"; }
+          workspace "5" { open-on-output "DP-2"; }
+
+          window-rule {
+            match app-id="^steam_app_default$" title="^World of Warcraft$"
+            open-on-workspace "5"
+          }
+
           binds {
             Mod+Shift+Slash { show-hotkey-overlay; }
 
@@ -137,6 +151,7 @@
             Mod+Shift+M { spawn "${getExe pkgs.wlogout}"; }
             Mod+F11 { screenshot-screen; }
             Mod+F { toggle-window-floating; }
+            Mod+M { maximize-column; }
 
             Mod+P { toggle-column-tabbed-display; }
             Mod+S { toggle-column-tabbed-display; }
@@ -151,18 +166,18 @@
             Mod+Shift+Up    { move-window-up; }
             Mod+Shift+Down  { move-window-down; }
 
-            Mod+1 { focus-workspace 1; }
-            Mod+2 { focus-workspace 2; }
-            Mod+3 { focus-workspace 3; }
-            Mod+4 { focus-workspace 4; }
-            Mod+5 { focus-workspace 5; }
+            Mod+1 { focus-workspace "1"; }
+            Mod+2 { focus-workspace "2"; }
+            Mod+3 { focus-workspace "3"; }
+            Mod+4 { focus-workspace "4"; }
+            Mod+5 { focus-workspace "5"; }
             Mod+6 { focus-workspace 6; }
 
-            Mod+Shift+1 { move-window-to-workspace 1; }
-            Mod+Shift+2 { move-window-to-workspace 2; }
-            Mod+Shift+3 { move-window-to-workspace 3; }
-            Mod+Shift+4 { move-window-to-workspace 4; }
-            Mod+Shift+5 { move-window-to-workspace 5; }
+            Mod+Shift+1 { move-window-to-workspace "1"; }
+            Mod+Shift+2 { move-window-to-workspace "2"; }
+            Mod+Shift+3 { move-window-to-workspace "3"; }
+            Mod+Shift+4 { move-window-to-workspace "4"; }
+            Mod+Shift+5 { move-window-to-workspace "5"; }
             Mod+Shift+6 { move-window-to-workspace 6; }
 
             Mod+Shift+S { screenshot; }
@@ -181,7 +196,7 @@
             Mod+Shift+E { quit; }
           }
 
-          screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+          screenshot-path "${config.xdg.userDirectories.PICTURES}/screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
           prefer-no-csd
         '';
     };
