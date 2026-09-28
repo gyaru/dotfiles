@@ -101,12 +101,10 @@ in {
         KbdInteractiveAuthentication = false;
       };
     };
-    avahi.allowInterfaces = singleton "eno1";
     journald.settings.Journal = {
       SystemMaxUse = "2G";
       RuntimeMaxUse = "256M";
     };
-
     avahi = {
       enable = true;
       allowInterfaces = singleton "eno1";
