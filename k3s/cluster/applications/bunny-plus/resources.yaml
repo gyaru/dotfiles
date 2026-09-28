@@ -17,7 +17,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: bunny-plus
-          image: ghcr.io/bunny-plus/core:latest@sha256:f275afcf80b11c21336f696b97aa2b7adcd4427c540beb7cff7825bcf5178723 # {"$imagepolicy": "flux-system:bunny-plus"}
+          image: ghcr.io/bunny-plus/core:latest@sha256:e958b30722ca87673ebbd185398769ab143e344028096a2f6476291b59988194 # {"$imagepolicy": "flux-system:bunny-plus"}
           imagePullPolicy: Always
           ports:
             - name: http
@@ -25,6 +25,11 @@ spec:
           envFrom:
             - secretRef:
                 name: bunny-plus-env
+          env:
+            - name: JELLYFIN_URL
+              value: http://jellyfin.default.svc.cluster.local:8096/jellyfin
+            - name: JELLYFIN_STREAM_URL
+              value: http://192.168.1.240:8096/jellyfin
           volumeMounts:
             - name: chat-history
               mountPath: /app/data
@@ -167,6 +172,13 @@ spec:
         - protocol: TCP
           port: 8787
   egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: jellyfin
+      ports:
+        - protocol: TCP
+          port: 8096
     - to:
         - namespaceSelector:
             matchLabels:

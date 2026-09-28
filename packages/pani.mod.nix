@@ -8,7 +8,7 @@ _: {
   in {
     packages.pani = pkgs.writeShellApplication {
       name = "pani";
-      runtimeInputs = with pkgs; [coreutils git nh nix];
+      runtimeInputs = with pkgs; [coreutils git nh nix openssh];
       text = fileContents ../scripts/pani.sh;
     };
   };

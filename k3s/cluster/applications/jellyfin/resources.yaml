@@ -150,6 +150,9 @@ spec:
         - podSelector:
             matchLabels:
               app: home-assistant
+        - podSelector:
+            matchLabels:
+              app: bunny-plus
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: tailscale

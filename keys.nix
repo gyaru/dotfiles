@@ -1,4 +1,10 @@
 {
+  adminAgeKeys = [
+    "age1yubikey1qfpynqykgjkz0hp4cyjynkak76l7mxeuv6a277vf07c6asp7ezv3z7gwt6t"
+  ];
+
+  radiataAgeKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICB8NpNVAbKggyfZTtpE6/VoszhwE4Ls+fnURrfSy2RD";
+
   adminSshKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINb6orK35ybAoo6O+rq6DI3fXzJ7debt/ioes4Vpy6Lj"
   ];
