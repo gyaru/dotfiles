@@ -22,7 +22,7 @@ spec:
           args:
             - --domain=devices.lapi
             - --device
-            - '{"name":"dri","groups":[{"paths":[{"path":"/dev/dri/card0","permissions":"rw"},{"path":"/dev/dri/card1","permissions":"rw"},{"path":"/dev/dri/renderD128","permissions":"rw"},{"path":"/dev/dri/renderD129","permissions":"rw"}]}]}'
+            - '{"name":"dri","groups":[{"paths":[{"path":"/dev/dri/by-path/pci-0000:11:00.0-card","mountPath":"/dev/dri/card0","permissions":"rw"},{"path":"/dev/dri/by-path/pci-0000:11:00.0-render","mountPath":"/dev/dri/renderD128","permissions":"rw"}]}]}'
             - --device
             - '{"name":"zigbee","groups":[{"paths":[{"path":"/dev/zigbee","mountPath":"/dev/zigbee","permissions":"rw"}]}]}'
           securityContext:

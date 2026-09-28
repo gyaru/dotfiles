@@ -101,18 +101,9 @@ in {
         KbdInteractiveAuthentication = false;
       };
     };
-    avahi.allowInterfaces = singleton "eno1";
-    journald.extraConfig =
-      /*
-      ini
-      */
-      ''
-        SystemMaxUse=2G
-        RuntimeMaxUse=256M
-      '';
-
     avahi = {
       enable = true;
+      allowInterfaces = singleton "eno1";
       nssmdns4 = true;
       publish = {
         enable = true;
@@ -206,26 +197,6 @@ in {
       suspend.enable = false;
       hibernate.enable = false;
       hybrid-sleep.enable = false;
-    };
-
-    services.disable-bad-usb4-port5 = {
-      description = "Disable noisy usb4-port5";
-      wantedBy = singleton "multi-user.target";
-      after = singleton "systemd-udev-settle.service";
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-      };
-      script =
-        /*
-        bash
-        */
-        ''
-          PORT="/sys/devices/pci0000:00/0000:00:02.1/0000:03:00.0/0000:04:08.0/0000:07:00.0/0000:08:0c.0/0000:0d:00.0/usb4/4-0:1.0/usb4-port5/disable"
-          if [ -e "$PORT" ]; then
-            echo 1 > "$PORT"
-          fi
-        '';
     };
   };
 
