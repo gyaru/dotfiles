@@ -36,7 +36,7 @@ spec:
         kubernetes.io/hostname: lapi
       containers:
         - name: transmission
-          image: linuxserver/transmission:4.1.3@sha256:d38840f24a82c79fa837525fc4d89cf001a95b1fd4edcf41fba327c45d0f19f9
+          image: linuxserver/transmission:4.1.3@sha256:4813745e2c721997d8849f5718786fd4406b3c656fbef479f87a161e51383cbd
           startupProbe:
             tcpSocket:
               port: http
