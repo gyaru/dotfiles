@@ -1,3 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  name: bunny-plus-data
+  labels:
+    app: bunny-plus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,6 +21,8 @@ metadata:
     app: bunny-plus
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: bunny-plus
@@ -70,7 +87,8 @@ spec:
           type: RuntimeDefault
       volumes:
         - name: chat-history
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: bunny-plus-data
 ---
 apiVersion: v1
 kind: Service

@@ -2,6 +2,9 @@
 
 import os
 import re
+import threading
+import time
+import uuid
 from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener
@@ -52,3 +55,47 @@ def prepare_jellyfin_input(source, api_key):
         raise RuntimeError("Could not reach the Jellyfin video from the controller") from None
 
     return f"X-Emby-Token: {api_key}\r\n"
+
+
+class JellyfinClock:
+    """A per-process clock: stale progress readers cannot change a new relay.
+
+    The first encoded output timestamp estimates the program date of source
+    time zero. Unlike process launch time, it excludes probing/startup delay.
+    HLS program dates then let late/buffering viewers follow the watched frame.
+    Encoder/network latency can leave a small offset; viewers can adjust it.
+    """
+
+    def __init__(self, source):
+        url = urlparse(source)
+        self.session_id = uuid.uuid4().hex
+        self.item_id = url.path.split('/')[-2]
+        self.media_source_id = parse_qs(url.query)['MediaSourceId'][0]
+        self.started_at = None
+
+    def read_progress(self, output):
+        values = {}
+        try:
+            for line in output:
+                key, separator, value = line.strip().partition('=')
+                if not separator:
+                    continue
+                values[key] = value
+                if key != 'progress':
+                    continue
+                try:
+                    seconds = int(values.get('out_time_us', '-1')) / 1_000_000
+                    if self.started_at is None and int(values.get('frame', '0')) > 0 and seconds > 0:
+                        self.started_at = round((time.time() - seconds) * 1000)
+                except ValueError:
+                    pass
+                values.clear()
+        finally:
+            output.close()
+
+    def follow(self, process):
+        threading.Thread(target=self.read_progress, args=(process.stdout,), daemon=True).start()
+
+    def status(self):
+        return {'sessionId': self.session_id, 'itemId': self.item_id,
+                'mediaSourceId': self.media_source_id, 'startedAt': self.started_at}

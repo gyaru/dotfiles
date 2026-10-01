@@ -1,4 +1,5 @@
 import importlib.util
+import io
 import os
 from pathlib import Path
 import tempfile
@@ -7,7 +8,7 @@ from email.message import Message
 from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError, URLError
 
-from jellyfin import NoRedirect, prepare_jellyfin_input
+from jellyfin import NoRedirect, prepare_jellyfin_input, JellyfinClock
 
 
 SOURCE = "https://jellyfin.test/jellyfin/Videos/" + "a" * 32 + "/stream?Static=true&MediaSourceId=version"
@@ -105,10 +106,19 @@ class ControllerTests(unittest.TestCase):
         process.poll.return_value = None
         with patch.object(self.controller, "prepare_jellyfin_input", return_value=f"X-Emby-Token: {TOKEN}\r\n"), patch.object(self.controller.subprocess, "Popen", return_value=process), patch.object(self.controller.time, "sleep"):
             self.controller.start_jellyfin(SOURCE, TOKEN, "Movie", None, None)
-            self.assertEqual(self.controller.relay_status(), {"running": True, "sourceType": "jellyfin", "title": "Movie"})
+            status = self.controller.relay_status()
+            self.assertTrue(status['running'])
+            self.assertEqual(status['sourceType'], 'jellyfin')
+            self.assertEqual(status['title'], 'Movie')
+            self.assertEqual(status['jellyfin']['itemId'], 'a' * 32)
+            self.assertEqual(status['jellyfin']['mediaSourceId'], 'version')
+            self.assertNotIn(TOKEN, str(status))
+            command = self.controller.subprocess.Popen.call_args.args[0]
+            self.assertIn('-progress', command)
             self.controller.stop_relay()
             process.terminate.assert_called_once()
             self.assertFalse(self.controller.relay_status()["running"])
+            self.assertNotIn('jellyfin', self.controller.relay_status())
 
     def test_http_is_available_only_to_validated_jellyfin_playback(self):
         source = SOURCE.replace("https://jellyfin.test", "http://192.168.1.240:8096")
@@ -119,6 +129,25 @@ class ControllerTests(unittest.TestCase):
             self.controller.stop_relay()
             with self.assertRaises(ValueError):
                 self.controller.start_relay(source, "Movie", None, None, None)
+
+
+class ClockTests(unittest.TestCase):
+    def test_clock_uses_encoded_output_not_process_start_or_viewer_wall_time(self):
+        clock = JellyfinClock(SOURCE)
+        output = io.StringIO('frame=0\nout_time_us=N/A\nprogress=continue\nframe=1\nout_time_us=0\nprogress=continue\nframe=1\nout_time_us=250000\nprogress=continue\nframe=90\nout_time_us=5000000\nprogress=continue\n')
+        self.assertIsNone(clock.status()['startedAt'])
+        with patch('jellyfin.time.time', return_value=1800000000.25):
+            clock.read_progress(output)
+        self.assertEqual(clock.status()['startedAt'], 1800000000000)
+        self.assertTrue(output.closed)
+
+    def test_new_process_gets_new_identity_and_old_reader_cannot_change_it(self):
+        old = JellyfinClock(SOURCE)
+        current = JellyfinClock(SOURCE)
+        self.assertNotEqual(old.session_id, current.session_id)
+        with patch('jellyfin.time.time', return_value=1800000000):
+            old.read_progress(io.StringIO('frame=1\nout_time_us=100000\nprogress=end\n'))
+        self.assertIsNone(current.started_at)
 
 
 if __name__ == "__main__":

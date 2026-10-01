@@ -9,7 +9,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import quote, urlparse
 
 from restream import resolve_restream_title, StreamlinkInput
-from jellyfin import prepare_jellyfin_input
+from jellyfin import prepare_jellyfin_input, JellyfinClock
 
 
 def read_credential(name):
@@ -44,6 +44,7 @@ relay = None
 relay_input = None
 relay_kind = None
 relay_title = None
+relay_clock = None
 
 
 def validate_source(source):
@@ -125,7 +126,7 @@ def probe_source(source):
 
 
 def stop_relay():
-    global relay, relay_input, relay_kind, relay_title
+    global relay, relay_input, relay_kind, relay_title, relay_clock
     if relay is not None and relay.poll() is None:
         relay.terminate()
         try:
@@ -139,6 +140,7 @@ def stop_relay():
     relay_input = None
     relay_kind = None
     relay_title = None
+    relay_clock = None
 
 
 def relay_command(source, audio_index, subtitle_index, resolution_index, network_source, input_headers=None):
@@ -234,14 +236,21 @@ def relay_command(source, audio_index, subtitle_index, resolution_index, network
 
 
 def start_relay(source, title, audio_index, subtitle_index, resolution_index, *, input_headers=None, source_type="direct"):
-    global relay, relay_kind, relay_title
+    global relay, relay_kind, relay_title, relay_clock
     if source_type != "jellyfin":
         source = validate_source(source)
     command = relay_command(source, audio_index, subtitle_index, resolution_index, True, input_headers)
+    if source_type == "jellyfin":
+        command[1:1] = ["-progress", "pipe:1", "-stats_period", "0.1"]
     stop_relay()
     last_code = None
     for attempt in range(2):
-        relay = subprocess.Popen(command)
+        if source_type == "jellyfin":
+            relay_clock = JellyfinClock(source)
+            relay = subprocess.Popen(command, stdout=subprocess.PIPE, text=True)
+            relay_clock.follow(relay)
+        else:
+            relay = subprocess.Popen(command)
         relay_kind = source_type
         relay_title = title
         for _ in range(20):
@@ -251,6 +260,7 @@ def start_relay(source, title, audio_index, subtitle_index, resolution_index, *,
         if relay.poll() is None:
             return
         last_code = relay.returncode
+        relay_clock = None
         relay = None
         relay_title = None
         if attempt == 0:
@@ -296,7 +306,10 @@ def relay_status():
         relay.poll() is not None or (relay_input is not None and relay_input.poll() is not None)
     ):
         stop_relay()
-    return {"running": relay is not None, "sourceType": relay_kind, "title": relay_title}
+    status = {"running": relay is not None, "sourceType": relay_kind, "title": relay_title}
+    if relay_clock is not None:
+        status["jellyfin"] = relay_clock.status()
+    return status
 
 
 class Handler(BaseHTTPRequestHandler):
