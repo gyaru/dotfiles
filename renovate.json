@@ -28,6 +28,12 @@
       "pinDigests": true
     },
     {
+      "description": "Only update container images when their version changes",
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["digest"],
+      "enabled": false
+    },
+    {
       "description": "Review related Nix input updates together",
       "matchManagers": ["nix"],
       "groupName": "Nix flake inputs"
