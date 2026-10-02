@@ -95,6 +95,12 @@ class ControllerTests(unittest.TestCase):
         direct = self.controller.relay_command("https://torbox.test/file", None, None, None, True)
         self.assertNotIn("-headers", direct)
 
+    def test_invalid_hdr_conversion_does_not_replace_the_stream(self):
+        with patch.object(self.controller, "stop_relay") as stop:
+            with self.assertRaisesRegex(ValueError, "HDR transfer"):
+                self.controller.start_relay(SOURCE, "Movie", None, None, None, hdr_transfer="injected-filter")
+            stop.assert_not_called()
+
     def test_failed_access_does_not_stop_current_stream(self):
         with patch.object(self.controller, "prepare_jellyfin_input", side_effect=RuntimeError("Unauthorized")), patch.object(self.controller, "stop_relay") as stop:
             with self.assertRaises(RuntimeError):

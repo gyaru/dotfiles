@@ -39,6 +39,7 @@ in
       ''
         PYTHONPATH=${./.} ${getExe python3} ${./test_restream.py}
         PYTHONPATH=${./.} ${getExe python3} ${./test_jellyfin.py}
+        BUNNY_TEST_FFMPEG=${getExe ffmpeg-headless} PYTHONPATH=${./.} ${getExe python3} ${./test_relay.py}
       '';
 
     meta.mainProgram = "bunny-controller";

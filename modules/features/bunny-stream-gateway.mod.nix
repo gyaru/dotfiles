@@ -51,6 +51,7 @@
         enable = true;
         settings = {
           api = true;
+          readTimeout = "120s";
           # Low-Latency HLS uses fragmented MP4 and supports modern codecs such as
           # H.265/HEVC and AV1 when the browser has a compatible decoder.
           hlsVariant = "lowLatency";

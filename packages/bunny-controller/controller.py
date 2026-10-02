@@ -143,7 +143,9 @@ def stop_relay():
     relay_clock = None
 
 
-def relay_command(source, audio_index, subtitle_index, resolution_index, network_source, input_headers=None):
+def relay_command(source, audio_index, subtitle_index, resolution_index, network_source, input_headers=None, hdr_transfer=None):
+    if hdr_transfer not in (None, "smpte2084", "arib-std-b67"):
+        raise ValueError("Unsupported HDR transfer function")
     audio_index = optional_index(audio_index, "audioIndex")
     subtitle_index = optional_index(subtitle_index, "subtitleIndex")
     resolution_index = optional_index(resolution_index, "resolutionIndex")
@@ -199,18 +201,34 @@ def relay_command(source, audio_index, subtitle_index, resolution_index, network
         ]
     )
     if VIDEO_ENCODER == "h264_nvenc":
-        command.extend(["-preset", "p4", "-tune", "hq", "-profile:v", "high"])
+        command.extend(["-preset", "p4", "-tune", "hq", "-rc", "vbr", "-cq", "18", "-b:v", "0", "-profile:v", "high"])
     elif VIDEO_ENCODER == "libx264":
-        command.extend(["-preset", "veryfast", "-profile:v", "high"])
+        command.extend(["-preset", "veryfast", "-crf", "18", "-profile:v", "high"])
 
-    command.extend(["-bf", "0"])
+    # FLV needs codec headers on every reconnect. Supplying them explicitly
+    # also avoids reusing an EOF-flushed extract_extradata filter in FFmpeg 9.
+    command.extend(["-bf", "0", "-flags:v", "+global_header"])
 
     target_height = RESOLUTION_HEIGHTS[resolution_index] if resolution_index is not None else None
     height = f"min(ih\\,{target_height})" if target_height is not None else "ih"
+    video_filter = f"scale=-2:trunc({height}/2)*2:flags=lanczos"
+    if hdr_transfer is not None:
+        # Convert HDR in linear light, then encode a correctly tagged SDR image
+        # that every viewer can display. Resize before the costly float stages.
+        video_filter += (
+            f",zscale=tin={hdr_transfer}:pin=bt2020:min=bt2020nc:p=bt2020:t=linear:npl=100,format=gbrpf32le"
+            ",zscale=p=bt709,tonemap=tonemap=mobius:desat=2"
+            ",zscale=t=bt709:m=bt709:r=tv:dither=error_diffusion,format=yuv420p"
+        )
+        # Do not advertise the source's HDR mastering/Dolby Vision metadata
+        # on the tone-mapped SDR frames.
+        for side_data in ("MASTERING_DISPLAY_METADATA", "CONTENT_LIGHT_LEVEL", "DYNAMIC_HDR_PLUS", "DOVI_RPU_BUFFER", "DOVI_METADATA"):
+            video_filter += f",sidedata=mode=delete:type={side_data}"
+        command.extend(["-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709", "-color_range", "tv"])
     command.extend(
         [
             "-vf",
-            f"scale=-2:trunc({height}/2)*2:flags=lanczos",
+            video_filter,
             "-pix_fmt",
             "yuv420p",
             "-force_key_frames",
@@ -223,23 +241,47 @@ def relay_command(source, audio_index, subtitle_index, resolution_index, network
             "2",
             "-ar",
             "48000",
+            # Shift timestamps in the inner FLV muxer's common millisecond
+            # time base; doing it in FIFO rounds audio/video differently.
             "-avoid_negative_ts",
-            "make_zero",
+            "disabled",
             "-muxdelay",
             "0",
+            # Input HTTP reconnects do not recover a broken RTMP output.
+            # Keep a bounded live queue and reconnect at a decodable keyframe,
+            # without restarting the movie or accumulating an outage's frames.
             "-f",
+            "fifo",
+            "-fifo_format",
             "flv",
+            "-format_opts",
+            "flvflags=no_duration_filesize:fflags=-autobsf:avoid_negative_ts=make_non_negative:rw_timeout=15000000",
+            "-queue_size",
+            "120",
+            "-drop_pkts_on_overflow",
+            "1",
+            "-attempt_recovery",
+            "1",
+            # RTMP disconnects can surface as EOF, which is otherwise fatal.
+            "-recover_any_error",
+            "1",
+            "-recovery_wait_time",
+            "2",
+            "-max_recovery_attempts",
+            "30",
+            "-restart_with_keyframe",
+            "1",
             OUTPUT_URL,
         ]
     )
     return command
 
 
-def start_relay(source, title, audio_index, subtitle_index, resolution_index, *, input_headers=None, source_type="direct"):
+def start_relay(source, title, audio_index, subtitle_index, resolution_index, *, input_headers=None, source_type="direct", hdr_transfer=None):
     global relay, relay_kind, relay_title, relay_clock
     if source_type != "jellyfin":
         source = validate_source(source)
-    command = relay_command(source, audio_index, subtitle_index, resolution_index, True, input_headers)
+    command = relay_command(source, audio_index, subtitle_index, resolution_index, True, input_headers, hdr_transfer)
     if source_type == "jellyfin":
         command[1:1] = ["-progress", "pipe:1", "-stats_period", "0.1"]
     stop_relay()
@@ -269,9 +311,9 @@ def start_relay(source, title, audio_index, subtitle_index, resolution_index, *,
     raise RuntimeError(f"FFmpeg exited while starting (code {last_code})")
 
 
-def start_jellyfin(source, api_key, title, audio_index, resolution_index):
+def start_jellyfin(source, api_key, title, audio_index, resolution_index, hdr_transfer=None):
     headers = prepare_jellyfin_input(source, api_key)
-    start_relay(source, title, audio_index, None, resolution_index, input_headers=headers, source_type="jellyfin")
+    start_relay(source, title, audio_index, None, resolution_index, input_headers=headers, source_type="jellyfin", hdr_transfer=hdr_transfer)
 
 
 def start_restream(source, title, quality):
@@ -360,6 +402,7 @@ class Handler(BaseHTTPRequestHandler):
                         str(body.get("title", "Jellyfin stream"))[:200],
                         body.get("audioIndex"),
                         body.get("resolutionIndex"),
+                        body.get("hdrTransfer"),
                     )
                     return self.respond(200, {"detail": "Jellyfin relay started", **relay_status()})
                 if action == "start":
