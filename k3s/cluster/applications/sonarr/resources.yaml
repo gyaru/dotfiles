@@ -36,7 +36,7 @@ spec:
         kubernetes.io/hostname: lapi
       containers:
         - name: sonarr
-          image: linuxserver/sonarr:4.0.19@sha256:4d9df314875e1249ab7d6170c2b9b3dc1d8e6383f168ceb10dc9a5ad9b324739
+          image: linuxserver/sonarr:4.0.20@sha256:f247545d23ba8b233d6604575347e48a623fe6ad75dda02348bf81917f3b5c06
           startupProbe:
             tcpSocket:
               port: http
