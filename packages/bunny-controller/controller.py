@@ -277,7 +277,7 @@ def relay_command(source, audio_index, subtitle_index, resolution_index, network
     return command
 
 
-def start_relay(source, title, audio_index, subtitle_index, resolution_index, *, input_headers=None, source_type="direct", hdr_transfer=None):
+def start_relay(source, title, audio_index, subtitle_index, resolution_index, *, input_headers=None, source_type="direct", hdr_transfer=None, jellyfin_subtitle_index=None):
     global relay, relay_kind, relay_title, relay_clock
     if source_type != "jellyfin":
         source = validate_source(source)
@@ -288,7 +288,7 @@ def start_relay(source, title, audio_index, subtitle_index, resolution_index, *,
     last_code = None
     for attempt in range(2):
         if source_type == "jellyfin":
-            relay_clock = JellyfinClock(source)
+            relay_clock = JellyfinClock(source, jellyfin_subtitle_index)
             relay = subprocess.Popen(command, stdout=subprocess.PIPE, text=True)
             relay_clock.follow(relay)
         else:
@@ -311,9 +311,10 @@ def start_relay(source, title, audio_index, subtitle_index, resolution_index, *,
     raise RuntimeError(f"FFmpeg exited while starting (code {last_code})")
 
 
-def start_jellyfin(source, api_key, title, audio_index, resolution_index, hdr_transfer=None):
+def start_jellyfin(source, api_key, title, audio_index, resolution_index, hdr_transfer=None, subtitle_index=None):
+    subtitle_index = optional_index(subtitle_index, "subtitleIndex")
     headers = prepare_jellyfin_input(source, api_key)
-    start_relay(source, title, audio_index, None, resolution_index, input_headers=headers, source_type="jellyfin", hdr_transfer=hdr_transfer)
+    start_relay(source, title, audio_index, None, resolution_index, input_headers=headers, source_type="jellyfin", hdr_transfer=hdr_transfer, jellyfin_subtitle_index=subtitle_index)
 
 
 def start_restream(source, title, quality):
@@ -403,6 +404,7 @@ class Handler(BaseHTTPRequestHandler):
                         body.get("audioIndex"),
                         body.get("resolutionIndex"),
                         body.get("hdrTransfer"),
+                        body.get("subtitleIndex"),
                     )
                     return self.respond(200, {"detail": "Jellyfin relay started", **relay_status()})
                 if action == "start":

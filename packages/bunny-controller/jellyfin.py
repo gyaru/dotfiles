@@ -66,12 +66,13 @@ class JellyfinClock:
     Encoder/network latency can leave a small offset; viewers can adjust it.
     """
 
-    def __init__(self, source):
+    def __init__(self, source, subtitle_index=None):
         url = urlparse(source)
         self.session_id = uuid.uuid4().hex
         self.item_id = url.path.split('/')[-2]
         self.media_source_id = parse_qs(url.query)['MediaSourceId'][0]
         self.started_at = None
+        self.subtitle_index = subtitle_index
 
     def read_progress(self, output):
         values = {}
@@ -98,4 +99,5 @@ class JellyfinClock:
 
     def status(self):
         return {'sessionId': self.session_id, 'itemId': self.item_id,
-                'mediaSourceId': self.media_source_id, 'startedAt': self.started_at}
+                'mediaSourceId': self.media_source_id, 'startedAt': self.started_at,
+                'subtitleIndex': self.subtitle_index}

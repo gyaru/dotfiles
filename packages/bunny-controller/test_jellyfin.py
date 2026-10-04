@@ -126,6 +126,31 @@ class ControllerTests(unittest.TestCase):
             self.assertFalse(self.controller.relay_status()["running"])
             self.assertNotIn('jellyfin', self.controller.relay_status())
 
+    def test_admin_subtitle_selection_is_metadata_and_resets_for_each_stream(self):
+        process = MagicMock()
+        process.poll.return_value = None
+        with patch.object(self.controller, "prepare_jellyfin_input", return_value=f"X-Emby-Token: {TOKEN}\r\n"), patch.object(self.controller.subprocess, "Popen", return_value=process), patch.object(self.controller.time, "sleep"):
+            self.controller.start_jellyfin(SOURCE, TOKEN, "Movie", None, None, subtitle_index=3)
+            selected = self.controller.relay_status()['jellyfin']
+            self.assertEqual(selected['subtitleIndex'], 3)
+            command = self.controller.subprocess.Popen.call_args.args[0]
+            self.assertEqual([command[index + 1] for index, value in enumerate(command) if value == '-map'], ['0:v:0', '0:a:0?'])
+            self.assertNotIn('subtitles', command[command.index('-vf') + 1])
+            self.assertNotIn('0:3', command)
+            self.controller.start_jellyfin(SOURCE, TOKEN, "Next movie", None, None)
+            next_stream = self.controller.relay_status()['jellyfin']
+            self.assertIsNone(next_stream['subtitleIndex'])
+            self.assertNotEqual(selected['sessionId'], next_stream['sessionId'])
+            self.controller.stop_relay()
+
+    def test_invalid_subtitle_selection_does_not_replace_playback(self):
+        with patch.object(self.controller, "prepare_jellyfin_input") as prepare, patch.object(self.controller, "stop_relay") as stop:
+            for value in (-1, True, "3", 1.5):
+                with self.subTest(value=value), self.assertRaisesRegex(ValueError, "subtitleIndex"):
+                    self.controller.start_jellyfin(SOURCE, TOKEN, "Movie", None, None, subtitle_index=value)
+            prepare.assert_not_called()
+            stop.assert_not_called()
+
     def test_http_is_available_only_to_validated_jellyfin_playback(self):
         source = SOURCE.replace("https://jellyfin.test", "http://192.168.1.240:8096")
         process = MagicMock()
