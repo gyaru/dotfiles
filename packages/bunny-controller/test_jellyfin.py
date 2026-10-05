@@ -95,6 +95,19 @@ class ControllerTests(unittest.TestCase):
         direct = self.controller.relay_command("https://torbox.test/file", None, None, None, True)
         self.assertNotIn("-headers", direct)
 
+    def test_both_encoders_bound_bitrate_at_every_resolution(self):
+        for encoder, quality_option in (("libx264", "-crf"), ("h264_nvenc", "-cq")):
+            with patch.object(self.controller, "VIDEO_ENCODER", encoder):
+                for resolution, limit in enumerate((250, 500, 1000, 1800, 3500, 6000, 12000, 20000)):
+                    with self.subTest(encoder=encoder, resolution=resolution):
+                        command = self.controller.relay_command(SOURCE, None, None, resolution, True)
+                        self.assertEqual(command[command.index("-maxrate:v") + 1], f"{limit}k")
+                        self.assertEqual(command[command.index("-bufsize:v") + 1], f"{limit * 2}k")
+                        self.assertEqual(command[command.index(quality_option) + 1], "20")
+                original = self.controller.relay_command("pipe:0", None, None, None, False)
+                self.assertEqual(original[original.index("-maxrate:v") + 1], "20000k")
+                self.assertEqual(original[original.index("-bufsize:v") + 1], "40000k")
+
     def test_invalid_hdr_conversion_does_not_replace_the_stream(self):
         with patch.object(self.controller, "stop_relay") as stop:
             with self.assertRaisesRegex(ValueError, "HDR transfer"):

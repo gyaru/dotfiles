@@ -38,6 +38,9 @@ if os.environ.get("BUNNY_OUTPUT_PASSWORD_CREDENTIAL") == "1":
 VIDEO_ENCODER = os.environ.get("BUNNY_VIDEO_ENCODER", "libx264")
 PROBE_TIMEOUT_SECONDS = int(os.environ.get("BUNNY_PROBE_TIMEOUT_SECONDS", "20"))
 RESOLUTION_HEIGHTS = [144, 240, 360, 480, 720, 1080, 1440, 2160]
+# Constrained quality: simple scenes can use less, complex scenes stay within
+# a two-second VBV budget. Original resolution uses the 4K ceiling.
+VIDEO_MAX_KBPS = [250, 500, 1000, 1800, 3500, 6000, 12000, 20000]
 
 lock = threading.Lock()
 relay = None
@@ -201,9 +204,12 @@ def relay_command(source, audio_index, subtitle_index, resolution_index, network
         ]
     )
     if VIDEO_ENCODER == "h264_nvenc":
-        command.extend(["-preset", "p4", "-tune", "hq", "-rc", "vbr", "-cq", "18", "-b:v", "0", "-profile:v", "high"])
+        command.extend(["-preset", "p4", "-tune", "hq", "-rc", "vbr", "-cq", "20", "-b:v", "0", "-profile:v", "high"])
     elif VIDEO_ENCODER == "libx264":
-        command.extend(["-preset", "veryfast", "-crf", "18", "-profile:v", "high"])
+        command.extend(["-preset", "veryfast", "-crf", "20", "-profile:v", "high"])
+
+    max_kbps = VIDEO_MAX_KBPS[resolution_index if resolution_index is not None else -1]
+    command.extend(["-maxrate:v", f"{max_kbps}k", "-bufsize:v", f"{max_kbps * 2}k"])
 
     # FLV needs codec headers on every reconnect. Supplying them explicitly
     # also avoids reusing an EOF-flushed extract_extradata filter in FFmpeg 9.

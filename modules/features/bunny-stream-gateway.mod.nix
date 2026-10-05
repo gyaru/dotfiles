@@ -55,6 +55,10 @@
           # Low-Latency HLS uses fragmented MP4 and supports modern codecs such as
           # H.265/HEVC and AV1 when the browser has a compatible decoder.
           hlsVariant = "lowLatency";
+          # Keep about a minute available for viewers with live sync disabled.
+          # Normal viewers still join at the client's usual live delay.
+          hlsSegmentCount = 30;
+          hlsSegmentDuration = "2s";
           authInternalUsers = [
             {
               user = "publisher";

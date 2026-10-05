@@ -144,6 +144,30 @@ class RelayRecoveryTests(unittest.TestCase):
                 for tag in ("color_space", "color_transfer", "color_primaries"):
                     self.assertEqual(stream[tag], "bt709")
 
+    def test_noisy_video_stays_within_the_bitrate_budget(self):
+        self.controller.OUTPUT_URL = str(Path(self.directory.name, "bounded.flv"))
+        # Noise makes an unconstrained quality encode much larger than the budget.
+        command = self.controller.relay_command(
+            "testsrc2=size=854x480:rate=24,noise=alls=60:allf=t", None, None, 3, False,
+        )
+        command.remove("-re")
+        index = command.index("-i")
+        command[index:index] = ["-f", "lavfi"]
+        command[-1:-1] = ["-t", "6"]
+        result = subprocess.run(command, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        probe = str(Path(self.ffmpeg).with_name("ffprobe"))
+        result = subprocess.run([
+            probe, "-v", "error", "-select_streams", "v:0", "-show_packets",
+            "-show_entries", "packet=size", "-of", "json", self.controller.OUTPUT_URL,
+        ], check=True, capture_output=True, text=True, timeout=10)
+        packets = json.loads(result.stdout)["packets"]
+        self.assertEqual(len(packets), 6 * 24)
+        encoded_bits = sum(int(packet["size"]) for packet in packets) * 8
+        # The allowed bits include the initial two-second VBV buffer.
+        self.assertLessEqual(encoded_bits, 1_800_000 * (6 + 2))
+        self.assertGreater(encoded_bits, 1_800_000 * 3)
+
     def test_permanent_output_failure_eventually_exits(self):
         command = self.controller.relay_command(self.source, None, None, 1, False)
         # Use a short retry budget for this test; the production budget is 30.
