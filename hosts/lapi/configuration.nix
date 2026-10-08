@@ -22,7 +22,6 @@ in {
     flake.modules.nixos.nix-index
     flake.modules.nixos.shell
     flake.modules.nixos.slop
-    flake.modules.nixos.development
     flake.modules.nixos.stockholm-time
     flake.modules.nixos.zfs
     ./services/k3s.nix
@@ -132,6 +131,7 @@ in {
   programs = {
     coolercontrol.enable = true;
     nix-ld.enable = true;
+    git.enable = true;
   };
 
   networking = {
