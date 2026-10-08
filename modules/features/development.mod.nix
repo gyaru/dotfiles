@@ -11,6 +11,7 @@
       nil
       nix-direnv
       socat
+      git
       strace
       self.packages.${pkgs.stdenv.hostPlatform.system}.slop
       vscode
