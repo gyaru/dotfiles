@@ -130,6 +130,7 @@ in {
 
   programs = {
     coolercontrol.enable = true;
+    nix-ld.enable = true;
   };
 
   networking = {
