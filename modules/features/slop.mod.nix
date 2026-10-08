@@ -67,6 +67,7 @@
         createHome = true;
         homeMode = "0700";
         shell = pkgs.bashInteractive;
+        packages = singleton pkgs.git;
       };
 
       networking.firewall.allowedTCPPorts = mkIf (cfg.enable && cfg.openFirewall && cfg.interfaces == []) <| singleton cfg.port;
