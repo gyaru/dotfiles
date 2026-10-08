@@ -21,6 +21,7 @@ in {
     flake.modules.nixos.english-locale
     flake.modules.nixos.nix-index
     flake.modules.nixos.shell
+    flake.modules.nixos.slop
     flake.modules.nixos.stockholm-time
     flake.modules.nixos.zfs
     ./services/k3s.nix
@@ -223,6 +224,12 @@ in {
     unrar
     tmux
   ];
+
+  modules.slop.server = {
+    enable = true;
+    openFirewall = true;
+    interfaces = ["eno1" config.services.tailscale.interfaceName];
+  };
 
   system.stateVersion = "25.11";
 }

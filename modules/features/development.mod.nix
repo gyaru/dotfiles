@@ -1,4 +1,4 @@
-_: {
+{self, ...}: {
   flake.modules.hjem.development = {
     config,
     pkgs,
@@ -8,12 +8,11 @@ _: {
 
     packages = with pkgs; [
       alejandra
-      codex
       nil
       nix-direnv
-      opencode
       socat
       strace
+      self.packages.${pkgs.stdenv.hostPlatform.system}.slop
       vscode
     ];
   };
