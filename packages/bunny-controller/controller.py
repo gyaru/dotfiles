@@ -9,7 +9,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import quote, urlparse
 
 from restream import resolve_restream_title, StreamlinkInput
-from jellyfin import prepare_jellyfin_input, JellyfinClock
+from jellyfin import prepare_jellyfin_input, prepare_jellyfin_subtitles, validate_subtitle_fonts, JellyfinClock
 
 
 def read_credential(name):
@@ -48,6 +48,7 @@ relay_input = None
 relay_kind = None
 relay_title = None
 relay_clock = None
+relay_subtitles = None
 
 
 def validate_source(source):
@@ -129,7 +130,7 @@ def probe_source(source):
 
 
 def stop_relay():
-    global relay, relay_input, relay_kind, relay_title, relay_clock
+    global relay, relay_input, relay_kind, relay_title, relay_clock, relay_subtitles
     if relay is not None and relay.poll() is None:
         relay.terminate()
         try:
@@ -139,14 +140,17 @@ def stop_relay():
             relay.wait(timeout=2)
     if relay_input is not None:
         relay_input.stop()
+    if relay_subtitles is not None:
+        relay_subtitles.stop()
     relay = None
     relay_input = None
     relay_kind = None
     relay_title = None
     relay_clock = None
+    relay_subtitles = None
 
 
-def relay_command(source, audio_index, subtitle_index, resolution_index, network_source, input_headers=None, hdr_transfer=None):
+def relay_command(source, audio_index, subtitle_index, resolution_index, network_source, input_headers=None, hdr_transfer=None, subtitle_files=None):
     if hdr_transfer not in (None, "smpte2084", "arib-std-b67"):
         raise ValueError("Unsupported HDR transfer function")
     audio_index = optional_index(audio_index, "audioIndex")
@@ -231,6 +235,10 @@ def relay_command(source, audio_index, subtitle_index, resolution_index, network
         for side_data in ("MASTERING_DISPLAY_METADATA", "CONTENT_LIGHT_LEVEL", "DYNAMIC_HDR_PLUS", "DOVI_RPU_BUFFER", "DOVI_METADATA"):
             video_filter += f",sidedata=mode=delete:type={side_data}"
         command.extend(["-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709", "-color_range", "tv"])
+    if subtitle_files is not None:
+        # Render against source frame timestamps, after resizing/tone mapping.
+        # Browser buffering cannot advance these subtitles independently.
+        video_filter += f",{subtitle_files.video_filter()}"
     command.extend(
         [
             "-vf",
@@ -283,44 +291,55 @@ def relay_command(source, audio_index, subtitle_index, resolution_index, network
     return command
 
 
-def start_relay(source, title, audio_index, subtitle_index, resolution_index, *, input_headers=None, source_type="direct", hdr_transfer=None, jellyfin_subtitle_index=None):
-    global relay, relay_kind, relay_title, relay_clock
+def start_relay(source, title, audio_index, subtitle_index, resolution_index, *, input_headers=None, source_type="direct", hdr_transfer=None, jellyfin_subtitle_index=None, subtitle_files=None):
+    global relay, relay_kind, relay_title, relay_clock, relay_subtitles
     if source_type != "jellyfin":
         source = validate_source(source)
-    command = relay_command(source, audio_index, subtitle_index, resolution_index, True, input_headers, hdr_transfer)
+    command = relay_command(source, audio_index, subtitle_index, resolution_index, True, input_headers, hdr_transfer, subtitle_files)
     if source_type == "jellyfin":
         command[1:1] = ["-progress", "pipe:1", "-stats_period", "0.1"]
     stop_relay()
-    last_code = None
-    for attempt in range(2):
-        if source_type == "jellyfin":
-            relay_clock = JellyfinClock(source, jellyfin_subtitle_index)
-            relay = subprocess.Popen(command, stdout=subprocess.PIPE, text=True)
-            relay_clock.follow(relay)
-        else:
-            relay = subprocess.Popen(command)
-        relay_kind = source_type
-        relay_title = title
-        for _ in range(20):
-            time.sleep(0.1)
-            if relay.poll() is not None:
-                break
-        if relay.poll() is None:
-            return
-        last_code = relay.returncode
-        relay_clock = None
-        relay = None
-        relay_title = None
-        if attempt == 0:
-            time.sleep(1)
-    relay_kind = None
-    raise RuntimeError(f"FFmpeg exited while starting (code {last_code})")
+    relay_subtitles = subtitle_files
+    try:
+        last_code = None
+        for attempt in range(2):
+            if source_type == "jellyfin":
+                relay_clock = JellyfinClock(source, jellyfin_subtitle_index, subtitle_files is not None)
+                relay = subprocess.Popen(command, stdout=subprocess.PIPE, text=True)
+                relay_clock.follow(relay)
+            else:
+                relay = subprocess.Popen(command)
+            relay_kind = source_type
+            relay_title = title
+            for _ in range(20):
+                time.sleep(0.1)
+                if relay.poll() is not None:
+                    break
+            if relay.poll() is None:
+                return
+            last_code = relay.returncode
+            relay_clock = None
+            relay = None
+            relay_title = None
+            if attempt == 0:
+                time.sleep(1)
+        raise RuntimeError(f"FFmpeg exited while starting (code {last_code})")
+    except Exception:
+        stop_relay()
+        raise
 
 
-def start_jellyfin(source, api_key, title, audio_index, resolution_index, hdr_transfer=None, subtitle_index=None):
+def start_jellyfin(source, api_key, title, audio_index, resolution_index, hdr_transfer=None, subtitle_index=None, subtitle_fonts=None):
     subtitle_index = optional_index(subtitle_index, "subtitleIndex")
+    subtitle_fonts = validate_subtitle_fonts(subtitle_fonts)
     headers = prepare_jellyfin_input(source, api_key)
-    start_relay(source, title, audio_index, None, resolution_index, input_headers=headers, source_type="jellyfin", hdr_transfer=hdr_transfer, jellyfin_subtitle_index=subtitle_index)
+    files = prepare_jellyfin_subtitles(source, api_key, subtitle_index, subtitle_fonts)
+    try:
+        start_relay(source, title, audio_index, None, resolution_index, input_headers=headers, source_type="jellyfin", hdr_transfer=hdr_transfer, jellyfin_subtitle_index=subtitle_index, subtitle_files=files)
+    except Exception:
+        if files is not None:
+            files.stop()
+        raise
 
 
 def start_restream(source, title, quality):
@@ -411,6 +430,7 @@ class Handler(BaseHTTPRequestHandler):
                         body.get("resolutionIndex"),
                         body.get("hdrTransfer"),
                         body.get("subtitleIndex"),
+                        body.get("subtitleFonts"),
                     )
                     return self.respond(200, {"detail": "Jellyfin relay started", **relay_status()})
                 if action == "start":

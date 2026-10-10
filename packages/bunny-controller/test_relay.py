@@ -17,6 +17,22 @@ import time
 import unittest
 from unittest.mock import patch
 
+from jellyfin import JellyfinSubtitleFiles
+
+
+ASS = r"""[Script Info]
+ScriptType: v4.00+
+PlayResX: 320
+PlayResY: 180
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,DejaVu Sans,18,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,2,10,10,10,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:01.00,0:00:02.00,Default,,0,0,0,,{\an7\pos(20,20)\p1}m 0 0 l 50 0 50 20 0 20
+Dialogue: 0,0:00:01.00,0:00:02.00,Default,,0,0,0,,Burned subtitles
+"""
+
 
 @unittest.skipUnless(os.environ.get("BUNNY_TEST_FFMPEG"), "BUNNY_TEST_FFMPEG is not set")
 class RelayRecoveryTests(unittest.TestCase):
@@ -100,7 +116,10 @@ class RelayRecoveryTests(unittest.TestCase):
 
     def test_broken_output_reconnects_without_restarting_and_eof_still_finishes(self):
         first = self.receiver()
-        command = self.controller.relay_command(self.source, None, None, 1, False)
+        files = JellyfinSubtitleFiles()
+        self.addCleanup(files.stop)
+        files.track.write_text(ASS)
+        command = self.controller.relay_command(self.source, None, None, 1, False, subtitle_files=files)
         publisher, publisher_log = self.start(command)
         self.wait_for_frames(first)
         # A receiver disappearing mid-stream reproduces the broken RTMP socket.
@@ -116,6 +135,39 @@ class RelayRecoveryTests(unittest.TestCase):
             self.fail("Relay kept retrying after normal input EOF")
         publisher_log.seek(0)
         self.assertNotIn("Unknown option", publisher_log.read())
+
+    def test_burned_subtitles_appear_only_on_their_encoded_video_frames(self):
+        files = JellyfinSubtitleFiles()
+        self.addCleanup(files.stop)
+        files.track.write_text(ASS)
+        font = os.environ.get("BUNNY_TEST_FONT")
+        if font:
+            files.fonts.joinpath("font-9.ttf").write_bytes(Path(font).read_bytes())
+        self.controller.OUTPUT_URL = str(Path(self.directory.name, "subtitles.flv"))
+        command = self.controller.relay_command(
+            "color=c=black:size=320x180:rate=10:duration=3", None, None, None, False,
+            subtitle_files=files,
+        )
+        command.remove("-re")
+        index = command.index("-i")
+        command[index:index] = ["-f", "lavfi"]
+        encoded = subprocess.run(command, capture_output=True, text=True, timeout=10)
+        self.assertEqual(encoded.returncode, 0, encoded.stderr)
+        decoded = subprocess.run([
+            self.ffmpeg, "-hide_banner", "-loglevel", "error", "-i", self.controller.OUTPUT_URL,
+            "-pix_fmt", "gray", "-f", "rawvideo", "-",
+        ], check=True, capture_output=True, timeout=10)
+        frame_size = 320 * 180
+        self.assertEqual(len(decoded.stdout), 30 * frame_size)
+        for index in range(30):
+            frame = decoded.stdout[index * frame_size:(index + 1) * frame_size]
+            # A cue from 1s inclusive to 2s exclusive must be part of exactly
+            # these ten frames, independent of when a viewer receives them.
+            self.assertEqual(max(frame) > 180, 10 <= index < 20, f"frame {index}")
+            if font and 10 <= index < 20:
+                # The drawing is near the top; lower pixels prove that the
+                # attached font rendered the text as well as ASS positioning.
+                self.assertGreater(max(frame[120 * 320:]), 180)
 
     def test_hdr_sources_produce_sdr_video_with_correct_colour_tags(self):
         probe = str(Path(self.ffmpeg).with_name("ffprobe"))
