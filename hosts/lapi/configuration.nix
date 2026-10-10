@@ -29,6 +29,7 @@ in {
     ./services/grafana/default.nix
     ./zfs.nix
     ./services/samba.nix
+    ./services/wifi-ap.nix
     flake.modules.nixos.virtual-machines
     # ./gaming.nix
   ];
@@ -108,7 +109,7 @@ in {
     };
     avahi = {
       enable = true;
-      allowInterfaces = singleton "eno1";
+      allowInterfaces = singleton config.networking.defaultGateway.interface;
       nssmdns4 = true;
       publish = {
         enable = true;
@@ -137,13 +138,16 @@ in {
   networking = {
     hostName = "lapi";
     useDHCP = false;
-    interfaces.eno1.ipv4.addresses = [
+    interfaces.br-lan.ipv4.addresses = [
       {
         address = "192.168.1.240";
         prefixLength = 24;
       }
     ];
-    defaultGateway = "192.168.1.1";
+    defaultGateway = {
+      address = "192.168.1.1";
+      interface = "br-lan";
+    };
     nameservers = [
       "1.1.1.1"
       "1.0.0.1"
@@ -230,7 +234,7 @@ in {
   modules.slop.server = {
     enable = true;
     openFirewall = true;
-    interfaces = ["eno1" config.services.tailscale.interfaceName];
+    interfaces = [config.networking.defaultGateway.interface config.services.tailscale.interfaceName];
   };
 
   system.stateVersion = "25.11";

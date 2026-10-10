@@ -20,7 +20,7 @@ in {
       "flannel.1"
     ];
     interfaces = {
-      eno1 = {
+      ${config.networking.defaultGateway.interface} = {
         allowedTCPPorts = [
           22
           139

@@ -8,4 +8,5 @@ in {
   "secrets/flux-sops-age-key.age".publicKeys = adminRecipients ++ entities.machines.lapi.sshKeys;
   "secrets/gon-mediamtx-publisher-password.age".publicKeys = adminRecipients;
   "secrets/hana-wifi-password.age".publicKeys = adminRecipients ++ entities.machines.hana.sshKeys;
+  "secrets/lapi-wifi-password.age".publicKeys = adminRecipients ++ entities.machines.lapi.sshKeys;
 }

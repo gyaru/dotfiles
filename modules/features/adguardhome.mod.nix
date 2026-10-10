@@ -1,7 +1,9 @@
 {lib, ...}: let
   inherit (lib.lists) map singleton;
 in {
-  flake.modules.nixos.adguardhome = {config, ...}: {
+  flake.modules.nixos.adguardhome = {config, ...}: let
+    lanInterface = config.networking.defaultGateway.interface;
+  in {
     services.adguardhome = {
       enable = true;
       mutableSettings = false;
@@ -13,7 +15,7 @@ in {
 
         dns = {
           bind_hosts =
-            map ({address, ...}: address) config.networking.interfaces.eno1.ipv4.addresses
+            map ({address, ...}: address) config.networking.interfaces.${lanInterface}.ipv4.addresses
             ++ singleton config.services.adguardhome.host;
           port = 53;
           upstream_dns = singleton "https://cloudflare-dns.com/dns-query";
@@ -36,7 +38,7 @@ in {
     };
 
     networking.firewall.interfaces = {
-      eno1 = {
+      ${lanInterface} = {
         allowedTCPPorts = singleton config.services.adguardhome.settings.dns.port;
         allowedUDPPorts = singleton config.services.adguardhome.settings.dns.port;
       };

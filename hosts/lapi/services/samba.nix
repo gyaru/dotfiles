@@ -1,4 +1,8 @@
-{lib, ...}: let
+{
+  config,
+  lib,
+  ...
+}: let
   inherit (lib.modules) mkForce;
   inherit (lib.strings) concatStringsSep;
 in {
@@ -58,7 +62,7 @@ in {
 
   services.samba-wsdd = {
     enable = true;
-    interface = "eno1";
+    interface = config.networking.defaultGateway.interface;
     openFirewall = false;
   };
 }
