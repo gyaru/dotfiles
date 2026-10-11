@@ -13,8 +13,8 @@ in {
       renderer = ../scripts/render-cluster.sh;
       kubernetesVersion = majorMinor self.nixosConfigurations.lapi.config.services.k3s.package.version;
       schemas = pkgs.fetchurl {
-        url = "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.35.7-standalone-strict/_definitions.json";
-        hash = "sha256-nbyepgQtQeNtkIskiXxO4SbhmaCkaFbNYMfcvnM4HkU=";
+        url = "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.36.4-standalone-strict/_definitions.json";
+        hash = "sha256-7XamvM+if/CFw5CVLWQmehjJG+sEWz4zEX1ILiZRDPM=";
       };
     } (fileContents ../scripts/check-cluster-schemas.sh);
   };

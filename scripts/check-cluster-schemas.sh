@@ -2,7 +2,7 @@
 set -euo pipefail
 : "${src:?}" "${out:?}" "${renderer:?}" "${schemas:?}" "${kubernetesVersion:?}"
 
-[[ "$kubernetesVersion" == 1.35 ]] || { printf 'Update the pinned Kubernetes schemas for %s\n' "$kubernetesVersion" >&2; exit 1; }
+[[ "$kubernetesVersion" == 1.36 ]] || { printf 'Update the pinned Kubernetes schemas for %s\n' "$kubernetesVersion" >&2; exit 1; }
 bash "$renderer" "$src" rendered
 mkdir --parents schemas manifests
 cp "$schemas" schemas/_definitions.json
