@@ -42,6 +42,8 @@ spec:
           envFrom:
             - secretRef:
                 name: bunny-plus-env
+            - secretRef:
+                name: bunny-plus-stream
           env:
             - name: STREAM_URL
               value: https://customer-5iex37u88kgz0p7m.cloudflarestream.com/b6347a6447c0adf72cc2daf521c7f396/manifest/video.m3u8?protocol=llhlsbeta
