@@ -1,9 +1,22 @@
 {lib, ...}: let
   inherit (lib.lists) map singleton;
+  inherit (lib.modules) mkAfter;
+  inherit (lib.meta) getExe;
 in {
-  flake.modules.nixos.adguardhome = {config, ...}: let
+  flake.modules.nixos.adguardhome = {
+    config,
+    pkgs,
+    ...
+  }: let
     lanInterface = config.networking.defaultGateway.interface;
   in {
+    age.secrets.adguardhome-users = {
+      file = ../../secrets/adguardhome-users.age;
+      mode = "0400";
+      owner = "root";
+      group = "root";
+    };
+
     services.adguardhome = {
       enable = true;
       mutableSettings = false;
@@ -11,8 +24,6 @@ in {
       port = 3001;
 
       settings = {
-        users = [];
-
         dns = {
           bind_hosts =
             map ({address, ...}: address) config.networking.interfaces.${lanInterface}.ipv4.addresses
@@ -56,7 +67,23 @@ in {
 
     systemd.services.adguardhome = {
       wants = singleton "tailscaled.service";
-      after = singleton "tailscaled.service";
+      after = ["tailscaled.service" "agenix-install-secrets.service"];
+      restartTriggers = singleton config.age.secrets.adguardhome-users.file;
+      serviceConfig.LoadCredential = singleton "adguard-users:${config.age.secrets.adguardhome-users.path}";
+      preStart =
+        mkAfter
+        /*
+        bash
+        */
+        ''
+          set -euo pipefail
+          ${getExe pkgs.jq} --exit-status '
+            type == "array" and length == 1
+            and .[0].name == "lis"
+            and (.[0].password | test("^[$]2[aby][$][0-9]{2}[$][./A-Za-z0-9]{53}$"))
+          ' "$CREDENTIALS_DIRECTORY/adguard-users" > /dev/null
+          ${getExe pkgs.yq-go} --inplace '.users = load(strenv(CREDENTIALS_DIRECTORY) + "/adguard-users")' "$STATE_DIRECTORY/AdGuardHome.yaml"
+        '';
     };
   };
 }

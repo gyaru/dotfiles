@@ -14,10 +14,6 @@ in {
   };
 
   machines = {
-    gon = {
-      sshKeys = keys.gonSystemKeys;
-      ssh.enable = true;
-    };
     hana = {
       sshKeys = keys.hanaSystemKeys;
       ssh.enable = true;

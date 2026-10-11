@@ -99,8 +99,6 @@ in {
     # consoleLogLevel = 0;
     kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
     kernelParams = [
-      "mitigations=off"
-      "preempt=full"
       "quiet"
       "udev.log_level=3"
     ];

@@ -5,6 +5,10 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    bunny-plus = {
+      url = "github:bunny-plus/core";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-gaming = {
       url = "github:fufexan/nix-gaming";
 

@@ -43,6 +43,8 @@ spec:
             - secretRef:
                 name: bunny-plus-env
           env:
+            - name: STREAM_URL
+              value: https://customer-5iex37u88kgz0p7m.cloudflarestream.com/b6347a6447c0adf72cc2daf521c7f396/manifest/video.m3u8?protocol=llhlsbeta
             - name: JELLYFIN_URL
               value: http://jellyfin.default.svc.cluster.local:8096/jellyfin
             - name: JELLYFIN_STREAM_URL

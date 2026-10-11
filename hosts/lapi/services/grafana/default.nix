@@ -165,21 +165,21 @@ in {
         {
           job_name = "kubelet";
           scheme = "https";
-          metrics_path = "/api/v1/nodes/${config.networking.hostName}/proxy/metrics";
+          metrics_path = "/metrics";
           bearer_token_file = kubeTokenFile;
           tls_config.ca_file = kubeCAFile;
           static_configs = singleton {
-            targets = singleton "127.0.0.1:6443";
+            targets = singleton "127.0.0.1:10250";
           };
         }
         {
           job_name = "cadvisor";
           scheme = "https";
-          metrics_path = "/api/v1/nodes/${config.networking.hostName}/proxy/metrics/cadvisor";
+          metrics_path = "/metrics/cadvisor";
           bearer_token_file = kubeTokenFile;
           tls_config.ca_file = kubeCAFile;
           static_configs = singleton {
-            targets = singleton "127.0.0.1:6443";
+            targets = singleton "127.0.0.1:10250";
           };
         }
         {

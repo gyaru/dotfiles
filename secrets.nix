@@ -6,7 +6,8 @@ in {
   "secrets/lapi-smb.age".publicKeys = adminRecipients ++ [keys.radiataAgeKey];
   "secrets/k3s-token.age".publicKeys = adminRecipients ++ entities.machines.lapi.sshKeys;
   "secrets/flux-sops-age-key.age".publicKeys = adminRecipients ++ entities.machines.lapi.sshKeys;
-  "secrets/gon-mediamtx-publisher-password.age".publicKeys = adminRecipients;
+  "secrets/cloudflare-stream-output-url.age".publicKeys = adminRecipients ++ entities.machines.lapi.sshKeys;
   "secrets/hana-wifi-password.age".publicKeys = adminRecipients ++ entities.machines.hana.sshKeys;
   "secrets/lapi-wifi-password.age".publicKeys = adminRecipients ++ entities.machines.lapi.sshKeys;
+  "secrets/adguardhome-users.age".publicKeys = adminRecipients ++ entities.machines.lapi.sshKeys;
 }

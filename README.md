@@ -11,7 +11,6 @@ Personal NixOS configurations built with flake-parts and the dendritic pattern.
 - **lapi**: home server configuration
 - **radiata**: AMD/Niri desktop with hjem
 - **hana**: raspberry pi 4
-- **gon**: MediaMTX server
 
 ## Usage
 

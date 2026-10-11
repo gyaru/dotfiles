@@ -1,69 +1,33 @@
 {
-  flake,
+  config,
+  inputs,
   lib,
-  pkgs,
   ...
 }: let
   inherit (lib.lists) singleton;
-  inherit (lib.meta) getExe;
 in {
+  imports = singleton inputs.bunny-plus.nixosModules.bunny-controller;
+
+  age.secrets.cloudflare-stream-output-url = {
+    file = ../../../secrets/cloudflare-stream-output-url.age;
+    mode = "0400";
+  };
+
+  services.bunny-controller = {
+    enable = true;
+    listenAddress = "0.0.0.0";
+    port = 10000;
+    controlSecretFile = "/var/lib/bunny-plus/control-secret";
+    outputUrlFile = config.age.secrets.cloudflare-stream-output-url.path;
+    # Leave headroom for AAC audio below Cloudflare's 14 Mbps ingest ceiling.
+    maxVideoBitrateKbps = 10000;
+    videoEncoder = "libx264";
+    jellyfinHttpOrigin = "http://192.168.1.240:8096";
+  };
+
   systemd.services.bunny-stream-controller = {
-    description = "Bunny+ host stream controller";
-    wantedBy = singleton "multi-user.target";
-    after = ["network-online.target" "tailscaled.service"];
-    wants = singleton "network-online.target";
-    unitConfig.ConditionPathExists = [
-      "/var/lib/bunny-plus/control-secret"
-      "/var/lib/bunny-plus/gon-publisher-password"
-    ];
-
-    environment = {
-      BUNNY_CONTROLLER_HOST = "0.0.0.0";
-      BUNNY_CONTROLLER_PORT = "10000";
-      BUNNY_OUTPUT_PASSWORD_CREDENTIAL = "1";
-      BUNNY_OUTPUT_URL = "rtmp://100.64.158.26:1935/bunny-plus?user=publisher";
-      BUNNY_VIDEO_ENCODER = "libx264";
-      BUNNY_JELLYFIN_HTTP_ORIGIN = "http://192.168.1.240:8096";
-    };
-
-    serviceConfig = {
-      CapabilityBoundingSet = "";
-      DeviceAllow = [
-        "/dev/nvidia0 rw"
-        "/dev/nvidiactl rw"
-        "/dev/nvidia-modeset rw"
-        "/dev/nvidia-uvm rw"
-        "/dev/nvidia-uvm-tools rw"
-        "/dev/nvidia-caps/nvidia-cap1 rw"
-        "/dev/nvidia-caps/nvidia-cap2 rw"
-      ];
-      DevicePolicy = "closed";
-      DynamicUser = true;
-      ExecStart = getExe flake.packages.${pkgs.stdenv.hostPlatform.system}.bunny-controller;
-      LoadCredential = [
-        "control-secret:/var/lib/bunny-plus/control-secret"
-        "publisher-password:/var/lib/bunny-plus/gon-publisher-password"
-      ];
-      LockPersonality = true;
-      NoNewPrivileges = true;
-      PrivateTmp = true;
-      ProtectClock = true;
-      ProtectControlGroups = true;
-      ProtectHome = true;
-      ProtectHostname = true;
-      ProtectKernelLogs = true;
-      ProtectKernelModules = true;
-      ProtectKernelTunables = true;
-      ProtectProc = "invisible";
-      ProtectSystem = "strict";
-      Restart = "on-failure";
-      RestartSec = 5;
-      RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
-      RestrictRealtime = true;
-      SupplementaryGroups = ["video" "render"];
-      SystemCallArchitectures = "native";
-      UMask = "0077";
-    };
+    after = ["tailscaled.service" "agenix-install-secrets.service"];
+    restartTriggers = singleton config.age.secrets.cloudflare-stream-output-url.file;
   };
 
   systemd.tmpfiles.rules = singleton "d /var/lib/bunny-plus 0700 root root -";
