@@ -77,12 +77,15 @@ in {
         */
         ''
           set -euo pipefail
+          umask 0077
           ${getExe pkgs.jq} --exit-status '
             type == "array" and length == 1
             and .[0].name == "lis"
             and (.[0].password | test("^[$]2[aby][$][0-9]{2}[$][./A-Za-z0-9]{53}$"))
           ' "$CREDENTIALS_DIRECTORY/adguard-users" > /dev/null
-          ${getExe pkgs.yq-go} --inplace '.users = load(strenv(CREDENTIALS_DIRECTORY) + "/adguard-users")' "$STATE_DIRECTORY/AdGuardHome.yaml"
+          ${getExe pkgs.yq-go} '.users = load(strenv(CREDENTIALS_DIRECTORY) + "/adguard-users")' "$STATE_DIRECTORY/AdGuardHome.yaml" > "$STATE_DIRECTORY/AdGuardHome.yaml.tmp"
+          chmod 600 "$STATE_DIRECTORY/AdGuardHome.yaml.tmp"
+          mv --force "$STATE_DIRECTORY/AdGuardHome.yaml.tmp" "$STATE_DIRECTORY/AdGuardHome.yaml"
         '';
     };
   };
