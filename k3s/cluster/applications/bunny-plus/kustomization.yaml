@@ -3,5 +3,6 @@ kind: Kustomization
 resources:
   - bunny-plus-env.sops.yaml
   - bunny-plus-stream.sops.yaml
+  - bunny-plus-playback.sops.yaml
   - bunny-plus-tunnel.sops.yaml
   - resources.yaml
