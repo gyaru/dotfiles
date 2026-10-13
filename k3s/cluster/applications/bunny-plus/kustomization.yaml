@@ -4,6 +4,7 @@ resources:
   - bunny-plus-env.sops.yaml
   - bunny-plus-discord.sops.yaml
   - bunny-plus-cloudflare.sops.yaml
+  - bunny-plus-database.sops.yaml
   - bunny-plus-stream.sops.yaml
   - bunny-plus-playback.sops.yaml
   - bunny-plus-tunnel.sops.yaml

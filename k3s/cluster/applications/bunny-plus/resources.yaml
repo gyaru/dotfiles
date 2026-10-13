@@ -65,6 +65,16 @@ spec:
                 secretKeyRef:
                   name: bunny-plus-cloudflare
                   key: CF_TOKEN
+            - name: D1_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus-database
+                  key: D1_DATABASE_URL
+            - name: D1_DATABASE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus-database
+                  key: D1_DATABASE_SECRET
             - name: JELLYFIN_URL
               value: http://jellyfin.default.svc.cluster.local:8096/jellyfin
             - name: JELLYFIN_STREAM_URL
