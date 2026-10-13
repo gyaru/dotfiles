@@ -50,18 +50,21 @@ spec:
                 secretKeyRef:
                   name: bunny-plus-playback
                   key: STREAM_URL
-            - name: STREAM_RECORDING_CLEANUP_ACCOUNT_ID
+            - name: DISCORD_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: bunny-plus-playback
-                  key: STREAM_RECORDING_CLEANUP_ACCOUNT_ID
-                  optional: true
-            - name: STREAM_RECORDING_CLEANUP_API_TOKEN
+                  name: bunny-plus-discord
+                  key: DISCORD_BOT_TOKEN
+            - name: CF_ACCOUNT_ID
               valueFrom:
                 secretKeyRef:
-                  name: bunny-plus-playback
-                  key: STREAM_RECORDING_CLEANUP_API_TOKEN
-                  optional: true
+                  name: bunny-plus-cloudflare
+                  key: CF_ACCOUNT_ID
+            - name: CF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus-cloudflare
+                  key: CF_TOKEN
             - name: JELLYFIN_URL
               value: http://jellyfin.default.svc.cluster.local:8096/jellyfin
             - name: JELLYFIN_STREAM_URL
