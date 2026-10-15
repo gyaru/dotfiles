@@ -21,6 +21,7 @@ in {
         "server string" = "lapi";
         "netbios name" = "lapi";
         security = "user";
+        "server signing" = "mandatory";
         "map to guest" = "never";
         "guest account" = "nobody";
         "hosts allow" = "192.168.1.0/24 100.64.0.0/10 127.0.0.1 localhost";

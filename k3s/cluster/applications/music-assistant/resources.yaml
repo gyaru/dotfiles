@@ -68,6 +68,8 @@ spec:
               cpu: "2000m"
           securityContext:
             allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["NET_RAW"]
       volumes:
         - name: data
           persistentVolumeClaim:
