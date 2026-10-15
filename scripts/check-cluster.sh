@@ -60,9 +60,9 @@ jq --exit-status '
   | require(all(.[] | select(.kind == "NetworkPolicy") | .spec.ingress[]? | .from[]?;
       .ipBlock.cidr != "192.168.1.0/24");
       "Application policies must not trust the entire physical LAN")
-  | require(all(.[] | select(.kind == "Deployment" and .metadata.name == "bunny-plus-tunnel");
-      .spec.replicas == 0);
-      "The public Bunny+ tunnel must remain disabled")
+  | require(any(.[]; .kind == "Deployment" and .metadata.name == "bunny-plus-tunnel"
+      and .spec.replicas > 0);
+      "The Bunny+ Cloudflare tunnel needs at least one connector")
   | true
 ' rendered/cluster.json
 

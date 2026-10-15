@@ -215,7 +215,7 @@ metadata:
   labels:
     app: bunny-plus-tunnel
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: bunny-plus-tunnel
@@ -285,6 +285,9 @@ spec:
     - Egress
   ingress:
     - from:
+        - podSelector:
+            matchLabels:
+              app: bunny-plus-tunnel
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: tailscale

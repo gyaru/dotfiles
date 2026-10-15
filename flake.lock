@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791754084,
-        "narHash": "sha256-MTbib0AmAIEj4jVtjgdt9WMjCWnFG8tWfjw+gx+Hsz8=",
+        "lastModified": 1792107596,
+        "narHash": "sha256-40SLdSgSap0FzvEJQfRJEJeFW52xt8CQNooyvgxwTeM=",
         "owner": "bunny-plus",
         "repo": "core",
-        "rev": "c6df9149282da47b9068f1b5f45c8221ca0a6683",
+        "rev": "a1445bc985ba594a428869dbb58ab58974c5a71e",
         "type": "github"
       },
       "original": {
