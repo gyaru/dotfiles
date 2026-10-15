@@ -20,47 +20,13 @@ in {
       "flannel.1"
     ];
     interfaces = {
-      ${config.networking.defaultGateway.interface} = {
-        allowedTCPPorts = [
-          22
-          139
-          445
-          5357
-          27036
-          27037
-        ];
-        allowedUDPPorts = [
-          137
-          138
-          3702
-          27031
-          27032
-          27033
-          27034
-          27035
-          27036
-        ];
-      };
+      br-lan.allowedTCPPorts = [22 445];
       tailscale0.allowedTCPPorts = [
         22
         139
         445
       ];
     };
-    allowedTCPPorts = singleton 51413;
-    allowedUDPPorts = singleton 51413;
-    extraCommands =
-      /*
-      bash
-      */
-      ''
-        iptables --append nixos-fw --protocol tcp --dport 8211 --source 192.168.1.0/24 --jump nixos-fw-accept
-        iptables --append nixos-fw --protocol tcp --dport 80 --source 192.168.1.0/24 --jump nixos-fw-accept
-        iptables --append nixos-fw --protocol tcp --dport 443 --source 192.168.1.0/24 --jump nixos-fw-accept
-        iptables --append nixos-fw --protocol tcp --dport 6443 --source 192.168.1.0/24 --jump nixos-fw-accept
-        iptables --append nixos-fw --protocol tcp --dport 8096 --source 192.168.1.0/24 --jump nixos-fw-accept
-        iptables --append nixos-fw --protocol tcp --dport 5055 --source 192.168.1.0/24 --jump nixos-fw-accept
-      '';
   };
 
   services.k3s = {
@@ -70,6 +36,9 @@ in {
     disable = ["traefik" "servicelb"];
 
     extraFlags = [
+      "--node-ip=192.168.1.240"
+      "--advertise-address=192.168.1.240"
+      "--flannel-iface=br-lan"
       "--tls-san=127.0.0.1"
       "--tls-san=${config.networking.hostName}"
       "--write-kubeconfig-mode=600"

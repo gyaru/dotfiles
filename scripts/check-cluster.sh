@@ -45,6 +45,24 @@ jq --exit-status '
       "Deployment references a missing PVC")
   | require(any(.[]; .kind == "Namespace" and .metadata.name == "tailscale");
       "Tailscale namespace is missing")
+  | require(any(.[]; .kind == "Ingress" and .spec.ingressClassName == "tailscale");
+      "Private Tailscale application endpoints must remain available")
+  | require(all(.[]; .metadata.annotations."tailscale.com/funnel" != "true");
+      "Private Tailscale endpoints must not enable public Funnel access")
+  | require(all(.[] | select(.kind == "Service");
+      .spec.type != "LoadBalancer" and .spec.type != "NodePort"
+      and ((.spec.externalIPs // []) | length) == 0);
+      "Application services must not publish direct LAN or public addresses")
+  | require(all(.[] | select(.kind == "Deployment" or .kind == "DaemonSet") | .spec.template.spec;
+      all((.containers + (.initContainers // []))[] | .ports[]?;
+        (.hostPort // 0) == 0));
+      "Applications must not publish host ports outside Tailscale")
+  | require(all(.[] | select(.kind == "NetworkPolicy") | .spec.ingress[]? | .from[]?;
+      .ipBlock.cidr != "192.168.1.0/24");
+      "Application policies must not trust the entire physical LAN")
+  | require(all(.[] | select(.kind == "Deployment" and .metadata.name == "bunny-plus-tunnel");
+      .spec.replicas == 0);
+      "The public Bunny+ tunnel must remain disabled")
   | true
 ' rendered/cluster.json
 

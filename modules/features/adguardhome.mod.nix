@@ -8,7 +8,7 @@ in {
     pkgs,
     ...
   }: let
-    lanInterface = config.networking.defaultGateway.interface;
+    lanInterface = "br-lan";
   in {
     age.secrets.adguardhome-users = {
       file = ../../secrets/adguardhome-users.age;

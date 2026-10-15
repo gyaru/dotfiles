@@ -1,8 +1,4 @@
-{
-  config,
-  lib,
-  ...
-}: let
+{lib, ...}: let
   inherit (lib.modules) mkForce;
   inherit (lib.strings) concatStringsSep;
 in {
@@ -18,6 +14,7 @@ in {
   services.samba = {
     enable = true;
     openFirewall = false;
+    nmbd.enable = false;
     settings = {
       global = {
         workgroup = "WORKGROUP";
@@ -60,9 +57,5 @@ in {
     };
   };
 
-  services.samba-wsdd = {
-    enable = true;
-    interface = config.networking.defaultGateway.interface;
-    openFirewall = false;
-  };
+  services.samba-wsdd.enable = false;
 }

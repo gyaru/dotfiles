@@ -37,14 +37,6 @@
 in {
   imports = singleton flake.modules.nixos.prometheus-endpointslice;
 
-  networking.firewall.extraCommands =
-    /*
-    bash
-    */
-    ''
-      iptables --append nixos-fw --protocol tcp --dport 3000 --source 192.168.1.0/24 --jump nixos-fw-accept
-    '';
-
   services = {
     grafana = {
       enable = true;

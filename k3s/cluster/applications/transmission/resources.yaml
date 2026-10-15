@@ -52,10 +52,8 @@ spec:
             - containerPort: 9091
               name: http
             - containerPort: 51413
-              hostPort: 51413
               name: torrent-tcp
             - containerPort: 51413
-              hostPort: 51413
               protocol: UDP
               name: torrent-udp
           env:
@@ -157,11 +155,6 @@ spec:
       ports:
         - protocol: TCP
           port: 9091
-    - ports:
-        - protocol: TCP
-          port: 51413
-        - protocol: UDP
-          port: 51413
   egress:
     - {}
 ---

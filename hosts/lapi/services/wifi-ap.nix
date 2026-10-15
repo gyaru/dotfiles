@@ -5,7 +5,7 @@
   ...
 }: let
   inherit (lib.lists) singleton;
-  lanInterface = config.networking.defaultGateway.interface;
+  lanInterface = "br-lan";
   wifiInterface = "wlp11s0";
   passwordFile = config.age.secrets.lapi-wifi-password.path;
 in {
@@ -17,8 +17,8 @@ in {
   };
 
   networking = {
-    bridges.${lanInterface}.interfaces = singleton "eno1";
-    interfaces.${lanInterface}.macAddress = "c8:7f:54:0c:b8:62";
+    bridges.${lanInterface}.interfaces = singleton "enp5s0";
+    interfaces.${lanInterface}.macAddress = "58:04:4f:b2:5b:f5";
   };
 
   services.hostapd = {

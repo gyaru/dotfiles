@@ -30,6 +30,7 @@ in {
     ./zfs.nix
     ./services/samba.nix
     ./services/wifi-ap.nix
+    ./services/router.nix
     flake.modules.nixos.virtual-machines
     # ./gaming.nix
   ];
@@ -107,16 +108,7 @@ in {
       SystemMaxUse = "2G";
       RuntimeMaxUse = "256M";
     };
-    avahi = {
-      enable = true;
-      allowInterfaces = singleton config.networking.defaultGateway.interface;
-      nssmdns4 = true;
-      publish = {
-        enable = true;
-        addresses = true;
-        workstation = true;
-      };
-    };
+    avahi.enable = false;
     fstrim.enable = true;
   };
 
@@ -144,10 +136,6 @@ in {
         prefixLength = 24;
       }
     ];
-    defaultGateway = {
-      address = "192.168.1.1";
-      interface = "br-lan";
-    };
     nameservers = [
       "1.1.1.1"
       "1.0.0.1"
@@ -234,7 +222,7 @@ in {
   modules.slop.server = {
     enable = true;
     openFirewall = true;
-    interfaces = [config.networking.defaultGateway.interface config.services.tailscale.interfaceName];
+    interfaces = singleton config.services.tailscale.interfaceName;
   };
 
   system.stateVersion = "25.11";
