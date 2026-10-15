@@ -103,8 +103,8 @@ spec:
             - name: SEAFILE_MYSQL_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mariadb
-                  key: root-password
+                  name: seafile
+                  key: SEAFILE_MYSQL_DB_PASSWORD
             - name: JWT_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:
