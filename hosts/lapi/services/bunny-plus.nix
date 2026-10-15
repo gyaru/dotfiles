@@ -22,7 +22,7 @@ in {
     # Leave headroom for AAC audio below Cloudflare's 14 Mbps ingest ceiling.
     maxVideoBitrateKbps = 10000;
     videoEncoder = "libx264";
-    jellyfinHttpOrigin = "http://192.168.1.240:8096";
+    jellyfinHttpOrigin = "http://10.43.141.156:8096";
   };
 
   systemd.services.bunny-stream-controller = {

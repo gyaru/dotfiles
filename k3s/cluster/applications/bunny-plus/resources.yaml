@@ -78,7 +78,7 @@ spec:
             - name: JELLYFIN_URL
               value: http://jellyfin.default.svc.cluster.local:8096/jellyfin
             - name: JELLYFIN_STREAM_URL
-              value: http://192.168.1.240:8096/jellyfin
+              value: http://10.43.141.156:8096/jellyfin
           volumeMounts:
             - name: chat-history
               mountPath: /app/data
@@ -145,7 +145,6 @@ metadata:
   labels:
     app: bunny-plus-tunnel
 spec:
-  # Public ingress is disabled; private Tailscale endpoints remain available.
   replicas: 0
   selector:
     matchLabels:

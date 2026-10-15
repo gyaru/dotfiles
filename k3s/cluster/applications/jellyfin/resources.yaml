@@ -125,6 +125,7 @@ metadata:
     app: jellyfin
 spec:
   type: ClusterIP
+  clusterIP: 10.43.141.156
   ports:
     - port: 8096
       targetPort: 8096
