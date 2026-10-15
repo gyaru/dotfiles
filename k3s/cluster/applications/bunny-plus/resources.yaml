@@ -39,42 +39,112 @@ spec:
           ports:
             - name: http
               containerPort: 8787
-          envFrom:
-            - secretRef:
-                name: bunny-plus-env
-            - secretRef:
-                name: bunny-plus-stream
           env:
-            - name: STREAM_URL
+            - name: ADMIN_DISCORD_IDS
               valueFrom:
                 secretKeyRef:
-                  name: bunny-plus-playback
-                  key: STREAM_URL
-            - name: DISCORD_BOT_TOKEN
+                  name: bunny-plus
+                  key: ADMIN_DISCORD_IDS
+            - name: API_URL
               valueFrom:
                 secretKeyRef:
-                  name: bunny-plus-discord
-                  key: DISCORD_BOT_TOKEN
-            - name: CF_ACCOUNT_ID
+                  name: bunny-plus
+                  key: API_URL
+            - name: APP_URL
               valueFrom:
                 secretKeyRef:
-                  name: bunny-plus-cloudflare
-                  key: CF_ACCOUNT_ID
-            - name: CF_TOKEN
+                  name: bunny-plus
+                  key: APP_URL
+            - name: APP_VERSION
               valueFrom:
                 secretKeyRef:
-                  name: bunny-plus-cloudflare
-                  key: CF_TOKEN
-            - name: D1_DATABASE_URL
+                  name: bunny-plus
+                  key: APP_VERSION
+            - name: CLOUDFLARE_STREAM_SIGNING_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: bunny-plus-database
-                  key: D1_DATABASE_URL
+                  name: bunny-plus
+                  key: CLOUDFLARE_STREAM_SIGNING_KEY_ID
+            - name: CLOUDFLARE_STREAM_SIGNING_KEY_JWK
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: CLOUDFLARE_STREAM_SIGNING_KEY_JWK
             - name: D1_DATABASE_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: bunny-plus-database
+                  name: bunny-plus
                   key: D1_DATABASE_SECRET
+            - name: D1_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: D1_DATABASE_URL
+            - name: DISCORD_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: DISCORD_BOT_TOKEN
+            - name: DISCORD_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: DISCORD_CLIENT_ID
+            - name: DISCORD_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: DISCORD_CLIENT_SECRET
+            - name: DISCORD_GUILD_ID
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: DISCORD_GUILD_ID
+            - name: DISCORD_ROLE_PERMISSIONS
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: DISCORD_ROLE_PERMISSIONS
+            - name: JELLYFIN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: JELLYFIN_API_KEY
+            - name: RELAY_CONTROLLER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: RELAY_CONTROLLER_SECRET
+            - name: RELAY_CONTROLLER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: RELAY_CONTROLLER_URL
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: SESSION_SECRET
+            - name: STREAM_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: STREAM_URL
+            - name: STREMIO_ADDON_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: STREMIO_ADDON_URL
+            - name: TMDB_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: TMDB_API_TOKEN
+            - name: TORBOX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bunny-plus
+                  key: TORBOX_API_KEY
             - name: JELLYFIN_URL
               value: http://jellyfin.default.svc.cluster.local:8096/jellyfin
             - name: JELLYFIN_STREAM_URL
@@ -170,7 +240,7 @@ spec:
             - name: TUNNEL_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: bunny-plus-tunnel
+                  name: bunny-plus
                   key: token
           ports:
             - name: metrics

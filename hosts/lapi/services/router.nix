@@ -10,6 +10,12 @@
   lanAddress = "192.168.1.240";
   guardService = "lapi-wan-guard.service";
   loadGuard = "${lib.getExe pkgs.nftables} --file ${./wan-guard.nft}";
+  interfaceSysctls = family: settings:
+    lib.concatMapAttrs (
+      setting: value:
+        lib.genAttrs (map (interface: "net.${family}.conf.${interface}.${setting}") ["all" "default" "*"]) (_: value)
+    )
+    settings;
 in {
   networking = {
     interfaces.${wanInterface}.useDHCP = true;
@@ -39,13 +45,36 @@ in {
     firewall.trustedInterfaces = lib.mkForce ["lo" "cni0" "flannel.1"];
   };
 
-  boot.kernel.sysctl = {
-    "net.ipv4.ip_forward" = 1;
-    "net.ipv6.conf.all.forwarding" = 0;
-    "net.ipv6.conf.all.accept_ra" = 0;
-    "net.ipv6.conf.default.accept_ra" = 0;
-    "net.ipv6.conf.${wanInterface}.disable_ipv6" = 1;
-  };
+  boot.kernel.sysctl =
+    interfaceSysctls "ipv4" {
+      accept_redirects = 0;
+      send_redirects = 0;
+      accept_source_route = 0;
+      bc_forwarding = 0;
+      arp_ignore = 1;
+      arp_announce = 2;
+    }
+    // interfaceSysctls "ipv6" {
+      accept_redirects = 0;
+      accept_source_route = -1;
+      accept_ra = 0;
+    }
+    // {
+      "net.ipv4.ip_forward" = 1;
+      "net.ipv4.conf.all.rp_filter" = 0;
+      "net.ipv4.conf.default.rp_filter" = 2;
+      "net.ipv4.conf.*.rp_filter" = 2;
+      "net.ipv4.conf.lo.rp_filter" = 0;
+      "net.ipv4.conf.${wanInterface}.rp_filter" = 1;
+      "net.ipv4.conf.all.src_valid_mark" = 1;
+      "net.ipv4.conf.${wanInterface}.log_martians" = 1;
+      "net.ipv4.tcp_syncookies" = 1;
+      "net.ipv4.tcp_rfc1337" = 1;
+      "net.ipv4.icmp_echo_ignore_broadcasts" = 1;
+      "net.ipv4.icmp_ignore_bogus_error_responses" = 1;
+      "net.ipv6.conf.all.forwarding" = 0;
+      "net.ipv6.conf.${wanInterface}.disable_ipv6" = 1;
+    };
 
   # DHCP only: AdGuard remains the LAN DNS server. Keep its existing address
   # so shares, cluster backends and clients do not need renumbering.
@@ -64,10 +93,6 @@ in {
 
   services.tailscale.openFirewall = false;
 
-  # A separate nft table guards traffic after conntrack and before DNAT.
-  # Keep the existing iptables backend for NixOS, k3s, and libvirt. Their
-  # ACCEPT rules cannot override a DROP in this table, and their reloads
-  # cannot remove it. Replacing only this table is an atomic transaction.
   systemd.services = {
     lapi-wan-guard = {
       description = "Restrict client service access and block unsolicited WAN traffic";
@@ -83,12 +108,9 @@ in {
         RemainAfterExit = true;
         ExecStart = loadGuard;
         ExecReload = loadGuard;
-        # No ExecStop: stopping/reloading a firewall must not open WAN.
       };
     };
 
-    # A failed guard must prevent both scripted interface setup and DHCP
-    # from bringing up WAN, including when the NIC appears after boot.
     "network-addresses-${wanInterface}" = {
       requires = singleton guardService;
       after = singleton guardService;

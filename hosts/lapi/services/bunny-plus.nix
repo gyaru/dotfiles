@@ -19,8 +19,8 @@ in {
     port = 10000;
     controlSecretFile = "/var/lib/bunny-plus/control-secret";
     outputUrlFile = config.age.secrets.cloudflare-stream-output-url.path;
-    # Leave headroom for AAC audio below Cloudflare's 14 Mbps ingest ceiling.
-    maxVideoBitrateKbps = 10000;
+    # WHIP sends H.264 baseline and Opus directly to viewers.
+    maxVideoBitrateKbps = 6000;
     videoEncoder = "libx264";
     jellyfinHttpOrigin = "http://10.43.141.156:8096";
   };

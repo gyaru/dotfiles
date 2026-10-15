@@ -20,9 +20,11 @@ table inet lapi_wan {
     }
 
     chain client_ingress {
-        # Check local addresses before Kubernetes can DNAT a service port.
-        # This includes lapi's WAN, LAN, VM and Tailscale address aliases.
         type filter hook prerouting priority -190; policy accept;
+        iifname { "eno1", "br-lan", "virbr0" } ip saddr 127.0.0.0/8 counter drop
+        iifname { "eno1", "br-lan", "virbr0" } ip daddr 127.0.0.0/8 counter drop
+        iifname { "eno1", "br-lan", "virbr0" } ip6 saddr ::1 counter drop
+        iifname { "eno1", "br-lan", "virbr0" } ip6 daddr ::1 counter drop
         iifname { "br-lan", "virbr0" } fib daddr type local jump client_to_host
     }
 
