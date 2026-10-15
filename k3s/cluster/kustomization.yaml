@@ -9,3 +9,14 @@ resources:
   - flux-system/sops-check.sops.yaml
   - flux-system/gotk-sync.yaml
   - flux-system/reconciliations.yaml
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: kustomize-controller
+      namespace: flux-system
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --feature-gates=CancelHealthCheckOnNewRevision=true
