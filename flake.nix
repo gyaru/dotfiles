@@ -5,6 +5,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    llm-agents.url = "github:numtide/llm-agents.nix";
     bunny-plus = {
       url = "github:bunny-plus/core";
       inputs.nixpkgs.follows = "nixpkgs";
