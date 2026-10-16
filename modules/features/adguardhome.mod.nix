@@ -9,6 +9,8 @@ in {
     ...
   }: let
     lanInterface = "br-lan";
+    webHost = "100.88.168.16";
+    webPort = 3001;
   in {
     age.secrets.adguardhome-users = {
       file = ../../secrets/adguardhome-users.age;
@@ -20,14 +22,13 @@ in {
     services.adguardhome = {
       enable = true;
       mutableSettings = false;
-      host = "100.88.168.16";
-      port = 3001;
 
       settings = {
+        http.address = "${webHost}:${toString webPort}";
         dns = {
           bind_hosts =
             map ({address, ...}: address) config.networking.interfaces.${lanInterface}.ipv4.addresses
-            ++ singleton config.services.adguardhome.host;
+            ++ singleton webHost;
           port = 53;
           upstream_dns = singleton "https://cloudflare-dns.com/dns-query";
           bootstrap_dns = ["1.1.1.1" "1.0.0.1"];
@@ -57,7 +58,7 @@ in {
       ${config.services.tailscale.interfaceName} = {
         allowedTCPPorts = [
           config.services.adguardhome.settings.dns.port
-          config.services.adguardhome.port
+          webPort
         ];
         allowedUDPPorts = singleton config.services.adguardhome.settings.dns.port;
       };
