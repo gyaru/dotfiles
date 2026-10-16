@@ -149,9 +149,6 @@ spec:
               value: http://jellyfin.default.svc.cluster.local:8096/jellyfin
             - name: JELLYFIN_STREAM_URL
               value: http://10.43.141.156:8096/jellyfin
-          volumeMounts:
-            - name: chat-history
-              mountPath: /app/data
           readinessProbe:
             httpGet:
               path: /healthz
@@ -180,17 +177,11 @@ spec:
                 - ALL
             readOnlyRootFilesystem: true
       securityContext:
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
         runAsGroup: 1000
         runAsNonRoot: true
         runAsUser: 1000
         seccompProfile:
           type: RuntimeDefault
-      volumes:
-        - name: chat-history
-          persistentVolumeClaim:
-            claimName: bunny-plus-data
 ---
 apiVersion: v1
 kind: Service
