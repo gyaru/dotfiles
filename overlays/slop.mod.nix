@@ -19,6 +19,6 @@
       overlays = [inputs.llm-agents.overlays.shared-nixpkgs];
     };
   in {
-    inherit (agentPkgs.llm-agents) codex claude-code opencode;
+    inherit (agentPkgs.llm-agents) codex claude-code opencode t3code;
   };
 }
