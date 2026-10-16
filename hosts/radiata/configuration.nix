@@ -96,7 +96,6 @@ in {
   swapDevices = [];
 
   boot = {
-    # consoleLogLevel = 0;
     kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
     kernelParams = [
       "quiet"

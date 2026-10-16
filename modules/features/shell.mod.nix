@@ -24,7 +24,6 @@ _: {
 
       plugins.zsh-autosuggestions.source = "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh";
 
-      # HJEM-RUM CONCATENATES THIS DIRECTLY AFTER THE PLUGIN COMMANDS
       initConfig =
         "\n"
         +

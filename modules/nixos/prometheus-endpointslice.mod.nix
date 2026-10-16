@@ -4,7 +4,6 @@ _: {
     inherit (lib.options) mkOption;
     inherit (lib.types) enum listOf nullOr submodule;
   in {
-    # EXTEND THE NIXPKGS ENUM UNTIL IT INCLUDES PROMETHEUS ENDPOINTSLICE DISCOVERY
     options.services.prometheus.scrapeConfigs = mkOption {
       type =
         listOf

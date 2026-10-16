@@ -40,8 +40,6 @@ in {
       };
     };
 
-    # Guest VMs get the same limited host access as physical LAN clients.
-    # Cluster interfaces remain trusted for existing app/monitoring backends.
     firewall.trustedInterfaces = lib.mkForce ["lo" "cni0" "flannel.1"];
   };
 
@@ -76,8 +74,6 @@ in {
       "net.ipv6.conf.${wanInterface}.disable_ipv6" = 1;
     };
 
-  # DHCP only: AdGuard remains the LAN DNS server. Keep its existing address
-  # so shares, cluster backends and clients do not need renumbering.
   services.dnsmasq = {
     enable = true;
     resolveLocalQueries = false;

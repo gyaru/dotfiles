@@ -1,10 +1,6 @@
-# Replace only our own table, atomically. Never flush Kubernetes/libvirt rules.
 destroy table inet lapi_wan
 
 table inet lapi_wan {
-    # Unauthenticated LAN/VM clients get only explicit infrastructure and
-    # SSH/SMB exceptions. Preserve replies to connections initiated by lapi,
-    # but do not grandfather old client-initiated application sessions.
     chain client_to_host {
         ct state invalid counter drop
         ct direction reply ct state established,related counter accept
@@ -29,24 +25,18 @@ table inet lapi_wan {
     }
 
     chain client_input {
-        # Cover multicast/broadcast input too, independently of ACCEPT rules
-        # installed by NixOS, libvirt or container networking.
         type filter hook input priority 10; policy accept;
         iifname { "br-lan", "virbr0" } jump client_to_host
     }
 
     chain ingress {
-        # Conntrack runs at -200; DNAT/hostPort rules run at -100. Reject new
-        # WAN traffic here before it can be redirected into a trusted pod net.
         type filter hook prerouting priority -190; policy accept;
         iifname != "eno1" return
 
-        # Public IPv6 is deliberately disabled pending an ISP prefix plan.
         meta nfproto ipv6 counter drop
         ct state invalid counter drop
         ct state established,related counter accept
 
-        # The only unsolicited IPv4 exception is the WAN DHCP client.
         udp sport 67 udp dport 68 counter accept
         counter drop
     }
@@ -54,17 +44,12 @@ table inet lapi_wan {
     chain forward {
         type filter hook forward priority 10; policy accept;
 
-        # Preserve traffic switched within each existing bridge. This policy
-        # does not isolate desktop/Wi-Fi peers or VM peers at layer 2.
         iifname "br-lan" oifname "br-lan" counter accept
         iifname "virbr0" oifname "virbr0" counter accept
         iifname { "br-lan", "virbr0" } ct direction reply ct state established,related counter accept
-        # Client internet traffic is checked by the WAN egress rules below;
-        # direct routes/port mappings to pods, VMs or tailscale0 are denied.
         iifname { "br-lan", "virbr0" } oifname != "eno1" counter drop
 
         iifname "eno1" ct state established,related counter accept
-        # DHCP replies may reach this host, never be routed into LAN/pods/VMs.
         iifname "eno1" counter drop
 
         oifname "eno1" meta nfproto ipv6 counter drop

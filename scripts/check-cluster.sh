@@ -5,7 +5,6 @@ set -euo pipefail
 
 bash "$renderer" "$src" rendered
 
-# Validate the complete rendered resource set, including encrypted Secret envelopes.
 jq --exit-status '
   def require($ok; $message): if $ok then . else error($message) end;
   def identity: [(.apiVersion | if contains("/") then split("/")[0] else "" end), .kind, (.metadata.namespace // ""), .metadata.name];

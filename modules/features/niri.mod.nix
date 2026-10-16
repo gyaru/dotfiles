@@ -15,7 +15,6 @@
       bash
       */
       ''
-        # SDL2 USES WAYLAND OUTPUT ANNOUNCEMENT ORDER
         if ${niri} msg --json outputs | ${getExe pkgs.jq} --exit-status '."DP-2".logical != null' > /dev/null; then
           ${niri} msg output HDMI-A-1 off
           ${niri} msg output HDMI-A-1 on
