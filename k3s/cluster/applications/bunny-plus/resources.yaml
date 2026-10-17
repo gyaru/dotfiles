@@ -34,7 +34,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: bunny-plus
-          image: ghcr.io/bunny-plus/core:latest@sha256:b90b238cd65870b31bdd1001b86af1bdbedaafc4fa74713098119a00fd8aadfc # {"$imagepolicy": "flux-system:bunny-plus"}
+          image: ghcr.io/bunny-plus/core:latest@sha256:d289014eaf58bdde84518dd51fd7bc57422ead58f3e68c7fceb7cc2a6e4eee0f # {"$imagepolicy": "flux-system:bunny-plus"}
           imagePullPolicy: Always
           ports:
             - name: http
