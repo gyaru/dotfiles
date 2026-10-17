@@ -20,6 +20,7 @@ in {
     flake.modules.nixos.firewall
     flake.modules.nixos.english-locale
     flake.modules.nixos.nix-index
+    flake.modules.nixos.ntopng
     flake.modules.nixos.shell
     flake.modules.nixos.slop
     flake.modules.nixos.stockholm-time
@@ -111,6 +112,17 @@ in {
     };
     avahi.enable = false;
     fstrim.enable = true;
+
+    ntopng = {
+      interfaces = [
+        "br-lan"
+        config.networking.nat.externalInterface
+        config.services.tailscale.interfaceName
+        "cni0"
+        "virbr0"
+      ];
+      extraConfig = "--local-networks=192.168.1.0/24,192.168.122.0/24,10.42.0.0/16,10.43.0.0/16,100.64.0.0/10,fd7a:115c:a1e0::/48";
+    };
   };
 
   nixpkgs = {
@@ -191,6 +203,8 @@ in {
 
   systemd = {
     oomd.enableUserSlices = true;
+
+    services.ntopng.after = ["k3s.service" "libvirtd.service"];
 
     tmpfiles.rules = [
       "z /root/.ssh/authorized_keys 0600 root root -"
