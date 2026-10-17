@@ -20,7 +20,7 @@ in {
     controlSecretFile = "/var/lib/bunny-plus/control-secret";
     outputUrlFile = config.age.secrets.cloudflare-stream-output-url.path;
     maxVideoBitrateKbps = 6000;
-    videoEncoder = "libx264";
+    videoEncoder = "h264_nvenc";
     jellyfinHttpOrigin = "http://10.43.141.156:8096";
   };
 

@@ -1,0 +1,84 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: bunny-plus-recording-cleanup
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 60
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 90
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            app: bunny-plus-recording-cleanup
+        spec:
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          containers:
+            - name: cleanup
+              image: ghcr.io/bunny-plus/core:latest
+              imagePullPolicy: Always
+              command: ["node", "/app/cleanup.cjs"]
+              env:
+                - name: CF_ACCOUNT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: bunny-plus
+                      key: CF_ACCOUNT_ID
+                - name: CF_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: bunny-plus
+                      key: CF_TOKEN
+                - name: STREAM_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: bunny-plus
+                      key: STREAM_URL
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: [ALL]
+                readOnlyRootFilesystem: true
+          securityContext:
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: bunny-plus-recording-cleanup
+spec:
+  podSelector:
+    matchLabels:
+      app: bunny-plus-recording-cleanup
+  policyTypes: [Ingress, Egress]
+  ingress: []
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - ports:
+        - protocol: TCP
+          port: 443

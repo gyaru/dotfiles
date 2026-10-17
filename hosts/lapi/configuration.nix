@@ -26,6 +26,7 @@ in {
     flake.modules.nixos.zfs
     ./services/k3s.nix
     ./services/bunny-plus.nix
+    ./services/nvidia.nix
     ./services/grafana/default.nix
     ./zfs.nix
     ./services/samba.nix
