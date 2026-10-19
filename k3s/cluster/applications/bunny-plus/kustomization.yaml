@@ -3,4 +3,3 @@ kind: Kustomization
 resources:
   - bunny-plus.sops.yaml
   - resources.yaml
-  - recording-cleanup.yaml

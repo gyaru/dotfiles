@@ -2,10 +2,10 @@ destroy table inet lapi_wan
 
 table inet lapi_wan {
     chain client_to_host {
+        udp sport 68 udp dport 67 counter accept
         ct state invalid counter drop
         ct direction reply ct state established,related counter accept
         tcp dport { 22, 445 } counter accept
-        udp sport 68 udp dport 67 counter accept
         udp dport 41641 counter accept
         iifname "br-lan" ip daddr 192.168.1.240 tcp dport 53 counter accept
         iifname "br-lan" ip daddr 192.168.1.240 udp dport 53 counter accept

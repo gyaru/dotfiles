@@ -35,6 +35,8 @@ in {
     tokenFile = config.age.secrets.k3s-token.path;
     disable = ["traefik" "servicelb"];
 
+    extraKubeletConfig.seccompDefault = true;
+
     extraFlags = [
       "--node-ip=192.168.1.240"
       "--advertise-address=192.168.1.240"

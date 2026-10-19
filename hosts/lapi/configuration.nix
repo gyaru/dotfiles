@@ -13,6 +13,7 @@ in {
     inputs.agenix.nixosModules.default
     flake.modules.nixos.nix-builder
     flake.modules.nixos.kernel-hardening
+    flake.modules.nixos.server-hardening
     flake.modules.nixos.amd-server-power
     flake.modules.nixos.ssh
     flake.modules.nixos.tailscale

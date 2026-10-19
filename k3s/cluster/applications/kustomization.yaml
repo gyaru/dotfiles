@@ -16,3 +16,19 @@ resources:
   - sonarr
   - transmission
   - zigbee2mqtt
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: seccomp-default
+      spec:
+        template:
+          spec:
+            securityContext:
+              seccompProfile:
+                type: RuntimeDefault

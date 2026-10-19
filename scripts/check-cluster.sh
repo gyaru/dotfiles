@@ -24,6 +24,11 @@ jq --exit-status '
   | require(all(.[] | select(.kind == "Deployment" and .metadata.namespace == "default");
       .spec.template.spec.automountServiceAccountToken == false);
       "Application pods must explicitly disable API token mounts")
+  | require(all(.[] | select((.kind == "Deployment" or .kind == "DaemonSet") and .metadata.namespace == "default") | .spec.template.spec;
+      . as $pod
+      | all((.containers + (.initContainers // []) + (.ephemeralContainers // []))[];
+          (.securityContext.seccompProfile // $pod.securityContext.seccompProfile).type == "RuntimeDefault"));
+      "Application containers must use the RuntimeDefault seccomp profile")
   | require(all(.[] | select(.kind == "Deployment");
       if any(.spec.template.spec.volumes[]?; has("persistentVolumeClaim"))
       then .spec.replicas == 1 and .spec.strategy.type == "Recreate" else true end);
