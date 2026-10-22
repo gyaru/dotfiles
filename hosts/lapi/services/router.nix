@@ -89,6 +89,8 @@ in {
 
   services.tailscale.openFirewall = false;
 
+  systemd.network.links."40-enp5s0".linkConfig.GenericReceiveOffload = false;
+
   systemd.services = {
     lapi-wan-guard = {
       description = "Restrict client service access and block unsolicited WAN traffic";
