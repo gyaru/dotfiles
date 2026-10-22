@@ -236,6 +236,7 @@ in {
 
   modules.slop.server = {
     enable = true;
+    host = "100.88.168.16";
     openFirewall = true;
     interfaces = singleton config.services.tailscale.interfaceName;
   };
