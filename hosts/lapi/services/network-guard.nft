@@ -1,0 +1,53 @@
+destroy table inet lapi_wan
+destroy table inet lapi_network
+
+table inet lapi_network {
+    chain client_to_host {
+        iifname "virbr0" udp sport 68 udp dport 67 counter accept
+        ct state invalid counter drop
+        ct direction reply ct state established,related counter accept
+        tcp dport { 22, 445 } counter accept
+        udp dport 41641 counter accept
+        iifname "eno1" ip daddr 192.168.1.240 tcp dport 53 counter accept
+        iifname "eno1" ip daddr 192.168.1.240 udp dport 53 counter accept
+        iifname "virbr0" ip daddr 192.168.122.1 tcp dport 53 counter accept
+        iifname "virbr0" ip daddr 192.168.122.1 udp dport 53 counter accept
+        ip6 hoplimit 255 icmpv6 type { nd-neighbor-solicit, nd-neighbor-advert } counter accept
+        counter drop
+    }
+
+    chain client_ingress {
+        type filter hook prerouting priority -190; policy accept;
+        iifname { "eno1", "virbr0" } ip saddr 127.0.0.0/8 counter drop
+        iifname { "eno1", "virbr0" } ip daddr 127.0.0.0/8 counter drop
+        iifname { "eno1", "virbr0" } ip6 saddr ::1 counter drop
+        iifname { "eno1", "virbr0" } ip6 daddr ::1 counter drop
+        iifname { "eno1", "virbr0" } fib daddr type local jump client_to_host
+    }
+
+    chain client_input {
+        type filter hook input priority 10; policy accept;
+        iifname { "eno1", "virbr0" } jump client_to_host
+    }
+
+    chain forward {
+        type filter hook forward priority 10; policy accept;
+
+        iifname "virbr0" oifname "virbr0" counter accept
+        iifname "virbr0" ct direction reply ct state established,related counter accept
+        iifname "virbr0" oifname != "eno1" counter drop
+
+        iifname "eno1" ct state established,related counter accept
+        iifname "eno1" counter drop
+
+        oifname "eno1" meta nfproto ipv6 counter drop
+        oifname "eno1" ct state invalid counter drop
+        oifname "eno1" ip saddr { 10.42.0.0/16, 192.168.122.0/24 } counter accept
+        oifname "eno1" counter drop
+    }
+
+    chain output {
+        type filter hook output priority 10; policy accept;
+        oifname "eno1" meta nfproto ipv6 counter drop
+    }
+}

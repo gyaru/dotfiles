@@ -32,8 +32,9 @@ in {
     ./services/grafana/default.nix
     ./zfs.nix
     ./services/samba.nix
-    ./services/wifi-ap.nix
-    ./services/router.nix
+    # ./services/wifi-ap.nix
+    # ./services/router.nix
+    ./services/network.nix
     flake.modules.nixos.virtual-machines
     # ./gaming.nix
   ];
@@ -116,8 +117,7 @@ in {
 
     ntopng = {
       interfaces = [
-        "br-lan"
-        config.networking.nat.externalInterface
+        "eno1"
         config.services.tailscale.interfaceName
         "cni0"
         "virbr0"
@@ -143,12 +143,11 @@ in {
   networking = {
     hostName = "lapi";
     useDHCP = false;
-    interfaces.br-lan.ipv4.addresses = [
-      {
-        address = "192.168.1.240";
-        prefixLength = 24;
-      }
-    ];
+    defaultGateway = "192.168.1.1";
+    interfaces.eno1.ipv4.addresses = singleton {
+      address = "192.168.1.240";
+      prefixLength = 24;
+    };
     nameservers = [
       "1.1.1.1"
       "1.0.0.1"

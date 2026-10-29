@@ -20,7 +20,7 @@ in {
       "flannel.1"
     ];
     interfaces = {
-      br-lan.allowedTCPPorts = [22 445];
+      eno1.allowedTCPPorts = [22 445];
       tailscale0.allowedTCPPorts = [
         22
         139
@@ -40,7 +40,7 @@ in {
     extraFlags = [
       "--node-ip=192.168.1.240"
       "--advertise-address=192.168.1.240"
-      "--flannel-iface=br-lan"
+      "--flannel-iface=eno1"
       "--tls-san=127.0.0.1"
       "--tls-san=${config.networking.hostName}"
       "--write-kubeconfig-mode=600"
@@ -48,11 +48,16 @@ in {
   };
 
   systemd.services = {
-    k3s.unitConfig.RequiresMountsFor = singleton "/mlem/media";
+    k3s = {
+      after = singleton "network-addresses-eno1.service";
+      requires = singleton "network-addresses-eno1.service";
 
-    k3s.serviceConfig = {
-      ManagedOOMPreference = "avoid";
-      OOMScoreAdjust = -900;
+      unitConfig.RequiresMountsFor = singleton "/mlem/media";
+
+      serviceConfig = {
+        ManagedOOMPreference = "avoid";
+        OOMScoreAdjust = -900;
+      };
     };
 
     flux-sops-key = {
