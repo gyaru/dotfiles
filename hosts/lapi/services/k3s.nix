@@ -48,7 +48,7 @@ in {
   };
 
   systemd.services = {
-    k3s.unitConfig.RequiresMountsFor = ["/mlem/media" "/mlem/seafile/data"];
+    k3s.unitConfig.RequiresMountsFor = singleton "/mlem/media";
 
     k3s.serviceConfig = {
       ManagedOOMPreference = "avoid";
