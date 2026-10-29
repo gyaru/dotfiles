@@ -22,7 +22,7 @@ in {
 
     firewall = {
       interfaces = {
-        eno1.allowedUDPPorts = singleton config.services.tailscale.port;
+        enp5s0.allowedUDPPorts = singleton config.services.tailscale.port;
         virbr0 = {
           allowedTCPPorts = [22 53 445];
           allowedUDPPorts = [53 67 config.services.tailscale.port];
@@ -53,15 +53,15 @@ in {
       "net.ipv4.conf.default.rp_filter" = 2;
       "net.ipv4.conf.*.rp_filter" = 2;
       "net.ipv4.conf.lo.rp_filter" = 0;
-      "net.ipv4.conf.eno1.rp_filter" = 1;
+      "net.ipv4.conf.enp5s0.rp_filter" = 1;
       "net.ipv4.conf.all.src_valid_mark" = 1;
-      "net.ipv4.conf.eno1.log_martians" = 1;
+      "net.ipv4.conf.enp5s0.log_martians" = 1;
       "net.ipv4.tcp_syncookies" = 1;
       "net.ipv4.tcp_rfc1337" = 1;
       "net.ipv4.icmp_echo_ignore_broadcasts" = 1;
       "net.ipv4.icmp_ignore_bogus_error_responses" = 1;
       "net.ipv6.conf.all.forwarding" = 0;
-      "net.ipv6.conf.eno1.disable_ipv6" = 1;
+      "net.ipv6.conf.enp5s0.disable_ipv6" = 1;
     };
 
   services.tailscale.openFirewall = false;
@@ -85,7 +85,7 @@ in {
       };
     };
 
-    network-addresses-eno1 = {
+    network-addresses-enp5s0 = {
       requires = singleton "lapi-network-guard.service";
       after = singleton "lapi-network-guard.service";
     };
@@ -98,7 +98,7 @@ in {
     }
     {
       assertion =
-        config.networking.interfaces.eno1.ipv4.addresses
+        config.networking.interfaces.enp5s0.ipv4.addresses
         == singleton {
           address = "192.168.1.240";
           prefixLength = 24;
@@ -107,11 +107,11 @@ in {
     }
     {
       assertion =
-        sort (a: b: a < b) config.networking.firewall.interfaces.eno1.allowedTCPPorts
+        sort (a: b: a < b) config.networking.firewall.interfaces.enp5s0.allowedTCPPorts
         == [22 53 445]
-        && sort (a: b: a < b) config.networking.firewall.interfaces.eno1.allowedUDPPorts == [53 41641]
-        && config.networking.firewall.interfaces.eno1.allowedTCPPortRanges == []
-        && config.networking.firewall.interfaces.eno1.allowedUDPPortRanges == [];
+        && sort (a: b: a < b) config.networking.firewall.interfaces.enp5s0.allowedUDPPorts == [53 41641]
+        && config.networking.firewall.interfaces.enp5s0.allowedTCPPortRanges == []
+        && config.networking.firewall.interfaces.enp5s0.allowedUDPPortRanges == [];
       message = "LAN may expose only SSH, SMB, DNS and encrypted Tailscale transport.";
     }
     {

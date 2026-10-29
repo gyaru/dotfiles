@@ -20,7 +20,7 @@ in {
       "flannel.1"
     ];
     interfaces = {
-      eno1.allowedTCPPorts = [22 445];
+      enp5s0.allowedTCPPorts = [22 445];
       tailscale0.allowedTCPPorts = [
         22
         139
@@ -40,7 +40,7 @@ in {
     extraFlags = [
       "--node-ip=192.168.1.240"
       "--advertise-address=192.168.1.240"
-      "--flannel-iface=eno1"
+      "--flannel-iface=enp5s0"
       "--tls-san=127.0.0.1"
       "--tls-san=${config.networking.hostName}"
       "--write-kubeconfig-mode=600"
@@ -49,8 +49,8 @@ in {
 
   systemd.services = {
     k3s = {
-      after = singleton "network-addresses-eno1.service";
-      requires = singleton "network-addresses-eno1.service";
+      after = singleton "network-addresses-enp5s0.service";
+      requires = singleton "network-addresses-enp5s0.service";
 
       unitConfig.RequiresMountsFor = singleton "/mlem/media";
 

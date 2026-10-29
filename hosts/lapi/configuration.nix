@@ -117,7 +117,7 @@ in {
 
     ntopng = {
       interfaces = [
-        "eno1"
+        "enp5s0"
         config.services.tailscale.interfaceName
         "cni0"
         "virbr0"
@@ -144,7 +144,7 @@ in {
     hostName = "lapi";
     useDHCP = false;
     defaultGateway = "192.168.1.1";
-    interfaces.eno1.ipv4.addresses = singleton {
+    interfaces.enp5s0.ipv4.addresses = singleton {
       address = "192.168.1.240";
       prefixLength = 24;
     };

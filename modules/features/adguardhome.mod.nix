@@ -8,7 +8,7 @@ in {
     pkgs,
     ...
   }: let
-    lanInterface = "eno1";
+    lanInterface = "enp5s0";
     webHost = "100.88.168.16";
     webPort = 3001;
   in {
