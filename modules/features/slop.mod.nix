@@ -1,4 +1,25 @@
 {self, ...}: {
+  flake.modules.hjem.slop = {
+    pkgs,
+    lib,
+    ...
+  }: let
+    inherit (lib.lists) singleton;
+  in {
+    packages = singleton self.packages.${pkgs.stdenv.hostPlatform.system}.slop;
+
+    files.".codex/rules/nix-eval.rules".text =
+      /*
+      starlark
+      */
+      ''
+        prefix_rule(
+            pattern = ["nix", "--accept-flake-config", "eval"],
+            decision = "allow",
+        )
+      '';
+  };
+
   flake.modules.nixos.slop = {
     config,
     lib,

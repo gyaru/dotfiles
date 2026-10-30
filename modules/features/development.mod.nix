@@ -1,4 +1,4 @@
-{self, ...}: {
+{
   flake.modules.hjem.development = {
     config,
     pkgs,
@@ -13,7 +13,6 @@
       socat
       git
       strace
-      self.packages.${pkgs.stdenv.hostPlatform.system}.slop
       vscode
     ];
   };

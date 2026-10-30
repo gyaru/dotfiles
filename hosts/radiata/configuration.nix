@@ -98,7 +98,7 @@ in {
   boot = {
     kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
     kernelParams = [
-      "quiet"
+      # "quiet"
       "udev.log_level=3"
     ];
 
@@ -116,7 +116,6 @@ in {
         "sd_mod"
       ];
       kernelModules = [];
-      systemd.enable = true;
       supportedFilesystems = singleton "btrfs";
     };
 
