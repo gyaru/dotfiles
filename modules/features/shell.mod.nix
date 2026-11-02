@@ -4,11 +4,13 @@ _: {
   };
 
   flake.modules.hjem.shell = {
+    config,
     lib,
     pkgs,
     ...
   }: let
     inherit (lib.meta) getExe;
+    inherit (lib.modules) mkIf;
   in {
     packages = with pkgs; [
       btop
@@ -18,6 +20,8 @@ _: {
       starship
       tealdeer
     ];
+
+    files.".zlogin".text = mkIf config.rum.programs.zsh.enable config.rum.programs.zsh.loginConfig;
 
     rum.programs.zsh = {
       enable = true;

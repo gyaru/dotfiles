@@ -15,7 +15,7 @@ in {
     modifications = composeManyExtensions [
       config.flake.overlays.proton-ge
       config.flake.overlays.slop
-      config.flake.overlays.xwayland-satellite
+      # config.flake.overlays.xwayland-satellite
     ];
   };
 }

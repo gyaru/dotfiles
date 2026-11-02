@@ -31,7 +31,7 @@ in {
 
   modules.wayland = {
     enable = true;
-    compositor = "niri";
+    compositor = "hyprland";
   };
 
   modules.audio = {
