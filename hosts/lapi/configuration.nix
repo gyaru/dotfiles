@@ -20,15 +20,15 @@ in {
     flake.modules.nixos.adguardhome
     flake.modules.nixos.firewall
     flake.modules.nixos.english-locale
+    flake.modules.nixos.external-gaming
+    flake.modules.nixos.kodi-tv
     flake.modules.nixos.nix-index
-    flake.modules.nixos.ntopng
     flake.modules.nixos.shell
     flake.modules.nixos.slop
     flake.modules.nixos.stockholm-time
     flake.modules.nixos.zfs
     ./services/k3s.nix
     ./services/bunny-plus.nix
-    ./services/nvidia.nix
     ./services/grafana/default.nix
     ./zfs.nix
     ./services/samba.nix
@@ -36,7 +36,6 @@ in {
     # ./services/router.nix
     ./services/network.nix
     flake.modules.nixos.virtual-machines
-    # ./gaming.nix
   ];
 
   boot = {
@@ -142,6 +141,7 @@ in {
 
   networking = {
     hostName = "lapi";
+    networkmanager.enable = false;
     useDHCP = false;
     defaultGateway = "192.168.1.1";
     interfaces.enp5s0.ipv4.addresses = singleton {
@@ -238,6 +238,15 @@ in {
     host = "100.88.168.16";
     openFirewall = true;
     interfaces = singleton config.services.tailscale.interfaceName;
+  };
+
+  services.kodi-tv = {
+    device = "/dev/dri/by-path/pci-0000:11:00.0-card";
+    renderDevice = "/dev/dri/by-path/pci-0000:11:00.0-render";
+    connector = "HDMI-A-1";
+    audioDevice = "ALSA:hdmi:CARD=Generic,DEV=0";
+    audioCard = "alsa_card.pci-0000_11_00.1";
+    passwordFile = "/var/lib/kodi-tv-secrets/remote-password";
   };
 
   system.stateVersion = "25.11";

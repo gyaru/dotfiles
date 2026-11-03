@@ -1,0 +1,101 @@
+--- a/xbmc/windowing/gbm/drm/DRMUtils.cpp
++++ b/xbmc/windowing/gbm/drm/DRMUtils.cpp
+@@ -18,0 +19,2 @@
++
++#include <cstring>
+@@ -185,0 +188,31 @@
++  drmVersionPtr driver = drmGetVersion(m_fd);
++  const bool needsPrimary = driver && std::strcmp(driver->name, "amdgpu") == 0;
++  if (driver)
++    drmFreeVersion(driver);
++
++  if (needsPrimary)
++  {
++    for (size_t i = 0; i < m_crtcs.size(); ++i)
++    {
++      if (!(m_encoder->GetPossibleCrtcs() & (1 << i)))
++        continue;
++
++      for (const auto& plane : m_planes)
++      {
++        if (!(plane->GetPossibleCrtcs() & (1 << i)) || !plane->IsPrimary() ||
++            !(plane->SupportsFormat(DRM_FORMAT_XRGB2101010) ||
++              plane->SupportsFormat(DRM_FORMAT_XRGB8888)))
++          continue;
++
++        m_crtc = m_crtcs[i].get();
++        m_gui_plane = plane.get();
++        m_video_plane = nullptr;
++        CLog::Log(LOGINFO, "CDRMUtils::FindPlanes - using AMD primary plane {} on crtc {}",
++                  m_gui_plane->GetPlaneId(), m_crtc->GetCrtcId());
++        return true;
++      }
++    }
++
++    CLog::Log(LOGERROR, "CDRMUtils::FindPlanes - no compatible AMD primary plane found");
++    return false;
++  }
+@@ -226 +259,2 @@
+-      if (!m_crtc && m_encoder->GetCrtcId() == m_crtcs[i]->GetCrtcId())
++      if (!m_crtc && (m_encoder->GetCrtcId() == 0 ||
++                      m_encoder->GetCrtcId() == m_crtcs[i]->GetCrtcId()))
+@@ -525 +559 @@
+-                               return connector->GetEncoderId() > 0 && connector->IsConnected() &&
++                               return connector->GetModesCount() > 0 && connector->IsConnected() &&
+@@ -541 +575 @@
+-                             { return connector->GetEncoderId() > 0 && connector->IsConnected(); });
++                             { return connector->GetModesCount() > 0 && connector->IsConnected(); });
+@@ -561,0 +596,7 @@
++
++  if (encoder == m_encoders.end())
++  {
++    encoder = std::find_if(m_encoders.begin(), m_encoders.end(), [this](const auto& candidate) {
++      return m_connector->SupportsEncoder(candidate->GetEncoderId());
++    });
++  }
+@@ -598 +639 @@
+-  return false;
++  return m_encoder->GetCrtcId() == 0 && m_encoder->GetPossibleCrtcs() != 0;
+--- a/xbmc/windowing/gbm/drm/DRMPlane.h
++++ b/xbmc/windowing/gbm/drm/DRMPlane.h
+@@ -13,0 +14 @@
++#include <string>
+@@ -33,0 +35,13 @@
++
++  bool IsPrimary() const
++  {
++    if (!m_props)
++      return false;
++    const uint32_t typeId = GetPropertyId("type");
++    for (uint32_t i = 0; i < m_props->count_props; ++i)
++    {
++      if (m_props->props[i] == typeId)
++        return m_props->prop_values[i] == DRM_PLANE_TYPE_PRIMARY;
++    }
++    return false;
++  }
+--- a/xbmc/windowing/gbm/drm/DRMConnector.h
++++ b/xbmc/windowing/gbm/drm/DRMConnector.h
+@@ -33,0 +34,10 @@
++  bool SupportsEncoder(uint32_t encoderId) const
++  {
++    for (int i = 0; i < m_connector->count_encoders; ++i)
++    {
++      if (m_connector->encoders[i] == encoderId)
++        return true;
++    }
++    return false;
++  }
++
+--- a/xbmc/windowing/gbm/WinSystemGbm.cpp
++++ b/xbmc/windowing/gbm/WinSystemGbm.cpp
+@@ -124,8 +124 @@
+-      m_DRM = std::make_shared<COffScreenModeSetting>();
+-      if (!m_DRM->InitDrm())
+-      {
+-        CLog::Log(LOGERROR, "CWinSystemGbm::{} - failed to initialize off screen DRM",
+-                  __FUNCTION__);
+-        m_DRM.reset();
+-        return false;
+-      }
++      return false;

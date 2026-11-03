@@ -10,6 +10,8 @@ table inet lapi_network {
         udp dport 41641 counter accept
         iifname "enp5s0" ip daddr 192.168.1.240 tcp dport 53 counter accept
         iifname "enp5s0" ip daddr 192.168.1.240 udp dport 53 counter accept
+        iifname "enp5s0" ip saddr 192.168.1.0/24 ip daddr 192.168.1.240 tcp dport { 8080, 9090 } counter accept
+        iifname "enp5s0" ip saddr 192.168.1.0/24 ip daddr 192.168.1.240 udp dport 9777 counter accept
         iifname "virbr0" ip daddr 192.168.122.1 tcp dport 53 counter accept
         iifname "virbr0" ip daddr 192.168.122.1 udp dport 53 counter accept
         ip6 hoplimit 255 icmpv6 type { nd-neighbor-solicit, nd-neighbor-advert } counter accept

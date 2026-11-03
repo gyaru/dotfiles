@@ -108,7 +108,6 @@ pani switch lapi --build-host lapi
 │   ├── lapi/
 │   │   ├── services/        # Host services
 │   │   ├── configuration.nix
-│   │   ├── gaming.nix
 │   │   └── zfs.nix
 │   └── radiata/
 │       ├── users/           # Host-specific hjem users

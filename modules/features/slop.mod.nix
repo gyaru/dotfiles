@@ -124,6 +124,7 @@
             (toString cfg.port)
           ];
           Restart = "on-failure";
+          RestartPreventExitStatus = singleton 78;
           RestartSec = 5;
           UMask = "0077";
         };

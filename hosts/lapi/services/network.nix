@@ -22,7 +22,8 @@ in {
 
     firewall = {
       interfaces = {
-        enp5s0.allowedUDPPorts = singleton config.services.tailscale.port;
+        enp5s0.allowedTCPPorts = [8080 9090];
+        enp5s0.allowedUDPPorts = [9777 config.services.tailscale.port];
         virbr0 = {
           allowedTCPPorts = [22 53 445];
           allowedUDPPorts = [53 67 config.services.tailscale.port];
@@ -108,11 +109,11 @@ in {
     {
       assertion =
         sort (a: b: a < b) config.networking.firewall.interfaces.enp5s0.allowedTCPPorts
-        == [22 53 445]
-        && sort (a: b: a < b) config.networking.firewall.interfaces.enp5s0.allowedUDPPorts == [53 41641]
+        == [22 53 445 8080 9090]
+        && sort (a: b: a < b) config.networking.firewall.interfaces.enp5s0.allowedUDPPorts == [53 9777 41641]
         && config.networking.firewall.interfaces.enp5s0.allowedTCPPortRanges == []
         && config.networking.firewall.interfaces.enp5s0.allowedUDPPortRanges == [];
-      message = "LAN may expose only SSH, SMB, DNS and encrypted Tailscale transport.";
+      message = "LAN may expose only SSH, SMB, DNS, Kodi and encrypted Tailscale transport.";
     }
     {
       assertion = !config.networking.nat.enable && !config.services.dnsmasq.enable && !config.services.hostapd.enable;
