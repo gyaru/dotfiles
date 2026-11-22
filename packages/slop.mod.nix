@@ -10,11 +10,12 @@
       config.allowUnfreePredicate = package:
         builtins.elem (lib.getName package) [
           "claude-code"
+          "antigravity-acp"
           "antigravity-cli"
         ];
       overlays = [self.overlays.slop];
     };
-    providers = with agentPkgs; [codex claude-code antigravity-cli];
+    providers = with agentPkgs; [codex claude-code antigravity-acp antigravity-cli];
     t3code = agentPkgs.t3code.override {providerPackages = providers;};
     mkSlop = server:
       pkgs.symlinkJoin {
