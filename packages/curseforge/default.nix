@@ -11,7 +11,7 @@
   version = "1.0.0";
   src = fetchurl {
     url = "https://curseforge.overwolf.com/downloads/curseforge-latest-linux.AppImage";
-    hash = "sha256-vJpsXJabVyp6Ge+NPRwoy7yNUtlsO5xG7I1MrqUW7zc=";
+    hash = "sha256-aljM1fS5P8v9kkklNx05jMmHJDFfUMbUQj231hrAoc8=";
   };
   extracted = appimageTools.extract {inherit pname version src;};
   appimage = appimageTools.wrapType2 {inherit pname version src;};

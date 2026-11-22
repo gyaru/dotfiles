@@ -7,10 +7,14 @@
   perSystem = {pkgs, ...}: let
     agentPkgs = import inputs.nixpkgs {
       inherit (pkgs.stdenv.hostPlatform) system;
-      config.allowUnfreePredicate = package: lib.getName package == "claude-code";
+      config.allowUnfreePredicate = package:
+        builtins.elem (lib.getName package) [
+          "claude-code"
+          "antigravity-cli"
+        ];
       overlays = [self.overlays.slop];
     };
-    providers = with agentPkgs; [codex claude-code opencode];
+    providers = with agentPkgs; [codex claude-code antigravity-cli];
     t3code = agentPkgs.t3code.override {providerPackages = providers;};
     mkSlop = server:
       pkgs.symlinkJoin {
