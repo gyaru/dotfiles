@@ -5,6 +5,9 @@
   ...
 }: {
   perSystem = {pkgs, ...}: let
+    inherit (lib.lists) elem;
+    inherit (lib.strings) getName;
+
     agentPkgs = import inputs.nixpkgs {
       inherit (pkgs.stdenv.hostPlatform) system;
       config.allowUnfreePredicate = package:
