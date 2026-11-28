@@ -1,0 +1,132 @@
+{
+  "agenix": {
+    "lastModified": 1792507013,
+    "narHash": "sha256-8tKjSQajD3mUND1GaAuaWTcuyUpgcGsh5V+l4ibzC7U=",
+    "owner": "ryantm",
+    "repo": "agenix",
+    "rev": "5e5b88a0c8e56f291a108c2fe9934054d9745b2e",
+    "type": "github"
+  },
+  "bunny-plus": {
+    "lastModified": 1793299698,
+    "narHash": "sha256-i7mNt7YDipksPomZNRQGtsK99NY+VIIlifAubhSt7a4=",
+    "owner": "bunny-plus",
+    "repo": "core",
+    "rev": "678e6c1d8dac3c8a2aabaaf74b887b48a4db4321",
+    "type": "github"
+  },
+  "disko": {
+    "lastModified": 1795168368,
+    "narHash": "sha256-D35n2Q2v1KrlF9LS/pFl8Z3EBMJW6qvPw5q4HMbXXLg=",
+    "owner": "nix-community",
+    "repo": "disko",
+    "rev": "44761d4f745b95e037458a0e57133c5700c8e320",
+    "type": "github"
+  },
+  "flake-parts": {
+    "lastModified": 1793576659,
+    "narHash": "sha256-V1h85lUaJBQoHFrB2vpXZOE0Ju1MYSnIpsehoVZYlDo=",
+    "owner": "hercules-ci",
+    "repo": "flake-parts",
+    "rev": "ea2630b7470978622c7689a1ff75d2b389175399",
+    "type": "github"
+  },
+  "git-hooks": {
+    "lastModified": 1793686154,
+    "narHash": "sha256-Zb/0L3soxrkfcrywpfp0J++0WFLB3tzh0Xtx9up+VNc=",
+    "owner": "cachix",
+    "repo": "git-hooks.nix",
+    "rev": "204b6977e00caac19e2313015a598543ca7be150",
+    "type": "github"
+  },
+  "hjem-rum": {
+    "lastModified": 1794150524,
+    "narHash": "sha256-buVkE9dseq+k0dCEA5gFhbpCO9GRNaziOX7Z9LGu2T0=",
+    "owner": "snugnug",
+    "repo": "hjem-rum",
+    "rev": "f6193a9a0269044bc3f5665ee29b319def307771",
+    "type": "github"
+  },
+  "lanzaboote": {
+    "lastModified": 1794065867,
+    "narHash": "sha256-TYMpR6+R2yIGbxINBepphHTcoVJFGAiaj+aFVAbbCw4=",
+    "owner": "sarunint",
+    "repo": "lanzaboote",
+    "rev": "403451d914ac1e1a786bbaba6fdf02d7063cb158",
+    "type": "github"
+  },
+  "llm-agents": {
+    "lastModified": 1795241446,
+    "narHash": "sha256-v8/CnsHh4/p58E5d0k208omIYUUu6EruiKRIYYNNuE0=",
+    "owner": "numtide",
+    "repo": "llm-agents.nix",
+    "rev": "a59764a6424689d67c1bd9070fd48afa44a47ee0",
+    "type": "github"
+  },
+  "nix-gaming": {
+    "lastModified": 1795156834,
+    "narHash": "sha256-1PIR+1usRAK02VQerxIJ0rNr0Mix792R41wE9sgPUsY=",
+    "owner": "fufexan",
+    "repo": "nix-gaming",
+    "rev": "fd0b5dbc9e15fefd867a713c06bd26a9309200ca",
+    "type": "github"
+  },
+  "nix-index-database": {
+    "lastModified": 1794739050,
+    "narHash": "sha256-PCGNIyAydZcdUXCxEXTjrS1+wWS+k9E+ENqBkUK2Mpg=",
+    "owner": "nix-community",
+    "repo": "nix-index-database",
+    "rev": "9bd074026d6db75b59aae8cd6071b5f2fe27a36c",
+    "type": "github"
+  },
+  "nixos-hardware": {
+    "lastModified": 1795018746,
+    "narHash": "sha256-glQAHvZGgBVjzGIWgIZYSf3X10gvtO2LPR4rtyP/Soc=",
+    "owner": "NixOS",
+    "repo": "nixos-hardware",
+    "rev": "33475966110df258f52d05ec4d4cd6394637cbb9",
+    "type": "github"
+  },
+  "nixpkgs": {
+    "lastModified": 1795234589,
+    "narHash": "sha256-f/VVvxf5RsQgWVhUtefoca5ktVg0DA2bnkMOcmSnozo=",
+    "owner": "nixos",
+    "repo": "nixpkgs",
+    "rev": "2786a2a72088ecf32aea5b3ec52099e6a7cff78f",
+    "type": "github"
+  },
+  "noctalia": {
+    "lastModified": 1795294847,
+    "narHash": "sha256-z+HrwrUuWj3xUEabfqW9cszBEqNx9kQxfvDi8lu4R1E=",
+    "owner": "noctalia-dev",
+    "repo": "noctalia",
+    "rev": "db96d6252d01377c230a9e77bf26d8ff88f76b7d",
+    "type": "github"
+  },
+  "tack": {
+    "lastModified": 1795730888,
+    "narHash": "sha256-CUECELH3ty3Imlmbt88IC+ZkUxHPyd3FHuN9WWG4P+c=",
+    "owner": "manic-systems",
+    "repo": "tack",
+    "rev": "393ed432b3321a44a87e8a588552b51d5dad8f6e",
+    "type": "github",
+    "tag": "v2.0.0",
+    "version": "2.0.0"
+  },
+  "$declared": {
+    "agenix": "github:ryantm/agenix",
+    "bunny-plus": "github:bunny-plus/core",
+    "disko": "github:nix-community/disko",
+    "flake-parts": "github:hercules-ci/flake-parts",
+    "git-hooks": "github:cachix/git-hooks.nix",
+    "hjem-rum": "github:snugnug/hjem-rum",
+    "lanzaboote": "github:sarunint/lanzaboote/xbootldr",
+    "llm-agents": "github:numtide/llm-agents.nix",
+    "nix-gaming": "github:fufexan/nix-gaming",
+    "nix-index-database": "github:nix-community/nix-index-database",
+    "nixos-hardware": "github:NixOS/nixos-hardware",
+    "nixpkgs": "github:nixos/nixpkgs/nixos-unstable",
+    "noctalia": "github:noctalia-dev/noctalia",
+    "tack": "github:manic-systems/tack"
+  }
+}

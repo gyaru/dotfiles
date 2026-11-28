@@ -12,11 +12,16 @@ in {
     pkgs,
     ...
   }: {
+    pre-commit.settings.excludes = singleton "^\\.tack/default\\.nix$";
+
     pre-commit.settings.hooks = {
       alejandra.enable = true;
       deadnix.enable = true;
       nil.enable = true;
-      statix.enable = true;
+      statix = {
+        enable = true;
+        settings.ignore = singleton ".tack/default.nix";
+      };
       shellcheck.enable = true;
     };
 
@@ -25,6 +30,7 @@ in {
       packages = with pkgs; [
         alejandra
         config.packages.pani
+        config.packages.tack
         deadnix
         dix
         fd

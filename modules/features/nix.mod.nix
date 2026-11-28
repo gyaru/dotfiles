@@ -1,6 +1,11 @@
-_: {
-  flake.modules.nixos.nix = {
+{self, ...}: {
+  flake.modules.nixos.nix = {pkgs, ...}: {
     programs.nh.enable = true;
+
+    programs.tack = {
+      enable = true;
+      package = self.packages.${pkgs.stdenv.hostPlatform.system}.tack;
+    };
 
     nix.channel.enable = false;
 

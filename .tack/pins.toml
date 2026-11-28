@@ -1,0 +1,78 @@
+[inputs.agenix]
+url = "github:ryantm/agenix"
+
+[inputs.agenix.follows]
+nixpkgs = "nixpkgs"
+
+[inputs.bunny-plus]
+url = "github:bunny-plus/core"
+
+[inputs.bunny-plus.follows]
+nixpkgs = "nixpkgs"
+
+[inputs.disko]
+url = "github:nix-community/disko"
+
+[inputs.disko.follows]
+nixpkgs = "nixpkgs"
+
+[inputs.flake-parts]
+url = "github:hercules-ci/flake-parts"
+
+[inputs.git-hooks]
+url = "github:cachix/git-hooks.nix"
+
+[inputs.git-hooks.follows]
+nixpkgs = "nixpkgs"
+
+[inputs.hjem-rum]
+url = "github:snugnug/hjem-rum"
+
+[inputs.hjem-rum.follows]
+nixpkgs = "nixpkgs"
+
+[inputs.lanzaboote]
+url = "github:sarunint/lanzaboote/xbootldr"
+
+[inputs.lanzaboote.follows]
+nixpkgs = "nixpkgs"
+
+[inputs.llm-agents]
+url = "github:numtide/llm-agents.nix"
+
+[inputs.nix-gaming]
+url = "github:fufexan/nix-gaming"
+
+[inputs.nix-gaming.follows]
+flake-parts = "flake-parts"
+git-hooks = "git-hooks"
+nixpkgs = "nixpkgs"
+
+[inputs.nix-index-database]
+url = "github:nix-community/nix-index-database"
+
+[inputs.nix-index-database.follows]
+nixpkgs = "nixpkgs"
+
+[inputs.nixos-hardware]
+url = "github:NixOS/nixos-hardware"
+
+[inputs.nixos-hardware.follows]
+nixpkgs = "nixpkgs"
+
+[inputs.nixpkgs]
+url = "github:nixos/nixpkgs/nixos-unstable"
+
+[inputs.noctalia]
+url = "github:noctalia-dev/noctalia"
+
+[inputs.noctalia.follows]
+nixpkgs = "nixpkgs"
+
+[inputs.hjem]
+follows = "hjem-rum/hjem"
+
+[inputs.tack]
+url = "github:manic-systems/tack"
+type = "fetch"
+tag = "v{version}"
